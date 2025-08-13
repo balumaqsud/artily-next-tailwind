@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter, withRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { getJwtToken, logOut, updateUserInfo } from "../auth";
-import { Stack, Box, Button } from "@mui/material";
+import { Stack, Box } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import { alpha, styled } from "@mui/material/styles";
 import Menu, { MenuProps } from "@mui/material/Menu";
@@ -16,6 +16,7 @@ import { useReactiveVar } from "@apollo/client";
 import { userVar } from "../../apollo/store";
 import { Logout } from "@mui/icons-material";
 import { REACT_APP_API_URL } from "../config";
+import { Button } from "@/libs/components/ui/button";
 
 const Top = () => {
   const device = useDeviceDetect();
@@ -173,14 +174,14 @@ const Top = () => {
         direction="row"
       >
         <Stack
-          className={`${
+          className={`fixed top-0 left-0 right-0 z-50 ${
             colorChange || bgColor
               ? "bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 shadow-sm"
               : "bg-transparent"
-          } w-full transition-colors duration-300 py-4 `}
+          } w-full transition-colors duration-300 py-2 `}
         >
           <Stack
-            className="relative mx-auto flex w-full h-14 max-w-7xl items-center px-6"
+            className=" mx-auto flex w-full h-14 max-w-7xl items-center px-6 justify-between"
             direction="row"
           >
             <Box
@@ -192,7 +193,7 @@ const Top = () => {
                 <img
                   src="/logo/artly-logo.png"
                   alt="artly-logo"
-                  className="h-48 w-auto"
+                  className="h-40 w-auto"
                 />
               </Link>
             </Box>
@@ -201,34 +202,34 @@ const Top = () => {
               className="router-box pointer-events-auto absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:flex flex-row items-center gap-12"
             >
               <Link href={"/"}>
-                <div className="text-lg font-semibold text-gray-900 hover:opacity-80">
+                <div className="text-base md:text-lg font-medium text-foreground/70 transition-colors hover:text-foreground">
                   {t("Home")}
                 </div>
               </Link>
               <Link href={"/product"}>
-                <div className="text-lg font-semibold text-gray-900 hover:opacity-80">
+                <div className="text-base md:text-lg font-medium text-foreground/70 transition-colors hover:text-foreground">
                   {t("Products")}
                 </div>
               </Link>
               <Link href={"/artists"}>
-                <div className="text-lg font-semibold text-gray-900 hover:opacity-80">
+                <div className="text-base md:text-lg font-medium text-foreground/70 transition-colors hover:text-foreground">
                   {t("Artists")}
                 </div>
               </Link>
               <Link href={"/community?articleCategory=FREE"}>
-                <div className="text-lg font-semibold text-gray-900 hover:opacity-80">
+                <div className="text-base md:text-lg font-medium text-foreground/70 transition-colors hover:text-foreground">
                   {t("Community")}
                 </div>
               </Link>
               {user?._id && (
                 <Link href={"/mypage"}>
-                  <div className="text-lg font-semibold text-gray-900 hover:opacity-80">
+                  <div className="text-base md:text-lg font-medium text-foreground/70 transition-colors hover:text-foreground">
                     {t("My Page")}
                   </div>
                 </Link>
               )}
               <Link href={"/connect"}>
-                <div className="text-lg font-semibold text-gray-900 hover:opacity-80">
+                <div className="text-base md:text-lg font-medium text-foreground/70 transition-colors hover:text-foreground">
                   {t("Connect")}
                 </div>
               </Link>
@@ -267,10 +268,7 @@ const Top = () => {
                     sx={{ mt: "5px" }}
                   >
                     <MenuItem onClick={() => logOut()}>
-                      <Logout
-                        fontSize="small"
-                        style={{ color: "blue", marginRight: "10px" }}
-                      />
+                      <Logout className="px-4 text-lg font-semibold hover:bg-gray-100 cursor-pointer" />
                       Logout
                     </MenuItem>
                   </Menu>
@@ -278,7 +276,10 @@ const Top = () => {
               ) : (
                 <Link href={"/account/join"}>
                   <div>
-                    <Button className="px-0 text-lg font-semibold normal-case text-gray-900 hover:opacity-80">
+                    <Button
+                      variant="ghost"
+                      className="px-4 text-lg  font-normal hover:bg-gray-100 cursor-pointer"
+                    >
                       Login
                     </Button>
                   </div>
@@ -290,28 +291,26 @@ const Top = () => {
                   <NotificationsOutlinedIcon className="h-6 w-6 cursor-pointer text-gray-600 hover:text-gray-800" />
                 )}
                 <Button
-                  disableRipple
-                  className="btn-lang ml-1 flex items-center gap-1 rounded-md px-2 py-1 normal-case hover:bg-gray-100"
+                  variant="ghost"
+                  className="btn-lang ml-1 flex items-center gap-1 rounded-md px-2 py-1 normal-case hover:bg-gray-100 cursor-pointer"
                   onClick={langClick}
-                  endIcon={
-                    <CaretDown size={14} color="#616161" weight="fill" />
-                  }
                 >
-                  <Box component={"div"} className="flag h-6 w-6">
+                  <Box component={"div"} className="flag h-4 w-6">
                     {lang !== null ? (
                       <img
-                        src={`/img/flag/lang${lang}.png`}
+                        src={`/flag/lang${lang}.png`}
                         alt={"usaFlag"}
-                        className="h-6 w-6"
+                        className="h-4 w-6"
                       />
                     ) : (
                       <img
-                        src={`/img/flag/langen.png`}
+                        src={`/flag/langen.png`}
                         alt={"usaFlag"}
-                        className="h-6 w-6"
+                        className="h-4 w-6"
                       />
                     )}
                   </Box>
+                  <CaretDown size={14} color="#616161" weight="fill" />
                 </Button>
 
                 <StyledMenu
@@ -322,8 +321,8 @@ const Top = () => {
                 >
                   <MenuItem disableRipple onClick={langChoice} id="en">
                     <img
-                      className="h-5 w-5"
-                      src={"/img/flag/langen.png"}
+                      className="h-5 w-6 m-1"
+                      src={"/flag/langen.png"}
                       onClick={langChoice}
                       id="en"
                       alt={"usaFlag"}
@@ -332,23 +331,13 @@ const Top = () => {
                   </MenuItem>
                   <MenuItem disableRipple onClick={langChoice} id="kr">
                     <img
-                      className="h-5 w-5"
-                      src={"/img/flag/langkr.png"}
+                      className="h-5 w-6 m-1"
+                      src={"/flag/langkr.png"}
                       onClick={langChoice}
                       id="uz"
                       alt={"koreanFlag"}
                     />
                     {t("Korean")}
-                  </MenuItem>
-                  <MenuItem disableRipple onClick={langChoice} id="ru">
-                    <img
-                      className="h-5 w-5"
-                      src={"/img/flag/langru.png"}
-                      onClick={langChoice}
-                      id="ru"
-                      alt={"russiaFlag"}
-                    />
-                    {t("Russian")}
                   </MenuItem>
                 </StyledMenu>
               </div>

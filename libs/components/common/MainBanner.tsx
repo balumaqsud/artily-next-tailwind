@@ -1,32 +1,27 @@
-import React, { useRef } from 'react';
-import { Box, Button, Stack, Typography } from '@mui/material';
+import React from "react";
+import { Button } from "@/libs/components/ui/button";
 
 export default function MainBanner() {
-	return (
-		<Stack
-			style={{ marginTop: '120px', width: '100%', height: '480px', justifyContent: 'flex-start', alignItems: 'center' }}
-		>
-			<Typography variant="h1" color="white" sx={{ fontSize: '4.5rem', mt: 4 }}>
-				Creative Looks Begin Here
-			</Typography>
-			<Typography variant="h2" color="white" sx={{ mt: 4, width: '600px', textAlign: 'center' }}>
-				New chapter, same you. Score deals on tees, stickers & more, all with fresh art you’ll love.
-			</Typography>
-			<Button
-				variant="contained"
-				color="secondary"
-				size="large"
-				sx={{
-					mt: 4,
-					width: '200px',
-					height: '60px',
-					textAlign: 'center',
-					backgroundColor: 'white',
-					borderRadius: '10px',
-				}}
-			>
-				<Typography variant="h3">Shop Now</Typography>
-			</Button>
-		</Stack>
-	);
+  return (
+    <div className="mt-18 w-full px-4">
+      <div
+        className="relative h-[660px] w-full rounded-[10px] bg-cover bg-center"
+        style={{ backgroundImage: "url('/banner/main7.jpg')" }}
+      >
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
+          <h1 className="text-white text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight drop-shadow-lg">
+            Creative Looks{" "}
+            <span className="text-yellow-300 drop-shadow-lg">Begin Here</span>
+          </h1>
+          <p className="mt-6 max-w-2xl text-white text-lg md:text-2xl drop-shadow-md">
+            New chapter, same you. Score deals on tees, stickers & more, all
+            with fresh art you'll love.
+          </p>
+          <Button className="mt-8 h-14 w-48 text-lg font-normal rounded-[10px] bg-white text-gray-900 hover:bg-gray-100 cursor-pointer">
+            Shop Now
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 }
