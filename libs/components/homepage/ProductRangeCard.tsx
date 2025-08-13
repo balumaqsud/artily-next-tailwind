@@ -17,7 +17,7 @@ const ProductRangeCard = ({
 }: ProductRangeCardProps) => {
   return (
     <div
-      className={`relative w-full overflow-hidden rounded-2xl bg-cover bg-center shadow-sm cursor-pointer ${
+      className={`relative w-full overflow-hidden rounded-2xl bg-cover bg-center shadow-sm  transition-all duration-1000 ease-in-out hover:scale-105 ${
         className ?? ""
       }`}
       style={{ backgroundImage: `url('${image}')` }}

@@ -1,42 +1,33 @@
 import React from "react";
 import ProductRangeCard from "./ProductRangeCard";
-
-interface Collection {
-  _id: string;
-  title: string;
-  image: string;
-}
+import { ScrollArea, ScrollBar } from "@/libs/components/ui/scroll-area";
+import { Button } from "@/libs/components/ui/button";
+import { fallbackCollections } from "@/libs/config";
 
 const ProductRange = () => {
-  const fallbackCollections: Collection[] = [
-    { _id: "fallback-1", title: "Shop Apparel", image: "/banner/main.jpg" },
-    { _id: "fallback-2", title: "Shop Posters", image: "/banner/main2.jpg" },
-    {
-      _id: "fallback-3",
-      title: "Back to School Essentials",
-      image: "/banner/main7.jpg",
-    },
-  ];
-
   return (
     <section className="w-full px-4 py-10">
       <div className="mx-auto w-full max-w-7xl">
-        <div className="mb-8">
+        <div className="mb-8 flex items-center justify-between">
           <h2 className="text-xl md:text-2xl font-bold tracking-tight text-foreground">
             See Our Product Range
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {fallbackCollections.map((collection: Collection) => (
-            <ProductRangeCard
-              key={collection._id}
-              href={`/product/${collection._id}`}
-              title={collection.title}
-              image={collection.image}
-            />
-          ))}
-        </div>
+        <ScrollArea className="w-full overflow-hidden">
+          <div className="flex w-max gap-6 p-4">
+            {fallbackCollections.map((collection: any) => (
+              <div key={collection._id} className="shrink-0 w-[360px]">
+                <ProductRangeCard
+                  href={`/product/${collection._id}`}
+                  title={collection.title}
+                  image={collection.image}
+                />
+              </div>
+            ))}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
       </div>
     </section>
   );
