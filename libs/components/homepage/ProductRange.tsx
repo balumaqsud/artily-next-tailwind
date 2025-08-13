@@ -9,7 +9,7 @@ const ProductRange = () => {
     <section className="w-full px-4 py-10">
       <div className="mx-auto w-full max-w-7xl">
         <div className="mb-8 flex items-center justify-between">
-          <h2 className="text-xl md:text-2xl font-bold tracking-tight text-foreground">
+          <h2 className="text-xl md:text-2xl font-bold tracking-tight text-muted-foreground">
             See Our Product Range
           </h2>
         </div>

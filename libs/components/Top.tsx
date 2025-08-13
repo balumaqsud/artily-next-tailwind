@@ -202,34 +202,34 @@ const Top = () => {
               className="router-box pointer-events-auto absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:flex flex-row items-center gap-12"
             >
               <Link href={"/"}>
-                <div className="text-base md:text-lg font-medium text-foreground/70 transition-colors hover:text-foreground">
+                <div className="text-base md:text-lg font-medium text-muted-foreground transition-colors hover:text-foreground">
                   {t("Home")}
                 </div>
               </Link>
               <Link href={"/product"}>
-                <div className="text-base md:text-lg font-medium text-foreground/70 transition-colors hover:text-foreground">
+                <div className="text-base md:text-lg font-medium text-muted-foreground transition-colors hover:text-foreground">
                   {t("Products")}
                 </div>
               </Link>
               <Link href={"/artists"}>
-                <div className="text-base md:text-lg font-medium text-foreground/70 transition-colors hover:text-foreground">
+                <div className="text-base md:text-lg font-medium text-muted-foreground transition-colors hover:text-foreground">
                   {t("Artists")}
                 </div>
               </Link>
               <Link href={"/community?articleCategory=FREE"}>
-                <div className="text-base md:text-lg font-medium text-foreground/70 transition-colors hover:text-foreground">
+                <div className="text-base md:text-lg font-medium text-muted-foreground transition-colors hover:text-foreground">
                   {t("Community")}
                 </div>
               </Link>
               {user?._id && (
                 <Link href={"/mypage"}>
-                  <div className="text-base md:text-lg font-medium text-foreground/70 transition-colors hover:text-foreground">
+                  <div className="text-base md:text-lg font-medium text-muted-foreground transition-colors hover:text-foreground">
                     {t("My Page")}
                   </div>
                 </Link>
               )}
               <Link href={"/connect"}>
-                <div className="text-base md:text-lg font-medium text-foreground/70 transition-colors hover:text-foreground">
+                <div className="text-base md:text-lg font-medium text-muted-foreground transition-colors hover:text-foreground">
                   {t("Connect")}
                 </div>
               </Link>
