@@ -1,4 +1,5 @@
 import type { AppProps } from "next/app";
+import "../styles/globals.css";
 import { CssBaseline } from "@mui/material";
 import React, { useState } from "react";
 import { ApolloProvider } from "@apollo/client";
