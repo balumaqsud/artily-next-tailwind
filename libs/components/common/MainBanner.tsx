@@ -21,7 +21,7 @@ export default function MainBanner() {
             New chapter, same you. Score deals on tees, stickers & more, all
             with fresh art you'll love.
           </p>
-          <Button className="mt-8 h-14 w-48 text-lg font-normal rounded-[10px] bg-white text-gray-900 hover:bg-gray-100 cursor-pointer">
+          <Button className="rounded-full bg-white px-8 py-6 mt-8 text-lg font-semibold text-gray-900 hover:bg-gray-100 cursor-pointer">
             Shop Now
           </Button>
         </div>

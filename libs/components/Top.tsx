@@ -276,10 +276,7 @@ const Top = () => {
               ) : (
                 <Link href={"/account/join"}>
                   <div>
-                    <Button
-                      variant="ghost"
-                      className="px-4 text-lg  font-normal hover:bg-gray-100 cursor-pointer"
-                    >
+                    <Button className="rounded-full bg-white px-6 py-5 text-base font-semibold text-gray-900 hover:bg-gray-100 cursor-pointer">
                       Login
                     </Button>
                   </div>
