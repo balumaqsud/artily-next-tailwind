@@ -47,7 +47,7 @@ const footerCols = [
 const Footer = () => {
   const year = new Date().getFullYear();
   return (
-    <footer className="bg-amber-100 text-muted-foreground">
+    <footer className="bg-[#4E89DF] text-muted-foreground">
       <div className="mx-auto w-full max-w-7xl px-6 py-12">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-5">
           {footerCols.map((col) => (
@@ -80,13 +80,16 @@ const Footer = () => {
               studies.
             </p>
             <div className="w-full max-w-md">
-              <div className="flex h-10 w-full items-center rounded-md border border-neutral-800 bg-neutral-950/50 pl-3 pr-2">
+              <div className="flex h-10 w-full items-center rounded-md border pl-3 pr-2">
                 <input
                   type="email"
-                  placeholder="you@domain.com"
-                  className="h-full w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+                  placeholder="email"
+                  className="h-full w-full bg-transparent  text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
                 />
-                <Button className="h-8 shrink-0 rounded-md bg-neutral-800 px-3 text-xs font-semibold text-foreground hover:bg-neutral-700">
+                <Button
+                  variant="outline"
+                  className="h-8 shrink-0 rounded-md px-3 text-xs font-semibold text-foreground hover:bg-white hover:text-black"
+                >
                   Subscribe
                 </Button>
               </div>
