@@ -1,86 +1,37 @@
-import React from 'react';
-import { Stack, Box, Divider, Typography } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import useDeviceDetect from '../../hooks/useDeviceDetect';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import { Property } from '../../types/property/property';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import { REACT_APP_API_URL } from '../../config';
-import { useRouter } from 'next/router';
-import { useReactiveVar } from '@apollo/client';
-import { userVar } from '../../../apollo/store';
+import React from "react";
+import Link from "next/link";
+import { Button } from "@/libs/components/ui/button";
 
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Button from '@mui/material/Button';
+type ProductRangeCardProps = {
+  href: string;
+  title: string;
+  image: string; // public path to background image
+  className?: string;
+};
 
-interface TrendPropertyCardProps {
-	property: Property;
-	likeTargetPropertyHandler: any;
-}
-
-const ProductRangeCard = (props: TrendPropertyCardProps) => {
-	const { property, likeTargetPropertyHandler } = props;
-	const device = useDeviceDetect();
-	const router = useRouter();
-	const user = useReactiveVar(userVar);
-
-	/** HANDLERS **/
-	const pushDetailHandler = async (id: string) => {
-		await router.push({ pathname: 'property/detail', query: { id: id } });
-	};
-
-	if (device === 'mobile') {
-		return (
-			<Card sx={{ maxWidth: 345 }}>
-				<CardMedia
-					component="img"
-					alt="green iguana"
-					height="140"
-					image="/static/images/cards/contemplative-reptile.jpg"
-				/>
-				<CardContent>
-					<Typography gutterBottom variant="h5" component="div">
-						Lizard
-					</Typography>
-					<Typography variant="body2" sx={{ color: 'text.secondary' }}>
-						Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging across all continents
-						except Antarctica
-					</Typography>
-				</CardContent>
-				<CardActions>
-					<Button size="small">Share</Button>
-					<Button size="small">Learn More</Button>
-				</CardActions>
-			</Card>
-		);
-	} else {
-		return (
-			<Card sx={{ maxWidth: 345 }}>
-				<CardMedia
-					component="img"
-					alt="green iguana"
-					height="140"
-					image="/static/images/cards/contemplative-reptile.jpg"
-				/>
-				<CardContent>
-					<Typography gutterBottom variant="h5" component="div">
-						Lizard
-					</Typography>
-					<Typography variant="body2" sx={{ color: 'text.secondary' }}>
-						Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging across all continents
-						except Antarctica
-					</Typography>
-				</CardContent>
-				<CardActions>
-					<Button size="small">Share</Button>
-					<Button size="small">Learn More</Button>
-				</CardActions>
-			</Card>
-		);
-	}
+const ProductRangeCard = ({
+  href,
+  title,
+  image,
+  className,
+}: ProductRangeCardProps) => {
+  return (
+    <div
+      className={`relative w-full overflow-hidden rounded-2xl bg-cover bg-center shadow-sm cursor-pointer ${
+        className ?? ""
+      }`}
+      style={{ backgroundImage: `url('${image}')` }}
+    >
+      <div className="aspect-[4/3] md:aspect-[16/12]" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-6 flex w-full justify-center">
+        <Link href={href} className="pointer-events-auto">
+          <Button className="rounded-full bg-white px-6 py-5 text-base font-semibold text-gray-900 hover:bg-gray-100 cursor-pointer">
+            {title}
+          </Button>
+        </Link>
+      </div>
+    </div>
+  );
 };
 
 export default ProductRangeCard;
