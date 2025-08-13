@@ -12,6 +12,7 @@ import { CaretDown } from "phosphor-react";
 import useDeviceDetect from "../hooks/useDeviceDetect";
 import Link from "next/link";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
+import LanguageIcon from "@mui/icons-material/Language";
 import { useReactiveVar } from "@apollo/client";
 import { userVar } from "../../apollo/store";
 import { Logout } from "@mui/icons-material";
@@ -193,13 +194,13 @@ const Top = () => {
                 <img
                   src="/logo/artly-logo.png"
                   alt="artly-logo"
-                  className="h-40 w-auto"
+                  className="h-40 w-auto ml-2"
                 />
               </Link>
             </Box>
             <Box
               component={"div"}
-              className="router-box pointer-events-auto absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:flex flex-row items-center gap-12"
+              className="router-box pointer-events-auto absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:flex flex-row items-center gap-6"
             >
               <Link href={"/"}>
                 <div className="text-base md:text-lg font-medium text-muted-foreground transition-colors hover:text-foreground">
@@ -236,7 +237,7 @@ const Top = () => {
             </Box>
             <Box
               component={"div"}
-              className="user-box ml-auto flex items-center gap-3"
+              className=" ml-auto flex items-center gap-1"
               sx={{ display: "flex", flexDirection: "row" }}
             >
               {user?._id ? (
@@ -274,40 +275,34 @@ const Top = () => {
                   </Menu>
                 </>
               ) : (
-                <Link href={"/account/join"}>
-                  <div>
-                    <Button className="rounded-full bg-white px-6 py-5 text-base font-semibold text-gray-900 hover:bg-gray-100 cursor-pointer">
-                      Login
-                    </Button>
-                  </div>
-                </Link>
+                <>
+                  <Link href={"/account/join"}>
+                    <div>
+                      <Button className="rounded-full bg-white px-6 py-5 text-base font-semibold text-gray-900 hover:bg-gray-100 cursor-pointer">
+                        Become a seller
+                      </Button>
+                    </div>
+                  </Link>
+                  <Link href={"/account/join"}>
+                    <div>
+                      <Button className="rounded-full bg-white px-6 py-5 text-base font-semibold text-gray-900 hover:bg-gray-100 cursor-pointer">
+                        Login
+                      </Button>
+                    </div>
+                  </Link>
+                </>
               )}
 
-              <div className="lan-box flex items-center gap-2">
+              <div className=" flex items-center gap-2 rounded-full">
                 {user?._id && (
-                  <NotificationsOutlinedIcon className="h-6 w-6 cursor-pointer text-gray-600 hover:text-gray-800" />
+                  <NotificationsOutlinedIcon className="h-6 w-6 cursor-pointer text-gray-600 hover:text-gray-800 rounded-full" />
                 )}
                 <Button
                   variant="ghost"
-                  className="btn-lang ml-1 flex items-center gap-1 rounded-md px-2 py-1 normal-case hover:bg-gray-100 cursor-pointer"
+                  className="btn-lang flex items-center rounded-full px-2 py-1 hover:bg-gray-100 cursor-pointer"
                   onClick={langClick}
                 >
-                  <Box component={"div"} className="flag h-4 w-6">
-                    {lang !== null ? (
-                      <img
-                        src={`/flag/lang${lang}.png`}
-                        alt={"usaFlag"}
-                        className="h-4 w-6"
-                      />
-                    ) : (
-                      <img
-                        src={`/flag/langen.png`}
-                        alt={"usaFlag"}
-                        className="h-4 w-6"
-                      />
-                    )}
-                  </Box>
-                  <CaretDown size={14} color="#616161" weight="fill" />
+                  <LanguageIcon fontSize="medium" className="text-gray-600" />
                 </Button>
 
                 <StyledMenu
@@ -317,24 +312,10 @@ const Top = () => {
                   sx={{ position: "absolute" }}
                 >
                   <MenuItem disableRipple onClick={langChoice} id="en">
-                    <img
-                      className="h-5 w-6 m-1"
-                      src={"/flag/langen.png"}
-                      onClick={langChoice}
-                      id="en"
-                      alt={"usaFlag"}
-                    />
-                    {t("English")}
+                    {t("English")} (EN)
                   </MenuItem>
                   <MenuItem disableRipple onClick={langChoice} id="kr">
-                    <img
-                      className="h-5 w-6 m-1"
-                      src={"/flag/langkr.png"}
-                      onClick={langChoice}
-                      id="uz"
-                      alt={"koreanFlag"}
-                    />
-                    {t("Korean")}
+                    {t("Korean")} (KR)
                   </MenuItem>
                 </StyledMenu>
               </div>

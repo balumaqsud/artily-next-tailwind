@@ -3,9 +3,9 @@ import { Button } from "@/libs/components/ui/button";
 
 export default function MainBanner() {
   return (
-    <div className="mt-18 w-full px-4">
+    <div className="mt-19 w-full px-4">
       <div
-        className="relative h-[460px] w-full rounded-[10px] bg-cover bg-center transition-all duration-1000 ease-in-out"
+        className="relative h-[580px] w-full rounded-[10px] bg-cover bg-center transition-all duration-1000 ease-in-out"
         style={{
           backgroundImage: `url('/banner/main${
             Math.floor(Date.now() / 4000) % 2 === 0 ? "" : "7"
