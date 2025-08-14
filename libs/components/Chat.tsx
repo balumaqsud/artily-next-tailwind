@@ -138,7 +138,7 @@ const Chat = () => {
       {openButton ? (
         <button
           onClick={handleOpenChat}
-          className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-[#ff5a73] text-white shadow-lg transition hover:bg-blue-700 cursor-pointer"
+          className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-[#ff5a73] text-white shadow-lg transition hover:bg-fuchsia-900 cursor-pointer"
           aria-label="Open chat"
         >
           {open ? (
