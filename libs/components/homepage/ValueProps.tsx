@@ -43,7 +43,7 @@ export default function ValueProps({
               <div className="mt-1 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
                 {item.icon ?? <Image className="h-8 w-8" />}
               </div>
-              <div>
+              <div className="px-4">
                 <h3 className="text-lg font-semibold text-foreground">
                   {item.title}
                 </h3>

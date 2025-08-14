@@ -105,7 +105,7 @@ const PopularProducts = ({ initialInput }: PopularProductsProps) => {
         </div>
 
         <ScrollArea className="w-full overflow-hidden">
-          <div className="flex w-max gap-4 p-2">
+          <div className="flex w-max gap-4 p-4">
             {items.map((product: any) => (
               <div key={product?._id} className="shrink-0">
                 <PopularProductsCard
