@@ -39,7 +39,7 @@ const TopSellerCard = ({ seller }: TopSellerProps) => {
         <div className="mt-4 flex justify-center">
           <button
             onClick={() => router.push("/artists")}
-            className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-gray-900 shadow hover:bg-gray-100"
+            className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-gray-900 shadow hover:bg-gray-100 cursor-pointer"
           >
             View Shop
           </button>

@@ -25,60 +25,35 @@ const withLayoutMain = (Component: any) => {
     }, []);
 
     /** HANDLERS **/
-
-    if (device == "mobile") {
-      return (
-        <>
-          <Head>
-            <title>Artly</title>
-            <meta name={"title"} content={`Artly`} />
-          </Head>
-          <Stack id="mobile-wrap">
-            <Stack id={"top"}>
-              <Top />
-            </Stack>
-
-            <Stack id={"main"}>
-              <Component {...props} />
-            </Stack>
-
-            <Stack id={"footer"}>
-              <Footer />
-            </Stack>
+    return (
+      <>
+        <Head>
+          <title>Artly</title>
+          <meta name={"title"} content={`Artly`} />
+        </Head>
+        <Stack className="w-full min-h-screen flex flex-col">
+          <Stack className="w-full">
+            <Top />
           </Stack>
-        </>
-      );
-    } else {
-      return (
-        <>
-          <Head>
-            <title>Artly</title>
-            <meta name={"title"} content={`Artly`} />
-          </Head>
-          <Stack id="pc-wrap" className="w-full h-full">
-            <Stack id={"top"}>
-              <Top />
-            </Stack>
 
-            <Stack className={"header-main"}>
-              <Stack className="main-banner">
-                <MainBanner />
-              </Stack>
-            </Stack>
+          <Stack className="w-full hidden md:block">
+            <MainBanner />
+          </Stack>
 
-            <Stack id={"main"}>
-              <Component {...props} />
-            </Stack>
+          <Stack className="flex-1 w-full">
+            <Component {...props} />
+          </Stack>
 
+          <div className="hidden md:block">
             <Chat />
+          </div>
 
-            <Stack id={"footer"}>
-              <Footer />
-            </Stack>
+          <Stack className="w-full mt-auto">
+            <Footer />
           </Stack>
-        </>
-      );
-    }
+        </Stack>
+      </>
+    );
   };
 };
 

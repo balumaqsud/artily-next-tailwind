@@ -1,80 +1,44 @@
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/router';
-import useDeviceDetect from '../../hooks/useDeviceDetect';
-import Head from 'next/head';
-import Top from '../Top';
-import Footer from '../Footer';
-import { Stack } from '@mui/material';
-import { getJwtToken, updateUserInfo } from '../../auth';
-import Chat from '../Chat';
-import { useReactiveVar } from '@apollo/client';
-import { userVar } from '../../../apollo/store';
-import 'swiper/css';
-import 'swiper/css/pagination';
-import 'swiper/css/navigation';
+import React, { useEffect } from "react";
+import { useRouter } from "next/router";
+import Head from "next/head";
+import Top from "../Top";
+import Footer from "../Footer";
+import { getJwtToken, updateUserInfo } from "../../auth";
+import Chat from "../Chat";
+import { useReactiveVar } from "@apollo/client";
+import { userVar } from "../../../apollo/store";
 
 const withLayoutFull = (Component: any) => {
-	return (props: any) => {
-		const router = useRouter();
-		const device = useDeviceDetect();
-		const user = useReactiveVar(userVar);
+  return (props: any) => {
+    const router = useRouter();
+    const user = useReactiveVar(userVar);
 
-		/** LIFECYCLES **/
-		useEffect(() => {
-			const jwt = getJwtToken();
-			if (jwt) updateUserInfo(jwt);
-		}, []);
+    useEffect(() => {
+      const jwt = getJwtToken();
+      if (jwt) updateUserInfo(jwt);
+    }, []);
 
-		/** HANDLERS **/
-
-		if (device == 'mobile') {
-			return (
-				<>
-					<Head>
-						<title>Artly</title>
-						<meta name={'title'} content={`Artly`} />
-					</Head>
-					<Stack id="mobile-wrap">
-						<Stack id={'top'}>
-							<Top />
-						</Stack>
-
-						<Stack id={'main'}>
-							<Component {...props} />
-						</Stack>
-
-						<Stack id={'footer'}>
-							<Footer />
-						</Stack>
-					</Stack>
-				</>
-			);
-		} else {
-			return (
-				<>
-					<Head>
-						<title>Artly</title>
-						<meta name={'title'} content={`Artly`} />
-					</Head>
-					<Stack id="pc-wrap">
-						<Stack id={'top'}>
-							<Top />
-						</Stack>
-
-						<Stack id={'main'}>
-							<Component {...props} />
-						</Stack>
-
-						<Chat />
-
-						<Stack id={'footer'}>
-							<Footer />
-						</Stack>
-					</Stack>
-				</>
-			);
-		}
-	};
+    return (
+      <>
+        <Head>
+          <title>Artly</title>
+          <meta name={"title"} content={`Artly`} />
+        </Head>
+        <div className="min-h-screen w-full bg-background text-foreground">
+          <header className="sticky top-0 z-40">
+            <Top />
+          </header>
+          <main className="mx-auto w-full max-w-7xl px-0 md:px-0">
+            <Component {...props} />
+          </main>
+          <Chat />
+          <footer className="mt-10">
+            <Footer />
+          </footer>
+        </div>
+      </>
+    );
+  };
 };
 
 export default withLayoutFull;

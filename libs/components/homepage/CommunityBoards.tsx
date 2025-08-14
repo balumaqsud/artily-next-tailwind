@@ -49,8 +49,8 @@ const CommunityBoards = () => {
   return (
     <section className="w-full px-4 py-10">
       <div className="mx-auto w-full max-w-7xl">
-        <h2 className="mb-6 text-2xl font-bold tracking-tight text-foreground">
-          Community highlights
+        <h2 className="text-xl md:text-2xl font-bold tracking-tight text-muted-foreground">
+          Community Highlights
         </h2>
 
         <div className="grid grid-cols-1 gap-10 md:grid-cols-5 px-4">
