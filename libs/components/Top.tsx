@@ -147,184 +147,158 @@ const Top = () => {
   if (typeof window !== "undefined") {
     window.addEventListener("scroll", changeNavbarColor);
   }
-
-  if (device == "mobile") {
-    return (
-      <Stack className={"top"}>
-        <Link href={"/"}>
-          <div>{t("Home")}</div>
-        </Link>
-        <Link href={"/products"}>
-          <div>{t("Products")}</div>
-        </Link>
-        <Link href={"/artists"}>
-          <div> {t("Artists")} </div>
-        </Link>
-        <Link href={"/community?articleCategory=FREE"}>
-          <div> {t("Community")} </div>
-        </Link>
-        <Link href={"/help"}>
-          <div> {t("Help")} </div>
-        </Link>
-      </Stack>
-    );
-  } else {
-    return (
+  return (
+    <Stack className="sticky top-0 z-50 w-full flex flex-row " direction="row">
       <Stack
-        className="sticky top-0 z-50 w-full flex flex-row "
-        direction="row"
+        className={`fixed top-0 left-0 right-0 z-50 ${
+          colorChange || bgColor
+            ? "bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 shadow-sm"
+            : "bg-transparent"
+        } w-full transition-colors duration-300 py-2 `}
       >
         <Stack
-          className={`fixed top-0 left-0 right-0 z-50 ${
-            colorChange || bgColor
-              ? "bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 shadow-sm"
-              : "bg-transparent"
-          } w-full transition-colors duration-300 py-2 `}
+          className=" mx-auto flex w-full h-14 max-w-7xl items-center px-3 sm:px-6 justify-between"
+          direction="row"
         >
-          <Stack
-            className=" mx-auto flex w-full h-14 max-w-7xl items-center px-6 justify-between"
-            direction="row"
+          <Box
+            component={"div"}
+            className="flex-shrink-0"
+            sx={{ display: "flex" }}
           >
-            <Box
-              component={"div"}
-              className="flex-shrink-0"
-              sx={{ display: "flex" }}
-            >
-              <Link href={"/"}>
-                <img
-                  src="/logo/artly-logo.png"
-                  alt="artly-logo"
-                  className="h-40 w-auto ml-2"
-                />
-              </Link>
-            </Box>
-            <Box
-              component={"div"}
-              className="router-box pointer-events-auto absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:flex flex-row items-center gap-6"
-            >
-              <Link href={"/"}>
+            <Link href={"/"}>
+              <img
+                src="/logo/artly-logo.png"
+                alt="artly-logo"
+                className="ml-1 h-10 w-auto sm:h-18 md:h-14 lg:h-16"
+              />
+            </Link>
+          </Box>
+          <Box
+            component={"div"}
+            className="router-box pointer-events-auto absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 lg:flex flex-row items-center gap-6"
+          >
+            <Link href={"/"}>
+              <div className="text-base md:text-lg font-medium text-muted-foreground transition-colors hover:text-foreground">
+                {t("Home")}
+              </div>
+            </Link>
+            <Link href={"/product"}>
+              <div className="text-base md:text-lg font-medium text-muted-foreground transition-colors hover:text-foreground">
+                {t("Products")}
+              </div>
+            </Link>
+            <Link href={"/artists"}>
+              <div className="text-base md:text-lg font-medium text-muted-foreground transition-colors hover:text-foreground">
+                {t("Artists")}
+              </div>
+            </Link>
+            <Link href={"/community?articleCategory=FREE"}>
+              <div className="text-base md:text-lg font-medium text-muted-foreground transition-colors hover:text-foreground">
+                {t("Community")}
+              </div>
+            </Link>
+            {user?._id && (
+              <Link href={"/mypage"}>
                 <div className="text-base md:text-lg font-medium text-muted-foreground transition-colors hover:text-foreground">
-                  {t("Home")}
+                  {t("My Page")}
                 </div>
               </Link>
-              <Link href={"/product"}>
-                <div className="text-base md:text-lg font-medium text-muted-foreground transition-colors hover:text-foreground">
-                  {t("Products")}
+            )}
+            <Link href={"/connect"}>
+              <div className="text-base md:text-lg font-medium text-muted-foreground transition-colors hover:text-foreground">
+                {t("Connect")}
+              </div>
+            </Link>
+          </Box>
+          <Box
+            component={"div"}
+            className="ml-auto flex items-center gap-2 sm:gap-2"
+            sx={{ display: "flex", flexDirection: "row" }}
+          >
+            {user?._id ? (
+              <>
+                <div
+                  className="h-8 w-8 cursor-pointer overflow-hidden rounded-full ring-1 ring-gray-200"
+                  onClick={(event: any) => setLogoutAnchor(event.currentTarget)}
+                >
+                  <img
+                    src={
+                      user?.memberImage
+                        ? `${REACT_APP_API_URL}/${user?.memberImage}`
+                        : ""
+                    }
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
                 </div>
-              </Link>
-              <Link href={"/artists"}>
-                <div className="text-base md:text-lg font-medium text-muted-foreground transition-colors hover:text-foreground">
-                  {t("Artists")}
-                </div>
-              </Link>
-              <Link href={"/community?articleCategory=FREE"}>
-                <div className="text-base md:text-lg font-medium text-muted-foreground transition-colors hover:text-foreground">
-                  {t("Community")}
-                </div>
-              </Link>
-              {user?._id && (
-                <Link href={"/mypage"}>
-                  <div className="text-base md:text-lg font-medium text-muted-foreground transition-colors hover:text-foreground">
-                    {t("My Page")}
+
+                <Menu
+                  id="basic-menu"
+                  anchorEl={logoutAnchor}
+                  open={logoutOpen}
+                  onClose={() => {
+                    setLogoutAnchor(null);
+                  }}
+                  sx={{ mt: "5px" }}
+                >
+                  <MenuItem onClick={() => logOut()}>
+                    <Logout className="px-4 text-lg font-semibold hover:bg-gray-100 cursor-pointer" />
+                    Logout
+                  </MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <>
+                <div className="hidden sm:block"></div>
+                <Link href={"/account/join"}>
+                  <div>
+                    <Button className="rounded-full bg-white px-2 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-gray-900 hover:bg-gray-100 cursor-pointer">
+                      {t("Become a seller")}
+                    </Button>
                   </div>
                 </Link>
-              )}
-              <Link href={"/connect"}>
-                <div className="text-base md:text-lg font-medium text-muted-foreground transition-colors hover:text-foreground">
-                  {t("Connect")}
-                </div>
-              </Link>
-            </Box>
-            <Box
-              component={"div"}
-              className=" ml-auto flex items-center gap-1"
-              sx={{ display: "flex", flexDirection: "row" }}
-            >
-              {user?._id ? (
-                <>
-                  <div
-                    className="h-8 w-8 cursor-pointer overflow-hidden rounded-full ring-1 ring-gray-200"
-                    onClick={(event: any) =>
-                      setLogoutAnchor(event.currentTarget)
-                    }
-                  >
-                    <img
-                      src={
-                        user?.memberImage
-                          ? `${REACT_APP_API_URL}/${user?.memberImage}`
-                          : ""
-                      }
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
+                <Link href={"/account/join"}>
+                  <div>
+                    <Button className="rounded-full bg-white px-2 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-gray-900 hover:bg-gray-100 cursor-pointer">
+                      {t("Login")}
+                    </Button>
                   </div>
+                </Link>
+              </>
+            )}
 
-                  <Menu
-                    id="basic-menu"
-                    anchorEl={logoutAnchor}
-                    open={logoutOpen}
-                    onClose={() => {
-                      setLogoutAnchor(null);
-                    }}
-                    sx={{ mt: "5px" }}
-                  >
-                    <MenuItem onClick={() => logOut()}>
-                      <Logout className="px-4 text-lg font-semibold hover:bg-gray-100 cursor-pointer" />
-                      Logout
-                    </MenuItem>
-                  </Menu>
-                </>
-              ) : (
-                <>
-                  <Link href={"/account/join"}>
-                    <div>
-                      <Button className="rounded-full bg-white px-6 py-5 text-base font-semibold text-gray-900 hover:bg-gray-100 cursor-pointer">
-                        Become a seller
-                      </Button>
-                    </div>
-                  </Link>
-                  <Link href={"/account/join"}>
-                    <div>
-                      <Button className="rounded-full bg-white px-6 py-5 text-base font-semibold text-gray-900 hover:bg-gray-100 cursor-pointer">
-                        Login
-                      </Button>
-                    </div>
-                  </Link>
-                </>
+            <div className="flex items-center gap-2 rounded-full">
+              {user?._id && (
+                <NotificationsOutlinedIcon className="h-6 w-6 cursor-pointer text-gray-600 hover:text-gray-800 rounded-full" />
               )}
+              <Button
+                variant="ghost"
+                className="btn-lang flex items-center rounded-full px-2 py-1 hover:bg-gray-100 cursor-pointer"
+                onClick={langClick}
+                aria-label="language"
+              >
+                <LanguageIcon fontSize="medium" className="text-gray-600" />
+              </Button>
 
-              <div className=" flex items-center gap-2 rounded-full">
-                {user?._id && (
-                  <NotificationsOutlinedIcon className="h-6 w-6 cursor-pointer text-gray-600 hover:text-gray-800 rounded-full" />
-                )}
-                <Button
-                  variant="ghost"
-                  className="btn-lang flex items-center rounded-full px-2 py-1 hover:bg-gray-100 cursor-pointer"
-                  onClick={langClick}
-                >
-                  <LanguageIcon fontSize="medium" className="text-gray-600" />
-                </Button>
-
-                <StyledMenu
-                  anchorEl={anchorEl2}
-                  open={drop}
-                  onClose={langClose}
-                  sx={{ position: "absolute" }}
-                >
-                  <MenuItem disableRipple onClick={langChoice} id="en">
-                    {t("English")} (EN)
-                  </MenuItem>
-                  <MenuItem disableRipple onClick={langChoice} id="kr">
-                    {t("Korean")} (KR)
-                  </MenuItem>
-                </StyledMenu>
-              </div>
-            </Box>
-          </Stack>
+              <StyledMenu
+                anchorEl={anchorEl2}
+                open={drop}
+                onClose={langClose}
+                sx={{ position: "absolute" }}
+              >
+                <MenuItem disableRipple onClick={langChoice} id="en">
+                  {t("English")} (EN)
+                </MenuItem>
+                <MenuItem disableRipple onClick={langChoice} id="kr">
+                  {t("Korean")} (KR)
+                </MenuItem>
+              </StyledMenu>
+            </div>
+          </Box>
         </Stack>
       </Stack>
-    );
-  }
+    </Stack>
+  );
 };
 
 export default withRouter(Top);
