@@ -135,7 +135,9 @@ const ProductList: NextPage<ProductListProps> = ({
       <div className="mx-auto w-full max-w-7xl px-4 py-6">
         {/* Header controls */}
         <div className="mb-4 flex items-center justify-between">
-          <h1 className="text-lg font-semibold text-foreground">Products</h1>
+          <h1 className="text-lg font-semibold text-foreground">
+            Explore Products
+          </h1>
           <div className="relative">
             <button
               onClick={() => setMenuOpen((v) => !v)}

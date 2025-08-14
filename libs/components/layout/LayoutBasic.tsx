@@ -28,51 +28,51 @@ const withLayoutBasic = (Component: any) => {
         bgImage = "";
 
       switch (router.pathname) {
-        case "/property":
-          title = "Property Search";
-          desc = "We are glad to see you again!";
-          bgImage = "/img/banner/properties.png";
+        case "/product":
+          title = "Explore our Products";
+          desc = "Discover a variety of art products and artworks";
+          bgImage = "/pageBanners/shop.jpeg";
           break;
-        case "/agent":
-          title = "Agents";
-          desc = "Home / For Rent";
-          bgImage = "/img/banner/agents.webp";
+        case "/artist":
+          title = "Artists";
+          desc = "Find the artist for your art";
+          bgImage = "/pageBanners/artist.jpeg";
           break;
-        case "/agent/detail":
-          title = "Agent Page";
-          desc = "Home / For Rent";
-          bgImage = "/img/banner/header2.svg";
+        case "/artist/detail":
+          title = "Artist Page";
+          desc = "See more art from the artist";
+          bgImage = "/pageBanners/artist.jpeg";
           break;
         case "/mypage":
           title = "my page";
-          desc = "Home / For Rent";
-          bgImage = "/img/banner/header1.svg";
+          desc = "Happy to see you again!";
+          bgImage = "/banner/artistic.jpeg";
           break;
         case "/community":
-          title = "Community";
-          desc = "Home / For Rent";
-          bgImage = "/img/banner/header2.svg";
+          title = "Together We Create";
+          desc = "Create a community of artists";
+          bgImage = "/pageBanners/community.jpeg";
           break;
         case "/community/detail":
-          title = "Community Detail";
-          desc = "Home / For Rent";
-          bgImage = "/img/banner/header2.svg";
+          title = "Together We Create";
+          desc = "Create a community of artists";
+          bgImage = "/pageBanners/community.jpeg";
           break;
-        case "/cs":
-          title = "CS";
-          desc = "We are glad to see you again!";
-          bgImage = "/img/banner/header2.svg";
+        case "/connect":
+          title = "Connect";
+          desc = "Connect to the community";
+          bgImage = "/pageBanners/connect.jpeg";
           break;
         case "/account/join":
           title = "Login/Signup";
-          desc = "Authentication Process";
-          bgImage = "/img/banner/header2.svg";
+          desc = "Become a member of Artly";
+          bgImage = "/pageBanners/join.jpeg";
           setAuthHeader(true);
           break;
         case "/member":
-          title = "Member Page";
-          desc = "Home / For Rent";
-          bgImage = "/img/banner/header1.svg";
+          title = "Member P";
+          desc = "Manage your account and preferences";
+          bgImage = "/banner/artistic.jpeg";
           break;
         default:
           break;
@@ -100,22 +100,23 @@ const withLayoutBasic = (Component: any) => {
             <Top />
           </header>
 
-          <div
-            className={`relative h-64 md:h-80 w-full bg-cover bg-center ${
-              authHeader ? "auth" : ""
-            }`}
-            style={{
-              backgroundImage: `url(${memoizedValues.bgImage})`,
-              boxShadow: "inset 10px 40px 150px 40px rgb(24 22 36)",
-            }}
-          >
-            <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
-              <h1 className="text-white text-2xl md:text-4xl font-bold tracking-tight drop-shadow-lg">
-                {t(memoizedValues.title)}
-              </h1>
-              <p className="mt-2 text-white text-sm md:text-base drop-shadow-md">
-                {t(memoizedValues.desc)}
-              </p>
+          <div className="w-full px-4 mt-19">
+            <div
+              className={`relative h-64 md:h-80 w-full rounded-[10px] bg-cover bg-center transition-all duration-1000 ease-in-out ${
+                authHeader ? "auth" : ""
+              }`}
+              style={{
+                backgroundImage: `url(${memoizedValues.bgImage})`,
+              }}
+            >
+              <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
+                <h1 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight drop-shadow-lg">
+                  {t(memoizedValues.title)}
+                </h1>
+                <p className="mt-4 sm:mt-6 max-w-xs sm:max-w-lg md:max-w-2xl text-white text-sm sm:text-base md:text-lg drop-shadow-md">
+                  {t(memoizedValues.desc)}
+                </p>
+              </div>
             </div>
           </div>
 

@@ -91,6 +91,32 @@ const PropertyDetail: NextPage<DetailProps> = ({
     commentRefId: "",
   });
 
+  // Unified product fields (fallback to legacy property fields)
+  const title = (property as any)?.productTitle ?? property?.propertyTitle;
+  const price =
+    (property as any)?.productPrice ?? (property as any)?.propertyPrice;
+  const images: string[] =
+    ((property as any)?.productImages as string[]) ??
+    ((property as any)?.propertyImages as string[]) ??
+    [];
+  const views =
+    (property as any)?.productViews ?? (property as any)?.propertyViews;
+  const likes =
+    (property as any)?.productLikes ?? (property as any)?.propertyLikes;
+  const location =
+    (property as any)?.productLocation ?? (property as any)?.propertyLocation;
+  const desc =
+    (property as any)?.productDesc ?? (property as any)?.propertyDesc;
+  const category =
+    (property as any)?.productCategory ?? (property as any)?.propertyType;
+  const productType =
+    (property as any)?.productType ?? (property as any)?.propertyType;
+  const productStatus = (property as any)?.productStatus;
+  const shippingTime = (property as any)?.productShippingTime;
+  const materials: string[] = (property as any)?.productMaterials ?? [];
+  const colors: string[] = (property as any)?.productColor ?? [];
+  const stock: number | null = (property as any)?.productStock ?? null;
+
   /** APOLLO REQUESTS **/
   const [likeTargetProperty] = useMutation(LIKE_TARGET_PROPERTY);
   const [createComment] = useMutation(CREATE_COMMENT);
@@ -107,7 +133,13 @@ const PropertyDetail: NextPage<DetailProps> = ({
     notifyOnNetworkStatusChange: true,
     onCompleted: (data: T) => {
       if (data?.getProperty) setProperty(data?.getProperty);
-      if (data?.getProperty) setSlideImage(data?.getProperty.propertyImages[0]);
+      if (data?.getProperty) {
+        const imgs =
+          (data as any)?.getProperty?.productImages ||
+          (data as any)?.getProperty?.propertyImages ||
+          [];
+        if (imgs[0]) setSlideImage(imgs[0]);
+      }
     },
   });
 
@@ -268,16 +300,15 @@ const PropertyDetail: NextPage<DetailProps> = ({
           <Stack className={"property-info-config"}>
             <Stack className={"info"}>
               <Stack className={"left-box"}>
-                <Typography className={"title-main"}>
-                  {property?.propertyTitle}
-                </Typography>
+                <Typography className={"title-main"}>{title}</Typography>
                 <Stack className={"top-box"}>
-                  <Typography className={"city"}>
-                    {property?.propertyLocation}
-                  </Typography>
+                  <Typography className={"city"}>{location}</Typography>
                   <Stack className={"divider"}></Stack>
                   <Stack className={"buy-rent-box"}>
-                    {property?.propertyBarter && (
+                    {category && (
+                      <Typography className={"buy-rent"}>{category}</Typography>
+                    )}
+                    {productType && (
                       <>
                         <Stack className={"circle"}>
                           <svg
@@ -287,14 +318,15 @@ const PropertyDetail: NextPage<DetailProps> = ({
                             viewBox="0 0 6 6"
                             fill="none"
                           >
-                            <circle cx="3" cy="3" r="3" fill="#EB6753" />
+                            <circle cx="3" cy="3" r="3" fill="#4E89DF" />
                           </svg>
                         </Stack>
-                        <Typography className={"buy-rent"}>Barter</Typography>
+                        <Typography className={"buy-rent"}>
+                          {productType}
+                        </Typography>
                       </>
                     )}
-
-                    {property?.propertyRent && (
+                    {productStatus && (
                       <>
                         <Stack className={"circle"}>
                           <svg
@@ -304,10 +336,12 @@ const PropertyDetail: NextPage<DetailProps> = ({
                             viewBox="0 0 6 6"
                             fill="none"
                           >
-                            <circle cx="3" cy="3" r="3" fill="#EB6753" />
+                            <circle cx="3" cy="3" r="3" fill="#16a34a" />
                           </svg>
                         </Stack>
-                        <Typography className={"buy-rent"}>rent</Typography>
+                        <Typography className={"buy-rent"}>
+                          {productStatus}
+                        </Typography>
                       </>
                     )}
                   </Stack>
@@ -358,7 +392,7 @@ const PropertyDetail: NextPage<DetailProps> = ({
                 <Stack className="buttons">
                   <Stack className="button-box">
                     <RemoveRedEyeIcon fontSize="medium" />
-                    <Typography>{property?.propertyViews}</Typography>
+                    <Typography>{views}</Typography>
                   </Stack>
                   <Stack className="button-box">
                     {property?.meLiked && property?.meLiked[0]?.myFavorite ? (
@@ -372,12 +406,10 @@ const PropertyDetail: NextPage<DetailProps> = ({
                         }
                       />
                     )}
-                    <Typography>{property?.propertyLikes}</Typography>
+                    <Typography>{likes}</Typography>
                   </Stack>
                 </Stack>
-                <Typography>
-                  ${formatterStr(property?.propertyPrice)}
-                </Typography>
+                <Typography>${formatterStr(price)}</Typography>
               </Stack>
             </Stack>
             <Stack className={"images"}>
@@ -392,7 +424,7 @@ const PropertyDetail: NextPage<DetailProps> = ({
                 />
               </Stack>
               <Stack className={"sub-images"}>
-                {property?.propertyImages.map((subImg: string) => {
+                {(images || []).map((subImg: string) => {
                   const imagePath: string = `${REACT_APP_API_URL}/${subImg}`;
                   return (
                     <Stack
@@ -426,9 +458,11 @@ const PropertyDetail: NextPage<DetailProps> = ({
                     </svg>
                   </Stack>
                   <Stack className={"option-includes"}>
-                    <Typography className={"title"}>Bedroom</Typography>
+                    <Typography className={"title"}>Materials</Typography>
                     <Typography className={"option-data"}>
-                      {property?.propertyBeds}
+                      {materials?.length
+                        ? materials.slice(0, 3).join(", ")
+                        : "—"}
                     </Typography>
                   </Stack>
                 </Stack>
@@ -437,9 +471,9 @@ const PropertyDetail: NextPage<DetailProps> = ({
                     <img src={"/img/icons/room.svg"} />
                   </Stack>
                   <Stack className={"option-includes"}>
-                    <Typography className={"title"}>Room</Typography>
+                    <Typography className={"title"}>Colors</Typography>
                     <Typography className={"option-data"}>
-                      {property?.propertyRooms}
+                      {colors?.length || 0}
                     </Typography>
                   </Stack>
                 </Stack>
@@ -505,9 +539,9 @@ const PropertyDetail: NextPage<DetailProps> = ({
                     </svg>
                   </Stack>
                   <Stack className={"option-includes"}>
-                    <Typography className={"title"}>Size</Typography>
+                    <Typography className={"title"}>Stock</Typography>
                     <Typography className={"option-data"}>
-                      {property?.propertySquare} m2
+                      {stock ?? "—"}
                     </Typography>
                   </Stack>
                 </Stack>
@@ -531,9 +565,9 @@ const PropertyDetail: NextPage<DetailProps> = ({
                     </svg>
                   </Stack>
                   <Stack className={"option-includes"}>
-                    <Typography className={"title"}>Property Type</Typography>
+                    <Typography className={"title"}>Type</Typography>
                     <Typography className={"option-data"}>
-                      {property?.propertyType}
+                      {productType ?? "—"}
                     </Typography>
                   </Stack>
                 </Stack>
@@ -541,65 +575,71 @@ const PropertyDetail: NextPage<DetailProps> = ({
               <Stack className={"prop-desc-config"}>
                 <Stack className={"top"}>
                   <Typography className={"title"}>
-                    Property Description
+                    Product Description
                   </Typography>
                   <Typography className={"desc"}>
-                    {property?.propertyDesc ?? "No Description!"}
+                    {desc ?? "No Description!"}
                   </Typography>
                 </Stack>
                 <Stack className={"bottom"}>
-                  <Typography className={"title"}>Property Details</Typography>
+                  <Typography className={"title"}>Product Details</Typography>
                   <Stack className={"info-box"}>
                     <Stack className={"left"}>
                       <Box component={"div"} className={"info"}>
                         <Typography className={"title"}>Price</Typography>
                         <Typography className={"data"}>
-                          ${formatterStr(property?.propertyPrice)}
+                          ${formatterStr(price)}
+                        </Typography>
+                      </Box>
+                      <Box component={"div"} className={"info"}>
+                        <Typography className={"title"}>Category</Typography>
+                        <Typography className={"data"}>
+                          {category ?? "—"}
                         </Typography>
                       </Box>
                       <Box component={"div"} className={"info"}>
                         <Typography className={"title"}>
-                          Property Size
+                          Shipping Time
                         </Typography>
                         <Typography className={"data"}>
-                          {property?.propertySquare} m2
-                        </Typography>
-                      </Box>
-                      <Box component={"div"} className={"info"}>
-                        <Typography className={"title"}>Rooms</Typography>
-                        <Typography className={"data"}>
-                          {property?.propertyRooms}
+                          {shippingTime ?? "—"}
                         </Typography>
                       </Box>
                       <Box component={"div"} className={"info"}>
-                        <Typography className={"title"}>Bedrooms</Typography>
+                        <Typography className={"title"}>Materials</Typography>
                         <Typography className={"data"}>
-                          {property?.propertyBeds}
+                          {materials?.join(", ") || "—"}
                         </Typography>
                       </Box>
                     </Stack>
                     <Stack className={"right"}>
                       <Box component={"div"} className={"info"}>
-                        <Typography className={"title"}>Year Built</Typography>
+                        <Typography className={"title"}>Created</Typography>
                         <Typography className={"data"}>
-                          {moment(property?.createdAt).format("YYYY")}
+                          {property?.createdAt
+                            ? moment(property?.createdAt).format("YYYY-MM-DD")
+                            : "—"}
                         </Typography>
                       </Box>
                       <Box component={"div"} className={"info"}>
-                        <Typography className={"title"}>
-                          Property Type
-                        </Typography>
+                        <Typography className={"title"}>Status</Typography>
                         <Typography className={"data"}>
-                          {property?.propertyType}
+                          {productStatus ?? "—"}
                         </Typography>
                       </Box>
                       <Box component={"div"} className={"info"}>
-                        <Typography className={"title"}>
-                          Property Options
-                        </Typography>
+                        <Typography className={"title"}>Options</Typography>
                         <Typography className={"data"}>
-                          For {property?.propertyBarter && "Barter"}{" "}
-                          {property?.propertyRent && "Rent"}
+                          {((property as any)?.productWrapAvailable
+                            ? "Gift wrap available"
+                            : "") +
+                            ((property as any)?.productWrapAvailable &&
+                            (property as any)?.productPersonalizable
+                              ? ", "
+                              : "") +
+                            ((property as any)?.productPersonalizable
+                              ? "Personalizable"
+                              : "") || "—"}
                         </Typography>
                       </Box>
                     </Stack>
@@ -613,7 +653,7 @@ const PropertyDetail: NextPage<DetailProps> = ({
                 </Stack>
               </Stack>
               <Stack className={"address-config"}>
-                <Typography className={"title"}>Address</Typography>
+                <Typography className={"title"}>Delivery</Typography>
                 <Stack className={"map-box"}>
                   <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d25867.098915951767!2d128.68632810247993!3d35.86402299180927!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x35660bba427bf179%3A0x1fc02da732b9072f!2sGeumhogangbyeon-ro%2C%20Dong-gu%2C%20Daegu!5e0!3m2!1suz!2skr!4v1695537640704!5m2!1suz!2skr"
@@ -839,10 +879,10 @@ const PropertyDetail: NextPage<DetailProps> = ({
               <Stack className={"title-pagination-box"}>
                 <Stack className={"title-box"}>
                   <Typography className={"main-title"}>
-                    Destination Property
+                    Related Products
                   </Typography>
                   <Typography className={"sub-title"}>
-                    Aliquam lacinia diam quis lacus euismod
+                    You may also like
                   </Typography>
                 </Stack>
                 <Stack className={"pagination-box"}>
