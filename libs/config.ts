@@ -29,7 +29,6 @@ interface Collection {
 }
 
 export const fallbackCollections: Collection[] = [
-  { _id: "CLOTHING", title: "CLOTHING", image: "/collections/clothing.jpg" },
   {
     _id: "HOME_LIVING",
     title: "HOME AND LIVING",
@@ -41,23 +40,25 @@ export const fallbackCollections: Collection[] = [
     image: "/collections/crafts.jpeg",
   },
   {
-    _id: "ACCESSORY",
-    title: "ACCESSORY",
-    image: "/collections/accessories.jpeg",
-  },
-  { _id: "HANDMADE", title: "HANDMADE", image: "/collections/handmade.jpeg" },
-  { _id: "VINTAGE", title: "VINTAGE", image: "/collections/vintage.jpeg" },
-
-  { _id: "JEWELRY", title: "JEWELRY", image: "/collections/jewelry.jpeg" },
-  {
     _id: "PET_PRODUCTS",
     title: "PET PRODUCTS",
     image: "/collections/pet.jpeg",
   },
+  { _id: "HANDMADE", title: "HANDMADE", image: "/collections/handmade.jpeg" },
+  { _id: "CLOTHING", title: "CLOTHING", image: "/collections/clothing.jpg" },
+  { _id: "VINTAGE", title: "VINTAGE", image: "/collections/vintage.jpeg" },
+  { _id: "CHILDREN", title: "CHILDREN", image: "/collections/children.jpeg" },
+
+  { _id: "JEWELRY", title: "JEWELRY", image: "/collections/jewelry.jpeg" },
+
   {
     _id: "ART_COLLECTABLES",
     title: "ART AND COLLECTABLES",
     image: "/collections/art.jpeg",
   },
-  { _id: "CHILDREN", title: "CHILDREN", image: "/collections/children.jpeg" },
+  {
+    _id: "ACCESSORY",
+    title: "ACCESSORY",
+    image: "/collections/accessories.jpeg",
+  },
 ];

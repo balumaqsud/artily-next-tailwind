@@ -11,6 +11,7 @@ import SignupPromo from "../libs/components/homepage/SignupPromo";
 import PopularProducts from "../libs/components/homepage/PopularProducts";
 import TopSellers from "../libs/components/homepage/TopSellers";
 import TrendingProducts from "../libs/components/homepage/TrendingProducts";
+import ShopHero from "../libs/components/homepage/ShopHero";
 
 export const getStaticProps = async ({ locale }: any) => ({
   props: {
@@ -26,6 +27,7 @@ const Home: NextPage = () => {
       <ValueProps />
       <TrendingProducts />
       <PopularProducts />
+      <ShopHero />
       <TopSellers />
       <CommunityBoards />
       <SignupPromo />
