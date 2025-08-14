@@ -8,6 +8,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import ProductRange from "../libs/components/homepage/ProductRange";
 import TopProducts from "../libs/components/homepage/TopProducts";
 import ValueProps from "../libs/components/homepage/ValueProps";
+import SignupPromo from "../libs/components/homepage/SignupPromo";
+import PopularProducts from "../libs/components/homepage/PopularProducts";
 
 export const getStaticProps = async ({ locale }: any) => ({
   props: {
@@ -21,8 +23,10 @@ const Home: NextPage = () => {
       <ProductRange />
       <TopProducts />
       <ValueProps />
+      <PopularProducts />
       <TopAgents />
       <CommunityBoards />
+      <SignupPromo />
     </Stack>
   );
 };

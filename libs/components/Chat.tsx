@@ -134,90 +134,106 @@ const Chat = () => {
   };
 
   return (
-    <Stack className="chatting">
+    <div>
       {openButton ? (
-        <button className="chat-button" onClick={handleOpenChat}>
-          {open ? <CloseFullscreenIcon /> : <MarkChatUnreadIcon />}
+        <button
+          onClick={handleOpenChat}
+          className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-[#ff5a73] text-white shadow-lg transition hover:bg-blue-700 cursor-pointer"
+          aria-label="Open chat"
+        >
+          {open ? (
+            <CloseFullscreenIcon fontSize="small" />
+          ) : (
+            <MarkChatUnreadIcon fontSize="small" />
+          )}
         </button>
       ) : null}
-      <Stack className={`chat-frame ${open ? "open" : ""}`}>
-        <Box className={"chat-top"} component={"div"}>
-          <div style={{ fontFamily: "Nunito" }}>Online Chat</div>
-          {/* <RippleBadge
-            style={{
-              margin: "-30px 0 0 20px",
-              color: "#33c1c1",
-              background: "none",
-            }}
-            badgeContent={onlineUsers}
-          /> */}
-        </Box>
-        <Box
-          className={"chat-content"}
+
+      <div
+        className={`fixed bottom-24 right-6 z-50 w-80 transform rounded-xl border border-gray-200 bg-white shadow-xl transition-all duration-200 dark:border-neutral-800 dark:bg-neutral-900 sm:w-96 ${
+          open
+            ? "opacity-100 translate-y-0 scale-100"
+            : "pointer-events-none opacity-0 translate-y-2 scale-95"
+        }`}
+        role="dialog"
+        aria-label="Chat window"
+      >
+        <div className="flex items-center justify-between bg-gray-100 px-3 py-2 text-sm font-semibold dark:bg-neutral-800">
+          <div className="text-foreground">Online Chat</div>
+          <button
+            onClick={handleOpenChat}
+            className="rounded p-1 text-muted-foreground hover:bg-black/5 dark:hover:bg-white/10"
+            aria-label="Close chat"
+          >
+            <CloseFullscreenIcon fontSize="small" />
+          </button>
+        </div>
+
+        <div
           id="chat-content"
           ref={chatContentRef}
-          component={"div"}
+          className="h-72 overflow-y-auto p-3"
         >
           <ScrollableFeed>
-            <Stack className={"chat-main"}>
-              <Box
-                flexDirection={"row"}
-                style={{ display: "flex" }}
-                sx={{ m: "10px 0px" }}
-                component={"div"}
-              >
-                <div className={"welcome"}>Welcome to Live chat!</div>
-              </Box>
-              {messagesList.map((ele: MessagePayload) => {
+            <div className="space-y-3">
+              <div className="flex justify-center">
+                <div className="text-xs text-muted-foreground">
+                  Welcome to Live chat!
+                </div>
+              </div>
+              {messagesList.map((ele: MessagePayload, idx: number) => {
                 const { text, memberData } = ele;
                 const memberPhoto = memberData?.memberImage
                   ? `${REACT_APP_API_URL}/${memberData?.memberImage}`
                   : "/img/profile/defaultUser.svg";
 
-                return memberData?._id === user._id ? (
-                  <Box
-                    component={"div"}
-                    flexDirection={"row"}
-                    style={{ display: "flex" }}
-                    alignItems={"flex-end"}
-                    justifyContent={"flex-end"}
-                    sx={{ m: "10px 0px" }}
-                  >
-                    <div className={"msg-right"}>{text}</div>
-                  </Box>
-                ) : (
-                  <Box
-                    flexDirection={"row"}
-                    style={{ display: "flex" }}
-                    sx={{ m: "10px 0px" }}
-                    component={"div"}
-                  >
-                    <Avatar alt={"avatar"} src={memberPhoto} />
-                    <div className={"msg-left"}>{text}</div>
-                  </Box>
+                if (memberData?._id === user._id) {
+                  return (
+                    <div key={idx} className="flex justify-end">
+                      <div className="max-w-[75%] rounded-2xl bg-blue-600 px-3 py-2 text-sm text-white">
+                        {text}
+                      </div>
+                    </div>
+                  );
+                }
+                return (
+                  <div key={idx} className="flex items-end gap-2">
+                    <Avatar
+                      alt={"avatar"}
+                      src={memberPhoto}
+                      sx={{ width: 28, height: 28 }}
+                    />
+                    <div className="max-w-[75%] rounded-2xl bg-gray-100 px-3 py-2 text-sm text-foreground dark:bg-neutral-800">
+                      {text}
+                    </div>
+                  </div>
                 );
               })}
-              <></>
-            </Stack>
+            </div>
           </ScrollableFeed>
-        </Box>
-        <Box className={"chat-bott"} component={"div"}>
+        </div>
+
+        <div className="flex items-center gap-2 border-t border-gray-200 p-2 dark:border-neutral-800">
           <input
             ref={textInput}
-            type={"text"}
-            name={"message"}
-            className={"msg-input"}
+            type="text"
+            name="message"
+            className="h-10 flex-1 rounded-md border border-gray-300 bg-transparent px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none dark:border-neutral-700"
             value={messageInput}
             placeholder={"Type message"}
             onChange={getInputMessageHandler}
             onKeyDown={getKeyHandler}
           />
-          <button className={"send-msg-btn"} onClick={onClickHandler}>
-            <SendIcon style={{ color: "#fff" }} />
+          <button
+            className="flex h-10 w-10 items-center justify-center rounded-md bg-blue-600 text-white hover:bg-blue-700"
+            onClick={onClickHandler}
+            aria-label="Send message"
+          >
+            <SendIcon fontSize="small" />
           </button>
-        </Box>
-      </Stack>
-    </Stack>
+        </div>
+      </div>
+    </div>
   );
 };
 
