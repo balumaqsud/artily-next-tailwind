@@ -54,7 +54,6 @@ const CommunityBoards = () => {
         </h2>
 
         <div className="grid grid-cols-1 gap-10 md:grid-cols-5 px-4">
-          {/* Left: News grid (60%) */}
           <div className="md:col-span-3">
             <div className="mb-4 flex items-center gap-2">
               <Link
