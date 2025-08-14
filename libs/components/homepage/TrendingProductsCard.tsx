@@ -12,7 +12,7 @@ const TrendingProductsCard = ({ product }: TrendingProductsCardProps) => {
     product?.productImages?.[0] ?? product?.propertyImages?.[0] ?? "";
 
   return (
-    <div className="w-[320px] shrink-0">
+    <div className="w-[320px] shrink-0 transition-all duration-1000 ease-in-out hover:scale-105 cursor-pointer">
       <div
         className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl bg-cover bg-center shadow-sm"
         style={{ backgroundImage: `url(${REACT_APP_API_URL}/${image})` }}

@@ -16,7 +16,7 @@ const TopSellerCard = ({ seller }: TopSellerProps) => {
   const banner = "/banner/main.jpg"; // placeholder artwork backdrop
 
   return (
-    <div className="w-[300px] rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900">
+    <div className="w-[300px] rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-1000 ease-in-out hover:scale-105 hover:shadow-md  dark:border-neutral-100 dark:bg-neutral-100">
       <div
         className="relative aspect-[4/3] w-full bg-cover bg-center rounded-t-2xl"
         style={{ backgroundImage: `url('${banner}')` }}
@@ -27,7 +27,7 @@ const TopSellerCard = ({ seller }: TopSellerProps) => {
           <img
             src={avatar}
             alt={seller?.memberNick || "seller"}
-            className="h-16 w-16 rounded-full border-4 border-white object-cover shadow-md dark:border-neutral-900"
+            className="h-16 w-16 rounded-full border-1 border-white object-cover shadow-md dark:border-neutral-200"
           />
         </div>
         <h3 className="text-center text-lg font-semibold text-foreground">
@@ -39,7 +39,7 @@ const TopSellerCard = ({ seller }: TopSellerProps) => {
         <div className="mt-4 flex justify-center">
           <button
             onClick={() => router.push("/artists")}
-            className="rounded-full bg-neutral-100 px-5 py-3 text-sm font-semibold text-foreground hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700"
+            className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-gray-900 shadow hover:bg-gray-100"
           >
             View Shop
           </button>

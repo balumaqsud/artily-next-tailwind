@@ -79,7 +79,7 @@ const TrendingProducts = ({ initialInput }: TrendingProductsProps) => {
 
   return (
     <section className="w-full px-4 py-8">
-      <div className="mx-auto w-full max-w-7xl">
+      <div className="mx-auto w-full max-w-7xl ">
         <h2 className="mb-6 text-xl md:text-2xl font-bold tracking-tight text-muted-foreground">
           Explore Recent Trends
         </h2>
