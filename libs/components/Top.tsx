@@ -249,7 +249,6 @@ const Top = () => {
               </>
             ) : (
               <>
-                <div className="hidden sm:block"></div>
                 <Link href={"/account/join"}>
                   <div>
                     <Button className="rounded-full bg-white px-2 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-gray-900 hover:bg-gray-100 cursor-pointer">
