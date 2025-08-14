@@ -17,12 +17,11 @@ const ProductRangeCard = ({
 }: ProductRangeCardProps) => {
   return (
     <div
-      className={`relative w-full overflow-hidden rounded-2xl bg-cover bg-center shadow-sm  transition-all duration-1000 ease-in-out hover:scale-105 ${
+      className={`relative w-full overflow-hidden rounded-2xl bg-cover bg-center shadow-sm transition-all duration-1000 ease-in-out hover:scale-105 h-[240px] md:h-[380px] ${
         className ?? ""
       }`}
       style={{ backgroundImage: `url('${image}')` }}
     >
-      <div className="aspect-[4/12] md:aspect-[16/12]" />
       <div className="pointer-events-none absolute inset-x-0 bottom-6 flex w-full justify-center">
         <Link href={href} className="pointer-events-auto">
           <Button className="rounded-full bg-white px-6 py-5 text-base font-semibold text-gray-900 hover:bg-gray-100 cursor-pointer">

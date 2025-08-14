@@ -3,12 +3,12 @@ import { Button } from "@/libs/components/ui/button";
 
 const footerCols = [
   {
-    title: "Resources",
+    title: "Shop",
     items: [
-      { label: "Docs", href: "#" },
-      { label: "Support Policy", href: "#" },
-      { label: "Learn", href: "#" },
-      { label: "Showcase", href: "#" },
+      { label: "Home", href: "#" },
+      { label: "Shop", href: "#" },
+      { label: "Artists", href: "#" },
+      { label: "Shop", href: "#" },
       { label: "Blog", href: "#" },
       { label: "Team", href: "#" },
       { label: "Analytics", href: "#" },
@@ -88,7 +88,7 @@ const Footer = () => {
                 />
                 <Button
                   variant="outline"
-                  className="h-8 shrink-0 rounded-md px-3 text-xs font-semibold text-foreground hover:bg-white hover:text-black"
+                  className="h-8 shrink-0 rounded-md px-3 text-xs font-semibold text-foreground hover:bg-white hover:text-blue-900 cursor-pointer"
                 >
                   Subscribe
                 </Button>
