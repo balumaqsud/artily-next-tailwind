@@ -10,6 +10,7 @@ import ValueProps from "../libs/components/homepage/ValueProps";
 import SignupPromo from "../libs/components/homepage/SignupPromo";
 import PopularProducts from "../libs/components/homepage/PopularProducts";
 import TopSellers from "../libs/components/homepage/TopSellers";
+import TrendingProducts from "../libs/components/homepage/TrendingProducts";
 
 export const getStaticProps = async ({ locale }: any) => ({
   props: {
@@ -23,6 +24,7 @@ const Home: NextPage = () => {
       <ProductRange />
       <TopProducts />
       <ValueProps />
+      <TrendingProducts />
       <PopularProducts />
       <TopSellers />
       <CommunityBoards />
