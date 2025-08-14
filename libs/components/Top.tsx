@@ -169,7 +169,7 @@ const Top = () => {
               <img
                 src="/logo/artly-logo.png"
                 alt="artly-logo"
-                className="ml-1 h-10 w-auto sm:h-18 md:h-14 lg:h-16"
+                className="ml-1 h-10 w-auto sm:h-16 md:h-14 lg:h-30"
               />
             </Link>
           </Box>
