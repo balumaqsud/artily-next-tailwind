@@ -86,10 +86,7 @@ const Footer = () => {
                   placeholder="email"
                   className="h-full w-full bg-transparent  text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
                 />
-                <Button
-                  variant="outline"
-                  className="h-8 shrink-0 rounded-md px-3 text-xs font-semibold text-foreground hover:bg-white hover:text-blue-900 cursor-pointer"
-                >
+                <Button className="h-8 rounded-full bg-[#ff6b81] p-2 text-base font-semibold text-white hover:bg-[#ff5a73] cursor-pointer">
                   Subscribe
                 </Button>
               </div>
