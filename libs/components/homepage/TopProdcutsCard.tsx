@@ -29,7 +29,7 @@ const TopProductCard = (props: TopProductCardProps) => {
   ).toFixed(1);
 
   return (
-    <div className="w-[360px] rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-1000 ease-in-out hover:scale-105 hover:shadow-md dark:border-gray-800 dark:bg-neutral-900 cursor-pointer">
+    <div className="w-[360px] rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-1000 ease-in-out hover:scale-105 hover:shadow-md dark:border-gray-200 dark:bg-neutral-100 cursor-pointer">
       <div
         role="button"
         onClick={() => pushDetailHandler((product as any)._id)}
