@@ -152,7 +152,7 @@ const Top = () => {
       <Stack
         className={`fixed top-0 left-0 right-0 z-50 ${
           colorChange || bgColor
-            ? "bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 shadow-sm"
+            ? "bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/93 shadow-sm"
             : "bg-transparent"
         } w-full transition-colors duration-300 py-2 `}
       >

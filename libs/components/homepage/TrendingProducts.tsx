@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ScrollArea, ScrollBar } from "@/libs/components/ui/scroll-area";
 import TrendingProductsCard from "./TrendingProductsCard";
-import { PropertiesInquiry as ProductsInquiry } from "../../types/product/product.input";
+import { AllProductsInquiry as ProductsInquiry } from "../../types/product/product.input";
 import { Product } from "../../types/product/product";
 import { GET_PRODUCTS } from "../../../apollo/user/query";
 import { LIKE_TARGET_PRODUCT as LIKE_TARGET_PRODUCT } from "../../../apollo/user/mutation";

@@ -7,7 +7,7 @@ interface TrendingProductsCardProps {
 }
 
 const TrendingProductsCard = ({ product }: TrendingProductsCardProps) => {
-  const price = Number(product?.productPrice ?? product?.propertyPrice ?? 0);
+  const price = Number(product?.productPrice ?? product?.productPrice ?? 0);
   const image =
     product?.productImages?.[0] ?? product?.propertyImages?.[0] ?? "";
 

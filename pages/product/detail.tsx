@@ -4,14 +4,14 @@ import { NextPage } from "next";
 import Review from "../../libs/components/product/Review";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Autoplay, Navigation, Pagination } from "swiper";
-import PropertyBigCard from "../../libs/components/common/PropertyBigCard";
+import PropertyBigCard from "../../libs/components/common/ProductBigCard";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import WestIcon from "@mui/icons-material/West";
 import EastIcon from "@mui/icons-material/East";
 import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
 import { useRouter } from "next/router";
-import { Property } from "../../libs/types/product/product";
+import { Product } from "../../libs/types/product/product";
 import moment from "moment";
 import { formatterStr } from "../../libs/utils";
 import { REACT_APP_API_URL } from "../../libs/config";
@@ -67,17 +67,15 @@ const ProductDetail: NextPage<DetailProps> = ({
   const router = useRouter();
   const user = useReactiveVar(userVar);
   const [propertyId, setPropertyId] = useState<string | null>(null);
-  const [property, setProperty] = useState<Property | null>(null);
+  const [product, setProperty] = useState<Product | null>(null);
   const [slideImage, setSlideImage] = useState<string>("");
-  const [destinationProperty, setDestinationProperty] = useState<Property[]>(
-    []
-  );
+  const [destinationProduct, setDestinationProduct] = useState<Product[]>([]);
   const [commentInquiry, setCommentInquiry] =
     useState<CommentsInquiry>(initialComment);
   const [propertyComments, setPropertyComments] = useState<Comment[]>([]);
   const [commentTotal, setCommentTotal] = useState<number>(0);
   const [insertCommentData, setInsertCommentData] = useState<CommentInput>({
-    commentGroup: CommentGroup.PROPERTY,
+    commentGroup: CommentGroup.PRODUCT,
     commentContent: "",
     commentRefId: "",
   });
@@ -85,34 +83,33 @@ const ProductDetail: NextPage<DetailProps> = ({
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
 
-  // Unified product fields (fallback to legacy property fields)
-  const title = (property as any)?.productTitle ?? property?.propertyTitle;
+  const title =
+    (product as any)?.productTitle ?? (product as any)?.propertyTitle;
   const price =
-    (property as any)?.productPrice ?? (property as any)?.propertyPrice;
+    (product as any)?.productPrice ?? (product as any)?.propertyPrice;
   const images: string[] =
-    ((property as any)?.productImages as string[]) ??
-    ((property as any)?.propertyImages as string[]) ??
+    ((product as any)?.productImages as string[]) ??
+    ((product as any)?.propertyImages as string[]) ??
     [];
   const views =
-    (property as any)?.productViews ?? (property as any)?.propertyViews;
+    (product as any)?.productViews ?? (product as any)?.propertyViews;
   const likes =
-    (property as any)?.productLikes ?? (property as any)?.propertyLikes;
+    (product as any)?.productLikes ?? (product as any)?.propertyLikes;
   const location =
-    (property as any)?.productLocation ?? (property as any)?.propertyLocation;
-  const desc =
-    (property as any)?.productDesc ?? (property as any)?.propertyDesc;
+    (product as any)?.productLocation ?? (product as any)?.propertyLocation;
+  const desc = (product as any)?.productDesc ?? (product as any)?.propertyDesc;
   const category =
-    (property as any)?.productCategory ?? (property as any)?.propertyType;
+    (product as any)?.productCategory ?? (product as any)?.propertyType;
   const productType =
-    (property as any)?.productType ?? (property as any)?.propertyType;
-  const productStatus = (property as any)?.productStatus;
-  const shippingTime = (property as any)?.productShippingTime;
-  const materials: string[] = (property as any)?.productMaterials ?? [];
-  const colors: string[] = (property as any)?.productColor ?? [];
-  const stock: number | null = (property as any)?.productStock ?? null;
+    (product as any)?.productType ?? (product as any)?.propertyType;
+  const productStatus = (product as any)?.productStatus;
+  const shippingTime = (product as any)?.productShippingTime;
+  const materials: string[] = (product as any)?.productMaterials ?? [];
+  const colors: string[] = (product as any)?.productColor ?? [];
+  const stock: number | null = (product as any)?.productStock ?? null;
 
   /** APOLLO REQUESTS **/
-  const [likeTargetProperty] = useMutation(LIKE_TARGET_PRODUCT);
+  const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
   const [createComment] = useMutation(CREATE_COMMENT);
 
   const {
@@ -126,22 +123,18 @@ const ProductDetail: NextPage<DetailProps> = ({
     skip: !propertyId,
     notifyOnNetworkStatusChange: true,
     onCompleted: (data: T) => {
-      if (data?.getProperty) setProperty(data?.getProperty);
-      if (data?.getProperty) {
-        const imgs =
-          (data as any)?.getProperty?.productImages ||
-          (data as any)?.getProperty?.propertyImages ||
-          [];
-        if (imgs[0]) setSlideImage(imgs[0]);
-      }
+      const p = (data as any)?.getProduct || (data as any)?.getProperty;
+      if (p) setProperty(p);
+      const imgs = p?.productImages || p?.propertyImages || [];
+      if (imgs[0]) setSlideImage(imgs[0]);
     },
   });
 
   const {
-    loading: getPropertiesLoading,
-    data: getPropertiesData,
-    error: getPropertiesError,
-    refetch: getPropertiesRefetch,
+    loading: getProductsLoading,
+    data: getProductsData,
+    error: getProductsError,
+    refetch: getProductsRefetch,
   } = useQuery(GET_PRODUCTS, {
     fetchPolicy: "cache-and-network",
     variables: {
@@ -151,17 +144,18 @@ const ProductDetail: NextPage<DetailProps> = ({
         sort: "createdAt",
         direction: Direction.DESC,
         search: {
-          locationList: property?.propertyLocation
-            ? [property?.propertyLocation]
+          locationList: product?.productLocation
+            ? [product?.productLocation]
             : [],
         },
       },
     },
-    skip: !propertyId && !property,
+    skip: !product && !product,
     notifyOnNetworkStatusChange: true,
     onCompleted: (data: T) => {
-      if (data?.getProperties?.list)
-        setDestinationProperty(data?.getProperties?.list);
+      const list =
+        (data as any)?.getProducts?.list || (data as any)?.getProperties?.list;
+      if (list) setDestinationProduct(list);
     },
   });
 
@@ -214,19 +208,21 @@ const ProductDetail: NextPage<DetailProps> = ({
       if (!user._id) throw new Error(Message.SOMETHING_WENT_WRONG);
 
       //important
-      await likeTargetProperty({ variables: { input: id } });
+      await likeTargetProduct({ variables: { input: id } });
 
       //refetch
       await getPropertyRefetch({ input: id });
 
-      await getPropertiesRefetch({
+      await getProductsRefetch({
         input: {
           page: 1,
           limit: 4,
           sort: "createdAt",
           direction: Direction.DESC,
           search: {
-            locationList: [property?.propertyLocation],
+            locationList: product?.productLocation
+              ? [product?.productLocation]
+              : [],
           },
         },
       });
@@ -434,7 +430,7 @@ const ProductDetail: NextPage<DetailProps> = ({
             </div>
 
             {/* Personalization */}
-            {(property as any)?.productPersonalizable ? (
+            {(product as any)?.productPersonalizable ? (
               <div>
                 <div className="mb-1 text-sm font-medium">Personalization</div>
                 <textarea
@@ -473,7 +469,7 @@ const ProductDetail: NextPage<DetailProps> = ({
                 <div className="flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full bg-rose-500" /> Gift
                   wrapping{" "}
-                  {(property as any)?.productWrapAvailable
+                  {(product as any)?.productWrapAvailable
                     ? "available"
                     : "not available"}
                 </div>
@@ -495,18 +491,18 @@ const ProductDetail: NextPage<DetailProps> = ({
                 <img
                   className="h-12 w-12 rounded-full object-cover"
                   src={
-                    property?.memberData?.memberImage
-                      ? `${REACT_APP_API_URL}/${property?.memberData?.memberImage}`
+                    product?.memberData?.memberImage
+                      ? `${REACT_APP_API_URL}/${product?.memberData?.memberImage}`
                       : "/img/profile/defaultUser.svg"
                   }
                   alt="seller"
                 />
                 <div>
                   <Link
-                    href={`/member?memberId=${property?.memberData?._id}`}
+                    href={`/member?memberId=${product?.memberData?._id}`}
                     className="font-medium hover:underline"
                   >
-                    {property?.memberData?.memberNick}
+                    {product?.memberData?.memberNick}
                   </Link>
                   <div className="text-xs text-muted-foreground">
                     Contact seller

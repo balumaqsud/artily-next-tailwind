@@ -16,11 +16,11 @@ export default function ShopHero2({
   blurb = "Thoughtfully crafted goods to elevate everyday living — handmade, unique, and responsibly sourced.",
   ctaLabel = "Start Shopping",
   ctaHref = "/product",
-  imageSrc = "/banner/artistic.jpeg",
+  imageSrc = "/banner/artistic2.jpeg",
 }: ShopHero2Props) {
   return (
     <section className="w-full px-4 py-6">
-      <div className="mx-auto w-full max-w-7xl overflow-hidden rounded-2xl bg-[#ff6b81] text-white">
+      <div className="mx-auto w-full max-w-7xl overflow-hidden rounded-2xl bg-[#1B938B] text-white">
         <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-2">
           {/* Decorative image (left) */}
           <div className="relative hidden h-[400px] w-full md:block">

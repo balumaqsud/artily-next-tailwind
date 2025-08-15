@@ -4,8 +4,8 @@ import Link from "next/link";
 import ProductCard from "../../libs/components/product/ProductCard";
 import withLayoutBasic from "../../libs/components/layout/LayoutBasic";
 import { useRouter } from "next/router";
-import { PropertiesInquiry as ProductsInquiry } from "../../libs/types/product/product.input";
-import { Property as Product } from "../../libs/types/product/product";
+import { ProductsInquiry } from "../../libs/types/product/product.input";
+import { Product } from "../../libs/types/product/product";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { Direction, Message } from "../../libs/enums/common.enum";
 import { GET_PRODUCTS } from "../../apollo/user/query";
@@ -31,7 +31,6 @@ const DEFAULT_INPUT: ProductsInquiry = {
   sort: "createdAt",
   direction: Direction.DESC,
   search: {
-    squaresRange: { start: 0, end: 500 },
     pricesRange: { start: 0, end: 2000000 },
   },
 };
@@ -185,7 +184,7 @@ const ProductList: NextPage<ProductListProps> = ({
           ) : (
             products.map((product: Product) => (
               <ProductCard
-                key={product?._id}
+                key={product?._id.toString()}
                 product={product}
                 likePropertyHandler={likeProductHandler}
               />
