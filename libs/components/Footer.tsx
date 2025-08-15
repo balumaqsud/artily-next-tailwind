@@ -3,29 +3,25 @@ import { Button } from "@/libs/components/ui/button";
 
 const footerCols = [
   {
-    title: "Shop",
+    title: "Artly",
     items: [
-      { label: "Home", href: "#" },
-      { label: "Shop", href: "#" },
-      { label: "Artists", href: "#" },
-      { label: "Shop", href: "#" },
-      { label: "Blog", href: "#" },
-      { label: "Team", href: "#" },
-      { label: "Analytics", href: "#" },
-      { label: "Next.js Conf", href: "#" },
-      { label: "Previews", href: "#" },
+      { label: "Home", href: "/" },
+      { label: "Shop", href: "/product" },
+      { label: "Artists", href: "/artists" },
+      { label: "Community", href: "/community" },
+      { label: "Connect", href: "/connect" },
     ],
   },
   {
     title: "More",
     items: [
-      { label: "Next.js Commerce", href: "#" },
-      { label: "Contact Sales", href: "#" },
-      { label: "Community", href: "#" },
-      { label: "GitHub", href: "#" },
-      { label: "Releases", href: "#" },
-      { label: "Telemetry", href: "#" },
-      { label: "Governance", href: "#" },
+      { label: "Home and Living", href: "/artist/join" },
+      { label: "Jewelry", href: "/product/category/jewelry" },
+      { label: "Art", href: "/artist/join" },
+      { label: "Pet Products", href: "/artist/join" },
+      { label: "Vintage", href: "/artists" },
+      { label: "Children", href: "/artists" },
+      { label: "Accessories", href: "/artists" },
     ],
   },
   {

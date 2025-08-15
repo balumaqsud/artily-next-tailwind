@@ -18,7 +18,7 @@ export default function SignupPromo({
   bg = "/banner/main7.jpg",
 }: SignupPromoProps) {
   return (
-    <div className="mt-19 w-full px-4 py-8">
+    <div className=" mt-16 w-full px-4 py-8">
       <div
         className="mx-auto w-full max-w-7xl rounded-2xl bg-cover bg-center px-4 py-12 text-center"
         style={{ backgroundImage: `url('${bg}')` }}

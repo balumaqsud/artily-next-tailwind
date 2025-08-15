@@ -30,9 +30,9 @@ const Home: NextPage = () => {
       <TrendingProducts />
       <PopularProducts />
       <TopSellers />
+      <ShopHero />
       <CommunityBoards />
       <SignupPromo />
-      <ShopHero />
     </Stack>
   );
 };
