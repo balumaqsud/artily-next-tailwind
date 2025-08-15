@@ -1,12 +1,5 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  Checkbox,
-  CircularProgress,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import withLayoutFull from "../../libs/components/layout/LayoutFull";
 import { NextPage } from "next";
 import Review from "../../libs/components/product/Review";
@@ -30,10 +23,10 @@ import {
 } from "../../libs/types/comment/comment.input";
 import { Comment } from "../../libs/types/comment/comment";
 import { CommentGroup } from "../../libs/enums/comment.enum";
-import { Pagination as MuiPagination } from "@mui/material";
 import Link from "next/link";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { Pagination as MuiPagination } from "@mui/material";
 import "swiper/css";
 import "swiper/css/pagination";
 import {
@@ -70,7 +63,7 @@ const DEFAULT_COMMENT: CommentsInquiry = {
   search: { commentRefId: "" },
 };
 
-const PropertyDetail: NextPage<DetailProps> = ({
+const ProductDetail: NextPage<DetailProps> = ({
   initialComment = DEFAULT_COMMENT,
 }: any) => {
   const router = useRouter();
@@ -90,6 +83,9 @@ const PropertyDetail: NextPage<DetailProps> = ({
     commentContent: "",
     commentRefId: "",
   });
+  const [personalization, setPersonalization] = useState<string>("");
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [quantity, setQuantity] = useState<number>(1);
 
   // Unified product fields (fallback to legacy property fields)
   const title = (property as any)?.productTitle ?? property?.propertyTitle;
@@ -929,4 +925,4 @@ const PropertyDetail: NextPage<DetailProps> = ({
   );
 };
 
-export default withLayoutFull(PropertyDetail);
+export default withLayoutFull(ProductDetail);

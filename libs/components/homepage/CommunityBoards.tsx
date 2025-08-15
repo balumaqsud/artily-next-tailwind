@@ -49,7 +49,7 @@ const CommunityBoards = () => {
   return (
     <section className="w-full px-4 py-10">
       <div className="mx-auto w-full max-w-7xl">
-        <h2 className="text-xl md:text-2xl font-bold tracking-tight text-muted-foreground">
+        <h2 className="text-xl mb-6 md:mb-8 md:text-2xl font-bold tracking-tight text-muted-foreground">
           Community Highlights
         </h2>
 
