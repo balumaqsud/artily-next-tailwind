@@ -1,98 +1,111 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 /**************************
  *         MEMBER         *
  *************************/
 
 export const UPDATE_MEMBER_BY_ADMIN = gql`
-	mutation UpdateMemberByAdmin($input: MemberUpdate!) {
-		updateMemberByAdmin(input: $input) {
-			_id
-			memberType
-			memberStatus
-			memberAuthType
-			memberPhone
-			memberNick
-			memberFullName
-			memberImage
-			memberAddress
-			memberDesc
-			memberProperties
-			memberRank
-			memberArticles
-			memberPoints
-			memberLikes
-			memberViews
-			memberWarnings
-			memberBlocks
-			deletedAt
-			createdAt
-			updatedAt
-			accessToken
-		}
-	}
+  mutation UpdateMemberByAdmin($input: MemberUpdate!) {
+    updateMemberByAdmin(input: $input) {
+      _id
+      memberType
+      memberStatus
+      memberAuthType
+      memberPhone
+      memberNick
+      memberFullName
+      memberImage
+      memberAddress
+      memberDesc
+      memberProperties
+      memberArticles
+      memberFollowers
+      memberFollowing
+      memberPoints
+      memberLikes
+      memberViews
+      memberComments
+      memberRank
+      memberWarnings
+      memberBlocks
+      deletedAt
+      createdAt
+      updatedAt
+      accessToken
+    }
+  }
 `;
 
 /**************************
  *        PROPERTY        *
  *************************/
 
-export const UPDATE_PROPERTY_BY_ADMIN = gql`
-	mutation UpdatePropertyByAdmin($input: PropertyUpdate!) {
-		updatePropertyByAdmin(input: $input) {
-			_id
-			propertyType
-			propertyStatus
-			propertyLocation
-			propertyAddress
-			propertyTitle
-			propertyPrice
-			propertySquare
-			propertyBeds
-			propertyRooms
-			propertyViews
-			propertyLikes
-			propertyImages
-			propertyDesc
-			propertyBarter
-			propertyRent
-			memberId
-			soldAt
-			deletedAt
-			constructedAt
-			createdAt
-			updatedAt
-		}
-	}
+export const UPDATE_PRODUCT_BY_ADMIN = gql`
+  mutation UpdateProductByAdmin($input: ProductUpdate!) {
+    updateProductByAdmin(input: $input) {
+      _id
+      productType
+      productCategory
+      productStatus
+      productTags
+      productLocation
+      productShippingTime
+      productTitle
+      productPrice
+      productViews
+      productLikes
+      productComments
+      productRank
+      productImages
+      productMaterials
+      productColor
+      productDesc
+      productShippingCost
+      productWrapAvailable
+      productPersonalizable
+      productStock
+      productSlug
+      memberId
+      soldAt
+      deletedAt
+      createdAt
+      updatedAt
+    }
+  }
 `;
 
 export const REMOVE_PROPERTY_BY_ADMIN = gql`
-	mutation RemovePropertyByAdmin($input: String!) {
-		removePropertyByAdmin(propertyId: $input) {
-			_id
-			propertyType
-			propertyStatus
-			propertyLocation
-			propertyAddress
-			propertyTitle
-			propertyPrice
-			propertySquare
-			propertyBeds
-			propertyRooms
-			propertyViews
-			propertyLikes
-			propertyImages
-			propertyDesc
-			propertyBarter
-			propertyRent
-			memberId
-			soldAt
-			deletedAt
-			constructedAt
-			createdAt
-			updatedAt
-		}
-	}
+  mutation RemoveProductByAdmin($input: String!) {
+    removeProductByAdmin(productId: $input) {
+      _id
+      productType
+      productCategory
+      productStatus
+      productTags
+      productLocation
+      productShippingTime
+      productTitle
+      productPrice
+      productViews
+      productLikes
+      productComments
+      productRank
+      productImages
+      productMaterials
+      productColor
+      productDesc
+      productShippingCost
+      productWrapAvailable
+      productPersonalizable
+      productStock
+      productSlug
+      memberId
+      soldAt
+      deletedAt
+      createdAt
+      updatedAt
+    }
+  }
 `;
 
 /**************************
@@ -100,39 +113,41 @@ export const REMOVE_PROPERTY_BY_ADMIN = gql`
  *************************/
 
 export const UPDATE_BOARD_ARTICLE_BY_ADMIN = gql`
-	mutation UpdateBoardArticleByAdmin($input: BoardArticleUpdate!) {
-		updateBoardArticleByAdmin(input: $input) {
-			_id
-			articleCategory
-			articleStatus
-			articleTitle
-			articleContent
-			articleImage
-			articleViews
-			articleLikes
-			memberId
-			createdAt
-			updatedAt
-		}
-	}
+  mutation UpdateArticleByAdmin($input: ArticleUpdate!) {
+    updateArticleByAdmin(input: $input) {
+      _id
+      articleCategory
+      articleStatus
+      articleTitle
+      articleContent
+      articleImage
+      articleViews
+      articleLikes
+      articleComments
+      memberId
+      createdAt
+      updatedAt
+    }
+  }
 `;
 
 export const REMOVE_BOARD_ARTICLE_BY_ADMIN = gql`
-	mutation RemoveBoardArticleByAdmin($input: String!) {
-		removeBoardArticleByAdmin(articleId: $input) {
-			_id
-			articleCategory
-			articleStatus
-			articleTitle
-			articleContent
-			articleImage
-			articleViews
-			articleLikes
-			memberId
-			createdAt
-			updatedAt
-		}
-	}
+  mutation RemoveBoardArticle($input: String!) {
+    removeBoardArticle(articleId: $input) {
+      _id
+      articleCategory
+      articleStatus
+      articleTitle
+      articleContent
+      articleImage
+      articleViews
+      articleLikes
+      articleComments
+      memberId
+      createdAt
+      updatedAt
+    }
+  }
 `;
 
 /**************************
@@ -140,16 +155,16 @@ export const REMOVE_BOARD_ARTICLE_BY_ADMIN = gql`
  *************************/
 
 export const REMOVE_COMMENT_BY_ADMIN = gql`
-	mutation RemoveCommentByAdmin($input: String!) {
-		removeCommentByAdmin(commentId: $input) {
-			_id
-			commentStatus
-			commentGroup
-			commentContent
-			commentRefId
-			memberId
-			createdAt
-			updatedAt
-		}
-	}
+  mutation RemoveCommentByAdmin($input: String!) {
+    removeCommentByAdmin(commentId: $input) {
+      _id
+      commentStatus
+      commentGroup
+      commentContent
+      commentRefId
+      memberId
+      createdAt
+      updatedAt
+    }
+  }
 `;
