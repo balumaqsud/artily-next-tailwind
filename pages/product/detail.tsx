@@ -292,7 +292,7 @@ const ProductDetail: NextPage<DetailProps> = ({
     images && images.length ? images : slideImage ? [slideImage] : [];
 
   return (
-    <div id="product-detail-page" className="w-full">
+    <div id="product-detail-page" className="w-full mt-20 px-8">
       <div className="mx-auto max-w-7xl px-4 py-8">
         <div className="grid gap-8 lg:grid-cols-2">
           {/* Gallery */}
@@ -484,7 +484,7 @@ const ProductDetail: NextPage<DetailProps> = ({
 
         {/* Description */}
         <div className="mt-10 grid gap-10 lg:grid-cols-3">
-          <div className="prose prose-sm max-w-none dark:prose-invert lg:col-span-2">
+          <div className="prose prose-sm max-w-none dark:prose-invert lg:col-span-2 px-8">
             <h2>Product description</h2>
             <p className="whitespace-pre-line">{desc ?? "No Description!"}</p>
           </div>

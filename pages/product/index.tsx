@@ -9,7 +9,7 @@ import { Property as Product } from "../../libs/types/property/property";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { Direction, Message } from "../../libs/enums/common.enum";
 import { GET_PROPERTIES as GET_PRODUCTS } from "../../apollo/user/query";
-import { LIKE_TARGET_PROPERTY as LIKE_TARGET_PRODUCT } from "../../apollo/user/mutation";
+import { LIKE_TARGET_PRODUCT } from "../../apollo/user/mutation";
 import { useMutation, useQuery } from "@apollo/client";
 import { T } from "../../libs/types/common";
 import {
