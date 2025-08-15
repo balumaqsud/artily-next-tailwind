@@ -3,8 +3,8 @@ import { ScrollArea, ScrollBar } from "@/libs/components/ui/scroll-area";
 import PopularProductsCard from "./PopularProductsCard";
 import { PropertiesInquiry as ProductsInquiry } from "../../types/property/property.input";
 import { Property as Product } from "../../types/property/property";
-import { GET_PROPERTIES as GET_PRODUCTS } from "../../../apollo/user/query";
-import { LIKE_TARGET_PROPERTY as LIKE_TARGET_PRODUCT } from "../../../apollo/user/mutation";
+import { GET_PRODUCTS } from "../../../apollo/user/query";
+import { LIKE_TARGET_PRODUCT as LIKE_TARGET_PRODUCT } from "../../../apollo/user/mutation";
 import { useMutation, useQuery } from "@apollo/client";
 import { T } from "../../types/common";
 import {
@@ -126,7 +126,7 @@ PopularProducts.defaultProps = {
   initialInput: {
     page: 1,
     limit: 8,
-    sort: "propertyLikes",
+    sort: "productLikes",
     direction: "DESC",
     search: {},
   },

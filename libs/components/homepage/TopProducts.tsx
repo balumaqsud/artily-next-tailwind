@@ -3,10 +3,10 @@ import { ScrollArea, ScrollBar } from "@/libs/components/ui/scroll-area";
 import TopProductCard from "./TopProdcutsCard";
 import { PropertiesInquiry as ProductsInquiry } from "../../types/property/property.input";
 import { Property as Product } from "../../types/property/property";
-import { GET_PROPERTIES as GET_PRODUCTS } from "../../../apollo/user/query";
+import { GET_PRODUCTS } from "../../../apollo/user/query";
 import { useMutation, useQuery } from "@apollo/client";
 import { T } from "../../types/common";
-import { LIKE_TARGET_PROPERTY as LIKE_TARGET_PRODUCT } from "../../../apollo/user/mutation";
+import { LIKE_TARGET_PRODUCT as LIKE_TARGET_PRODUCT } from "../../../apollo/user/mutation";
 import { Message } from "../../enums/common.enum";
 import {
   sweetMixinErrorAlert,
@@ -137,7 +137,7 @@ TopProducts.defaultProps = {
   initialInput: {
     page: 1,
     limit: 8,
-    sort: "propertyRank",
+    sort: "productRank",
     direction: "DESC",
     search: {},
   },

@@ -3,8 +3,8 @@ import { ScrollArea, ScrollBar } from "@/libs/components/ui/scroll-area";
 import TrendingProductsCard from "./TrendingProductsCard";
 import { PropertiesInquiry as ProductsInquiry } from "../../types/property/property.input";
 import { Property as Product } from "../../types/property/property";
-import { GET_PROPERTIES as GET_PRODUCTS } from "../../../apollo/user/query";
-import { LIKE_TARGET_PROPERTY as LIKE_TARGET_PRODUCT } from "../../../apollo/user/mutation";
+import { GET_PRODUCTS } from "../../../apollo/user/query";
+import { LIKE_TARGET_PRODUCT as LIKE_TARGET_PRODUCT } from "../../../apollo/user/mutation";
 import { useMutation, useQuery } from "@apollo/client";
 import { T } from "../../types/common";
 import {
@@ -27,7 +27,7 @@ const TrendingProducts = ({ initialInput }: TrendingProductsProps) => {
     variables: { input: initialInput },
     notifyOnNetworkStatusChange: true,
     onCompleted: (data: T) => {
-      setProducts(data?.getProperties?.list);
+      setProducts(data?.getProducts?.list);
     },
   });
 
@@ -100,7 +100,7 @@ TrendingProducts.defaultProps = {
   initialInput: {
     page: 1,
     limit: 10,
-    sort: "propertyViews",
+    sort: "productViews",
     direction: "DESC",
     search: {},
   },

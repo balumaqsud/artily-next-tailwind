@@ -4,7 +4,7 @@ import { ScrollArea, ScrollBar } from "@/libs/components/ui/scroll-area";
 import TopAgentCard from "./TopSellerCard";
 import { Member } from "../../types/member/member";
 import { AgentsInquiry } from "../../types/member/member.input";
-import { GET_AGENTS } from "../../../apollo/user/query";
+import { GET_ARTISTS } from "../../../apollo/user/query";
 import { useQuery } from "@apollo/client";
 import { T } from "../../types/common";
 
@@ -22,12 +22,12 @@ const TopSellers = ({ initialInput }: TopSellersProps) => {
     data: getAgentsData,
     error: getAgentsError,
     refetch: getAgentsRefetch,
-  } = useQuery(GET_AGENTS, {
+  } = useQuery(GET_ARTISTS, {
     fetchPolicy: "cache-and-network",
     variables: { input: initialInput },
     notifyOnNetworkStatusChange: false,
     onCompleted: (data: T) => {
-      setTopSellers(data?.getAgents?.list);
+      setTopSellers(data?.getSellers?.list);
     },
   });
 
