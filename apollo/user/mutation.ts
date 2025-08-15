@@ -129,7 +129,7 @@ export const LIKE_TARGET_MEMBER = gql`
 `;
 
 /**************************
- *        PROPERTY        *
+ *        PRODUCT        *
  *************************/
 
 export const CREATE_PRODUCT = gql`
@@ -235,7 +235,7 @@ export const LIKE_TARGET_PRODUCT = gql`
 `;
 
 /**************************
- *      BOARD-ARTICLE     *
+ *      ARTICLE     *
  *************************/
 
 export const CREATE_BOARD_ARTICLE = gql`

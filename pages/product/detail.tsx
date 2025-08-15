@@ -29,8 +29,8 @@ import "swiper/css";
 import "swiper/css/pagination";
 import {
   GET_COMMENTS,
-  GET_PROPERTIES,
-  GET_PROPERTY,
+  GET_PRODUCT,
+  GET_PRODUCTS,
 } from "../../apollo/user/query";
 import { T } from "../../libs/types/common";
 import { Direction, Message } from "../../libs/enums/common.enum";
@@ -41,7 +41,7 @@ import {
 } from "../../libs/sweetAlert";
 import {
   CREATE_COMMENT,
-  LIKE_TARGET_PROPERTY,
+  LIKE_TARGET_PRODUCT,
 } from "../../apollo/user/mutation";
 
 SwiperCore.use([Autoplay, Navigation, Pagination]);
@@ -112,7 +112,7 @@ const ProductDetail: NextPage<DetailProps> = ({
   const stock: number | null = (property as any)?.productStock ?? null;
 
   /** APOLLO REQUESTS **/
-  const [likeTargetProperty] = useMutation(LIKE_TARGET_PROPERTY);
+  const [likeTargetProperty] = useMutation(LIKE_TARGET_PRODUCT);
   const [createComment] = useMutation(CREATE_COMMENT);
 
   const {
@@ -120,7 +120,7 @@ const ProductDetail: NextPage<DetailProps> = ({
     data: getPropertyData,
     error: getPropertyError,
     refetch: getPropertyRefetch,
-  } = useQuery(GET_PROPERTY, {
+  } = useQuery(GET_PRODUCT, {
     fetchPolicy: "network-only",
     variables: { input: propertyId },
     skip: !propertyId,
@@ -142,7 +142,7 @@ const ProductDetail: NextPage<DetailProps> = ({
     data: getPropertiesData,
     error: getPropertiesError,
     refetch: getPropertiesRefetch,
-  } = useQuery(GET_PROPERTIES, {
+  } = useQuery(GET_PRODUCTS, {
     fetchPolicy: "cache-and-network",
     variables: {
       input: {
