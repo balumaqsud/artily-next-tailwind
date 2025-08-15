@@ -74,7 +74,7 @@ export const UPDATE_PRODUCT_BY_ADMIN = gql`
   }
 `;
 
-export const REMOVE_PROPERTY_BY_ADMIN = gql`
+export const REMOVE_PRODUCT_BY_ADMIN = gql`
   mutation RemoveProductByAdmin($input: String!) {
     removeProductByAdmin(productId: $input) {
       _id

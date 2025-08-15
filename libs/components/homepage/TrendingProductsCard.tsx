@@ -1,5 +1,5 @@
 import React from "react";
-import { Property as Product } from "../../types/property/property";
+import { Product } from "../../types/product/product";
 import { REACT_APP_API_URL } from "../../config";
 
 interface TrendingProductsCardProps {

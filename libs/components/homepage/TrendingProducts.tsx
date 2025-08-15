@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { ScrollArea, ScrollBar } from "@/libs/components/ui/scroll-area";
 import TrendingProductsCard from "./TrendingProductsCard";
-import { PropertiesInquiry as ProductsInquiry } from "../../types/property/property.input";
-import { Property as Product } from "../../types/property/property";
+import { PropertiesInquiry as ProductsInquiry } from "../../types/product/product.input";
+import { Product } from "../../types/product/product";
 import { GET_PRODUCTS } from "../../../apollo/user/query";
 import { LIKE_TARGET_PRODUCT as LIKE_TARGET_PRODUCT } from "../../../apollo/user/mutation";
 import { useMutation, useQuery } from "@apollo/client";
@@ -19,10 +19,14 @@ interface TrendingProductsProps {
 
 const TrendingProducts = ({ initialInput }: TrendingProductsProps) => {
   const [products, setProducts] = useState<Product[]>([]);
-
   const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
 
-  const { refetch } = useQuery(GET_PRODUCTS, {
+  const {
+    loading: getProductsLoading,
+    data: getProductsData,
+    error: getProductsError,
+    refetch: getProductsRefetch,
+  } = useQuery(GET_PRODUCTS, {
     fetchPolicy: "cache-and-network",
     variables: { input: initialInput },
     notifyOnNetworkStatusChange: true,
@@ -31,17 +35,25 @@ const TrendingProducts = ({ initialInput }: TrendingProductsProps) => {
     },
   });
 
-  const likeTargetProductHandler = async (user: T, id: string) => {
+  const likeTargetPropertyHandler = async (user: T, id: string) => {
     try {
       if (!id) return;
-      if (!(user as any)._id) throw new Error(Message.SOMETHING_WENT_WRONG);
+      if (!user._id) throw new Error(Message.SOMETHING_WENT_WRONG);
+
+      //important
       await likeTargetProduct({ variables: { input: id } });
-      await refetch({ input: initialInput });
+
+      //refetch
+      await getProductsRefetch({ input: initialInput });
       await sweetTopSmallSuccessAlert("success", 800);
     } catch (error: any) {
+      console.log("liketargetProduct", error);
       sweetMixinErrorAlert(error.message).then();
     }
   };
+
+  if (products) console.log("explore products++:", products);
+  if (!products) return null;
 
   const mock = [
     {
@@ -101,7 +113,6 @@ TrendingProducts.defaultProps = {
     page: 1,
     limit: 10,
     sort: "productViews",
-    direction: "DESC",
     search: {},
   },
 };

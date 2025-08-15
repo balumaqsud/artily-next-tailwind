@@ -3,7 +3,7 @@ import { NextPage } from "next";
 import useDeviceDetect from "../../hooks/useDeviceDetect";
 import { Pagination, Stack, Typography } from "@mui/material";
 import PropertyCard from "../product/ProductCard";
-import { Property } from "../../types/property/property";
+import { Property } from "../../types/product/product";
 import { T } from "../../types/common";
 import { LIKE_TARGET_PROPERTY } from "../../../apollo/user/mutation";
 import { useMutation, useQuery } from "@apollo/client";

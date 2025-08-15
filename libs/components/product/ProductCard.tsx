@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Property as Product } from "../../types/property/property";
+import { Property as Product } from "../../types/product/product";
 import { useReactiveVar } from "@apollo/client";
 import { userVar } from "../../../apollo/store";
 import FavoriteIcon from "@mui/icons-material/Favorite";
