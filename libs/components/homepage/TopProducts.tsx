@@ -14,11 +14,18 @@ import {
 } from "../../sweetAlert";
 
 interface TopProductsProps {
-  initialInput: ProductsInquiry;
+  initialInput?: ProductsInquiry;
 }
 
-const TopProducts = (props: TopProductsProps) => {
-  const { initialInput } = props;
+const DEFAULT_INPUT: ProductsInquiry = {
+  page: 1,
+  limit: 8,
+  sort: "productRank",
+  direction: "DESC" as any,
+  search: {},
+};
+
+const TopProducts = ({ initialInput = DEFAULT_INPUT }: TopProductsProps) => {
   const [topProducts, setTopProducts] = useState<Product[]>([]);
 
   /** APOLLO REQUESTS **/
@@ -35,7 +42,7 @@ const TopProducts = (props: TopProductsProps) => {
     variables: { input: initialInput },
     notifyOnNetworkStatusChange: true,
     onCompleted: (data: T) => {
-      setTopProducts(data?.getProperties?.list);
+      setTopProducts(data?.getProducts?.list);
     },
   });
   /** HANDLERS **/
@@ -131,16 +138,6 @@ const TopProducts = (props: TopProductsProps) => {
       </div>
     </section>
   );
-};
-
-TopProducts.defaultProps = {
-  initialInput: {
-    page: 1,
-    limit: 8,
-    sort: "productRank",
-    direction: "DESC",
-    search: {},
-  },
 };
 
 export default TopProducts;

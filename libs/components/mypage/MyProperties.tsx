@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NextPage } from "next";
 import { Pagination, Stack, Typography } from "@mui/material";
 import useDeviceDetect from "../../hooks/useDeviceDetect";
-import { PropertyCard } from "./PropertyCard";
+import { PropertyCard } from "./ProductCard";
 import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
 import { Property } from "../../types/product/product";
 import { AgentPropertiesInquiry } from "../../types/product/product.input";

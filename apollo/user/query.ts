@@ -32,7 +32,6 @@ export const GET_ARTISTS = gql`
         deletedAt
         createdAt
         updatedAt
-        accessToken
       }
       metaCounter {
         total
@@ -68,7 +67,6 @@ query GetMember($input: String!) {
         deletedAt
         createdAt
         updatedAt
-        accessToken
         meLiked {
             memberId
             likeRefId
@@ -142,12 +140,6 @@ export const GET_PRODUCT = gql`
         deletedAt
         createdAt
         updatedAt
-        accessToken
-      }
-      meLiked {
-        memberId
-        likeRefId
-        myFavorite
       }
     }
   }
@@ -209,12 +201,6 @@ export const GET_PRODUCTS = gql`
           deletedAt
           createdAt
           updatedAt
-          accessToken
-        }
-        meLiked {
-          memberId
-          likeRefId
-          myFavorite
         }
       }
       metaCounter {
@@ -280,12 +266,6 @@ export const GET_ARTIST_PRODUCTS = gql`
           deletedAt
           createdAt
           updatedAt
-          accessToken
-        }
-        meLiked {
-          memberId
-          likeRefId
-          myFavorite
         }
       }
       metaCounter {
@@ -326,11 +306,6 @@ export const GET_FAVORITES = gql`
         deletedAt
         createdAt
         updatedAt
-        meLiked {
-          memberId
-          likeRefId
-          myFavorite
-        }
         memberData {
           _id
           memberType
@@ -356,7 +331,6 @@ export const GET_FAVORITES = gql`
           deletedAt
           createdAt
           updatedAt
-          accessToken
         }
       }
       metaCounter {
@@ -427,7 +401,6 @@ export const GET_VISITED = gql`
           deletedAt
           createdAt
           updatedAt
-          accessToken
         }
       }
       metaCounter {
@@ -481,12 +454,6 @@ export const GET_BOARD_ARTICLE = gql`
         deletedAt
         createdAt
         updatedAt
-        accessToken
-      }
-      meLiked {
-        memberId
-        likeRefId
-        myFavorite
       }
     }
   }
@@ -538,7 +505,6 @@ export const GET_BOARD_ARTICLES = gql`
           deletedAt
           createdAt
           updatedAt
-          accessToken
         }
       }
       metaCounter {
@@ -606,7 +572,6 @@ export const GET_COMMENTS = gql`
           deletedAt
           createdAt
           updatedAt
-          accessToken
         }
       }
       metaCounter {
@@ -663,7 +628,6 @@ export const GET_MEMBER_FOLLOWERS = gql`
           deletedAt
           createdAt
           updatedAt
-          accessToken
         }
       }
       metaCounter {
@@ -717,7 +681,6 @@ export const GET_MEMBER_FOLLOWINGS = gql`
           deletedAt
           createdAt
           updatedAt
-          accessToken
         }
       }
       metaCounter {

@@ -22,7 +22,7 @@ const CommunityBoards = () => {
       input: {
         ...searchCommunity,
         limit: 6,
-        search: { articleCategory: BoardArticleCategory.NEWS },
+        search: { articleCategory: BoardArticleCategory.NEW },
       },
     },
     notifyOnNetworkStatusChange: true,
@@ -65,14 +65,15 @@ const CommunityBoards = () => {
               <span className="text-muted-foreground">›</span>
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {newsArticles.map((article, index) => (
-                <CommunityCard
-                  vertical
-                  article={article}
-                  index={index}
-                  key={article?._id}
-                />
-              ))}
+              {newsArticles &&
+                newsArticles.map((article, index) => (
+                  <CommunityCard
+                    vertical
+                    article={article}
+                    index={index}
+                    key={article?._id}
+                  />
+                ))}
             </div>
           </div>
 
@@ -88,14 +89,17 @@ const CommunityBoards = () => {
               <span className="text-muted-foreground">›</span>
             </div>
             <div className="flex flex-col gap-3">
-              {freeArticles.map((article, index) => (
-                <CommunityCard
-                  vertical={false}
-                  article={article}
-                  index={index}
-                  key={article?._id}
-                />
-              ))}
+              {/* @ts-ignore */}
+              {freeArticles &&
+                freeArticles.length > 0 &&
+                freeArticles.map((article, index) => (
+                  <CommunityCard
+                    vertical={false}
+                    article={article}
+                    index={index}
+                    key={article?._id}
+                  />
+                ))}
             </div>
           </div>
         </div>

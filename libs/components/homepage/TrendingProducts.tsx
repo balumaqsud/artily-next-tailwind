@@ -19,7 +19,6 @@ interface TrendingProductsProps {
 
 const TrendingProducts = ({ initialInput }: TrendingProductsProps) => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
 
   const {
     loading: getProductsLoading,
@@ -34,26 +33,6 @@ const TrendingProducts = ({ initialInput }: TrendingProductsProps) => {
       setProducts(data?.getProducts?.list);
     },
   });
-
-  const likeTargetPropertyHandler = async (user: T, id: string) => {
-    try {
-      if (!id) return;
-      if (!user._id) throw new Error(Message.SOMETHING_WENT_WRONG);
-
-      //important
-      await likeTargetProduct({ variables: { input: id } });
-
-      //refetch
-      await getProductsRefetch({ input: initialInput });
-      await sweetTopSmallSuccessAlert("success", 800);
-    } catch (error: any) {
-      console.log("liketargetProduct", error);
-      sweetMixinErrorAlert(error.message).then();
-    }
-  };
-
-  if (products) console.log("explore products++:", products);
-  if (!products) return null;
 
   const mock = [
     {
@@ -113,6 +92,7 @@ TrendingProducts.defaultProps = {
     page: 1,
     limit: 10,
     sort: "productViews",
+    direction: "DESC",
     search: {},
   },
 };

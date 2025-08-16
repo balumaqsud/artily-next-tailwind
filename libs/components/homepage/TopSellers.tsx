@@ -3,16 +3,24 @@ import { useRouter } from "next/router";
 import { ScrollArea, ScrollBar } from "@/libs/components/ui/scroll-area";
 import TopAgentCard from "./TopSellerCard";
 import { Member } from "../../types/member/member";
-import { AgentsInquiry } from "../../types/member/member.input";
+import { SellersInquiry } from "../../types/member/member.input";
 import { GET_ARTISTS } from "../../../apollo/user/query";
 import { useQuery } from "@apollo/client";
 import { T } from "../../types/common";
 
 interface TopSellersProps {
-  initialInput: AgentsInquiry;
+  initialInput?: SellersInquiry;
 }
 
-const TopSellers = ({ initialInput }: TopSellersProps) => {
+const DEFAULT_INPUT: SellersInquiry = {
+  page: 1,
+  limit: 10,
+  sort: "memberRank",
+  direction: "DESC" as any,
+  search: {},
+};
+
+const TopSellers = ({ initialInput = DEFAULT_INPUT }: TopSellersProps) => {
   const router = useRouter();
   const [topSellers, setTopSellers] = useState<Member[]>([]);
 
@@ -106,16 +114,6 @@ const TopSellers = ({ initialInput }: TopSellersProps) => {
       </div>
     </section>
   );
-};
-
-TopSellers.defaultProps = {
-  initialInput: {
-    page: 1,
-    limit: 10,
-    sort: "memberRank",
-    direction: "DESC",
-    search: {},
-  },
 };
 
 export default TopSellers;
