@@ -4,28 +4,26 @@ import TrendingProductsCard from "./TrendingProductsCard";
 import { AllProductsInquiry as ProductsInquiry } from "../../types/product/product.input";
 import { Product } from "../../types/product/product";
 import { GET_PRODUCTS } from "../../../apollo/user/query";
-import { LIKE_TARGET_PRODUCT as LIKE_TARGET_PRODUCT } from "../../../apollo/user/mutation";
-import { useMutation, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { T } from "../../types/common";
-import {
-  sweetMixinErrorAlert,
-  sweetTopSmallSuccessAlert,
-} from "../../sweetAlert";
-import { Message } from "../../enums/common.enum";
 
 interface TrendingProductsProps {
-  initialInput: ProductsInquiry;
+  initialInput?: ProductsInquiry;
 }
 
-const TrendingProducts = ({ initialInput }: TrendingProductsProps) => {
-  const [products, setProducts] = useState<Product[]>([]);
+const DEFAULT_INPUT: ProductsInquiry = {
+  page: 1,
+  limit: 10,
+  sort: "productViews" as any,
+  direction: "DESC" as any,
+  search: {},
+};
 
-  const {
-    loading: getProductsLoading,
-    data: getProductsData,
-    error: getProductsError,
-    refetch: getProductsRefetch,
-  } = useQuery(GET_PRODUCTS, {
+const TrendingProducts = ({
+  initialInput = DEFAULT_INPUT,
+}: TrendingProductsProps) => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const { refetch: refetchProducts } = useQuery(GET_PRODUCTS, {
     fetchPolicy: "cache-and-network",
     variables: { input: initialInput },
     notifyOnNetworkStatusChange: true,
@@ -85,16 +83,6 @@ const TrendingProducts = ({ initialInput }: TrendingProductsProps) => {
       </div>
     </section>
   );
-};
-
-TrendingProducts.defaultProps = {
-  initialInput: {
-    page: 1,
-    limit: 10,
-    sort: "productViews",
-    direction: "DESC",
-    search: {},
-  },
 };
 
 export default TrendingProducts;

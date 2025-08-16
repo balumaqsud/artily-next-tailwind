@@ -14,10 +14,20 @@ import {
 import { Message } from "../../enums/common.enum";
 
 interface PopularProductsProps {
-  initialInput: ProductsInquiry;
+  initialInput?: ProductsInquiry;
 }
 
-const PopularProducts = ({ initialInput }: PopularProductsProps) => {
+const DEFAULT_INPUT: ProductsInquiry = {
+  page: 1,
+  limit: 10,
+  sort: "productLikes",
+  direction: "DESC" as any,
+  search: {},
+};
+
+const PopularProducts = ({
+  initialInput = DEFAULT_INPUT,
+}: PopularProductsProps) => {
   const [popularProducts, setPopularProducts] = useState<Product[]>([]);
 
   const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
@@ -120,16 +130,6 @@ const PopularProducts = ({ initialInput }: PopularProductsProps) => {
       </div>
     </section>
   );
-};
-
-PopularProducts.defaultProps = {
-  initialInput: {
-    page: 1,
-    limit: 8,
-    sort: "productLikes",
-    direction: "DESC",
-    search: {},
-  },
 };
 
 export default PopularProducts;

@@ -19,25 +19,18 @@ interface TopProductsProps {
 
 const DEFAULT_INPUT: ProductsInquiry = {
   page: 1,
-  limit: 8,
-  sort: "productLikes",
+  limit: 10,
+  sort: "productRank",
   direction: "DESC" as any,
   search: {},
 };
 
 const TopProducts = ({ initialInput = DEFAULT_INPUT }: TopProductsProps) => {
+  /** APOLLO REQUESTS **/
+  const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
   const [topProducts, setTopProducts] = useState<Product[]>([]);
 
-  /** APOLLO REQUESTS **/
-
-  const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
-
-  const {
-    loading: getProductsLoading,
-    data: getProductsData,
-    error: getProductsError,
-    refetch: getProductsRefetch,
-  } = useQuery(GET_PRODUCTS, {
+  const { refetch: refetchProducts } = useQuery(GET_PRODUCTS, {
     fetchPolicy: "cache-and-network",
     variables: { input: initialInput },
     notifyOnNetworkStatusChange: true,
@@ -45,6 +38,7 @@ const TopProducts = ({ initialInput = DEFAULT_INPUT }: TopProductsProps) => {
       setTopProducts(data?.getProducts?.list);
     },
   });
+
   /** HANDLERS **/
   const likeTargetProductHandler = async (user: T, id: string) => {
     try {
@@ -55,16 +49,13 @@ const TopProducts = ({ initialInput = DEFAULT_INPUT }: TopProductsProps) => {
       await likeTargetProduct({ variables: { input: id } });
 
       //refetch
-      await getProductsRefetch({ input: initialInput });
+      await refetchProducts({ input: initialInput });
       await sweetTopSmallSuccessAlert("success", 800);
     } catch (error: any) {
       console.log("liketargetProduct", error);
       sweetMixinErrorAlert(error.message).then();
     }
   };
-
-  if (topProducts) console.log("topProducts++:", topProducts);
-  if (!topProducts) return null;
 
   const mockProducts = [
     {
