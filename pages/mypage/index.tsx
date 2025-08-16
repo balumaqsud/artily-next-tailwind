@@ -4,7 +4,7 @@ import { NextPage } from "next";
 import { Stack } from "@mui/material";
 import useDeviceDetect from "../../libs/hooks/useDeviceDetect";
 import withLayoutBasic from "../../libs/components/layout/LayoutBasic";
-import MyProperties from "../../libs/components/mypage/MyProperties";
+import MyProducts from "../../libs/components/mypage/MyProducts";
 import MyFavorites from "../../libs/components/mypage/MyFavorites";
 import RecentlyVisited from "../../libs/components/mypage/RecentlyVisited";
 import AddProperty from "../../libs/components/mypage/AddNewProduct";
@@ -132,7 +132,7 @@ const MyPage: NextPage = () => {
               <Stack className="main-config" mb={"76px"}>
                 <Stack className={"list-config"}>
                   {category === "addProperty" && <AddProperty />}
-                  {category === "myProperties" && <MyProperties />}
+                  {category === "myProperties" && <MyProducts />}
                   {category === "myFavorites" && <MyFavorites />}
                   {category === "recentlyVisited" && <RecentlyVisited />}
                   {category === "myArticles" && <MyArticles />}
