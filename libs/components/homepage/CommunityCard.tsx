@@ -15,7 +15,7 @@ const CommunityCard = ({
   index = 0,
 }: CommunityCardProps) => {
   const articleImage = article?.articleImage
-    ? `${REACT_APP_API_URL}/${article?.articleImage}`
+    ? `${process.env.NEXT_PUBLIC_API_URL}/${article?.articleImage}`
     : "/img/event.svg";
 
   if (vertical) {

@@ -20,7 +20,7 @@ interface TopProductsProps {
 const DEFAULT_INPUT: ProductsInquiry = {
   page: 1,
   limit: 8,
-  sort: "productRank",
+  sort: "productLikes",
   direction: "DESC" as any,
   search: {},
 };
@@ -33,10 +33,10 @@ const TopProducts = ({ initialInput = DEFAULT_INPUT }: TopProductsProps) => {
   const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
 
   const {
-    loading: getPropertiesLoading,
-    data: getPropertiesData,
-    error: getPropertiesError,
-    refetch: getPropertiesRefetch,
+    loading: getProductsLoading,
+    data: getProductsData,
+    error: getProductsError,
+    refetch: getProductsRefetch,
   } = useQuery(GET_PRODUCTS, {
     fetchPolicy: "cache-and-network",
     variables: { input: initialInput },
@@ -55,10 +55,10 @@ const TopProducts = ({ initialInput = DEFAULT_INPUT }: TopProductsProps) => {
       await likeTargetProduct({ variables: { input: id } });
 
       //refetch
-      await getPropertiesRefetch({ input: initialInput });
+      await getProductsRefetch({ input: initialInput });
       await sweetTopSmallSuccessAlert("success", 800);
     } catch (error: any) {
-      console.log("liketargetProperty", error);
+      console.log("liketargetProduct", error);
       sweetMixinErrorAlert(error.message).then();
     }
   };

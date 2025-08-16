@@ -79,8 +79,8 @@ const AddProduct = ({ initialValues, ...props }: any) => {
         "operations",
         JSON.stringify({
           query: `mutation ImagesUploader($files: [Upload!]!, $target: String!) { 
-							imagesUploader(files: $files, target: $target)
-						  }`,
+						imagesUploader(files: $files, target: $target)
+				  }`,
           variables: {
             files: [null, null, null, null, null],
             target: "product",
@@ -131,7 +131,6 @@ const AddProduct = ({ initialValues, ...props }: any) => {
       insertProductData.productTitle === "" ||
       insertProductData.productPrice === 0 ||
       insertProductData.productType === "" ||
-      insertProductData.productLocation === "" ||
       insertProductData.productDesc === "" ||
       insertProductData.productImages.length === 0
     ) {
@@ -267,33 +266,6 @@ const AddProduct = ({ initialValues, ...props }: any) => {
 
               <Stack className="config-row">
                 <Stack className="price-year-after-price">
-                  <Typography className="title">Location</Typography>
-                  <select
-                    className={"select-description"}
-                    defaultValue={insertProductData.productLocation || "select"}
-                    value={insertProductData.productLocation || "select"}
-                    onChange={({ target: { value } }) =>
-                      setInsertProductData({
-                        ...insertProductData,
-                        productLocation: value,
-                      })
-                    }
-                  >
-                    <>
-                      <option selected={true} disabled={true} value={"select"}>
-                        Select
-                      </option>
-                      {["US", "EU", "ASIA"].map((location: any) => (
-                        <option value={`${location}`} key={location}>
-                          {location}
-                        </option>
-                      ))}
-                    </>
-                  </select>
-                  <div className={"divider"}></div>
-                  <img src={"/img/icons/Vector.svg"} className={"arrow-down"} />
-                </Stack>
-                <Stack className="price-year-after-price">
                   <Typography className="title">Description</Typography>
                   <input
                     type="text"
@@ -398,7 +370,7 @@ AddProduct.defaultProps = {
     productTitle: "",
     productPrice: 0,
     productType: "",
-    productLocation: "",
+
     productDesc: "",
     productImages: [],
   },

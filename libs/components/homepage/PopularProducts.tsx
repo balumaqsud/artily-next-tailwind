@@ -27,7 +27,7 @@ const PopularProducts = ({ initialInput }: PopularProductsProps) => {
     variables: { input: initialInput },
     notifyOnNetworkStatusChange: true,
     onCompleted: (data: T) => {
-      setPopularProducts(data?.getProperties?.list);
+      setPopularProducts(data?.getProducts?.list);
     },
   });
 
