@@ -30,7 +30,7 @@ const ProductCard = ({
   const price = Number((product as any)?.productPrice ?? 0);
 
   return (
-    <div className="w-full overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md dark:border-neutral-100 dark:bg-neutral-100">
+    <div className="w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition hover:shadow-md dark:border-neutral-100 dark:bg-neutral-100">
       <Link
         href={{
           pathname: "/product/detail",
@@ -38,12 +38,12 @@ const ProductCard = ({
         }}
       >
         <div
-          className="relative aspect-[4/3] w-full bg-cover bg-center"
+          className="relative aspect-square w-full bg-cover bg-center"
           style={{ backgroundImage: `url(${image})` }}
         />
       </Link>
 
-      <div className="p-4">
+      <div className="p-3">
         <div className="flex items-start justify-between">
           <Link
             href={{
@@ -52,7 +52,7 @@ const ProductCard = ({
             }}
             className="min-w-0"
           >
-            <h3 className="line-clamp-2 pr-2 text-base font-medium text-foreground">
+            <h3 className="line-clamp-2 pr-2 text-sm font-medium text-foreground">
               {(product as any).productTitle}
             </h3>
           </Link>
@@ -65,29 +65,29 @@ const ProductCard = ({
                   String((product as any)?._id)
                 )
               }
-              className="ml-2 rounded-full p-1 text-gray-500 hover:bg-gray-100 dark:hover:bg-neutral-800"
+              className="ml-1 rounded-full p-1 text-gray-500 hover:bg-gray-100 dark:hover:bg-neutral-800"
               aria-label="like"
             >
               {myFavorites ||
               (product?.meLiked && product?.meLiked[0]?.myFavorite) ? (
-                <FavoriteIcon fontSize="small" className="text-red-500" />
+                <FavoriteIcon sx={{ fontSize: 16 }} className="text-red-500" />
               ) : (
-                <FavoriteBorderIcon fontSize="small" />
+                <FavoriteBorderIcon sx={{ fontSize: 16 }} />
               )}
             </button>
           )}
         </div>
 
-        <div className="mt-3 flex items-center justify-between">
-          <div className="text-xl font-extrabold text-green-700">
-            USD {price.toFixed(2)}
+        <div className="mt-2 flex items-center justify-between">
+          <div className="text-base font-bold text-green-700">
+            ${price.toFixed(2)}
           </div>
-          <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700">
+          <span className="rounded-full bg-green-100 px-1.5 py-0.5 text-xs font-semibold text-green-700">
             40% off
           </span>
         </div>
-        <div className="mt-1 text-sm text-muted-foreground line-through">
-          USD {(price * 1.6).toFixed(2)}
+        <div className="mt-0.5 text-xs text-muted-foreground line-through">
+          ${(price * 1.6).toFixed(2)}
         </div>
       </div>
     </div>

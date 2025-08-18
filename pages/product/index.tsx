@@ -171,7 +171,7 @@ const ProductList: NextPage<ProductListProps> = ({
         </div>
 
         {/* Content */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {products?.length === 0 ? (
             <div className="col-span-full flex flex-col items-center justify-center rounded-md border border-dashed p-8 text-muted-foreground">
               <img
