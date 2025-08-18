@@ -26,10 +26,10 @@ const TopSellers = ({ initialInput = DEFAULT_INPUT }: TopSellersProps) => {
 
   /** APOLLO REQUESTS **/
   const {
-    loading: getAgentsLoading,
-    data: getAgentsData,
-    error: getAgentsError,
-    refetch: getAgentsRefetch,
+    loading: getSellersLoading,
+    data: getSellersData,
+    error: getSellersError,
+    refetch: getSellersRefetch,
   } = useQuery(GET_ARTISTS, {
     fetchPolicy: "cache-and-network",
     variables: { input: initialInput },

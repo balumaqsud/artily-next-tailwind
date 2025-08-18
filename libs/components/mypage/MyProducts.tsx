@@ -70,7 +70,7 @@ const MyProducts = ({ initialInput = DEFAULT_INPUT }) => {
           variables: {
             input: {
               _id: id,
-              propertyStatus: "DELETE",
+              productStatus: "DELETE",
             },
           },
         });
@@ -101,7 +101,7 @@ const MyProducts = ({ initialInput = DEFAULT_INPUT }) => {
     }
   };
 
-  if (user?.memberType !== "AGENT") {
+  if (user?.memberType !== "ARTIST") {
     router.back();
   }
 
@@ -109,16 +109,16 @@ const MyProducts = ({ initialInput = DEFAULT_INPUT }) => {
     return <div>NESTAR PROPERTIES MOBILE</div>;
   } else {
     return (
-      <div id="my-property-page">
+      <div id="my-product-page">
         <Stack className="main-title-box">
           <Stack className="right-box">
-            <Typography className="main-title">My Properties</Typography>
+            <Typography className="main-title">My Products</Typography>
             <Typography className="sub-title">
               We are glad to see you again!
             </Typography>
           </Stack>
         </Stack>
-        <Stack className="property-list-box">
+        <Stack className="product-list-box">
           <Stack className="tab-name-box">
             <Typography
               onClick={() => changeStatusHandler(ProductStatus.ACTIVE)}
@@ -155,7 +155,7 @@ const MyProducts = ({ initialInput = DEFAULT_INPUT }) => {
             {sellerProducts?.length === 0 ? (
               <div className={"no-data"}>
                 <img src="/img/icons/icoAlert.svg" alt="" />
-                <p>No Property found!</p>
+                <p>No Product found!</p>
               </div>
             ) : (
               sellerProducts.map((product: Product) => {
@@ -181,7 +181,7 @@ const MyProducts = ({ initialInput = DEFAULT_INPUT }) => {
                   />
                 </Stack>
                 <Stack className="total-result">
-                  <Typography>{total} property available</Typography>
+                  <Typography>{total} product available</Typography>
                 </Stack>
               </Stack>
             )}

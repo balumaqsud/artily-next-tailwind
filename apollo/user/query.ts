@@ -32,6 +32,7 @@ export const GET_ARTISTS = gql`
         deletedAt
         createdAt
         updatedAt
+        accessToken
       }
       metaCounter {
         total
