@@ -288,7 +288,10 @@ const ProductDetail: NextPage<DetailProps> = ({
     images && images.length ? images : slideImage ? [slideImage] : [];
 
   return (
-    <div id="product-detail-page" className="w-full mt-20 px-8">
+    <div
+      id="product-detail-page"
+      className="w-full mt-20 px-8 min-h-screen bg-white text-gray-900 dark:bg-white dark:text-gray-900"
+    >
       <div className="mx-auto max-w-7xl px-4 py-8">
         <div className="grid gap-8 lg:grid-cols-2">
           {/* Gallery */}
@@ -301,7 +304,7 @@ const ProductDetail: NextPage<DetailProps> = ({
                   className={`aspect-[3/4] w-20 overflow-hidden rounded-md border ${
                     slideImage === img
                       ? "border-rose-500"
-                      : "border-gray-200 dark:border-neutral-800"
+                      : "border-gray-200 dark:border-gray-200"
                   }`}
                 >
                   <img
@@ -312,7 +315,7 @@ const ProductDetail: NextPage<DetailProps> = ({
                 </button>
               ))}
             </div>
-            <div className="relative w-full overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
+            <div className="relative w-full overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-200 dark:bg-white">
               <img
                 src={
                   slideImage
@@ -343,12 +346,12 @@ const ProductDetail: NextPage<DetailProps> = ({
               <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                 {location && <span>{location}</span>}
                 {category && (
-                  <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs dark:bg-neutral-800">
+                  <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs dark:bg-gray-100">
                     {category}
                   </span>
                 )}
                 {productType && (
-                  <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs dark:bg-neutral-800">
+                  <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs dark:bg-gray-100">
                     {productType}
                   </span>
                 )}
@@ -393,7 +396,7 @@ const ProductDetail: NextPage<DetailProps> = ({
                   {materials.map((m) => (
                     <span
                       key={m}
-                      className="rounded-full bg-gray-100 px-3 py-1 text-xs dark:bg-neutral-800"
+                      className="rounded-full bg-gray-100 px-3 py-1 text-xs dark:bg-neutral-100"
                     >
                       {m}
                     </span>
@@ -405,7 +408,7 @@ const ProductDetail: NextPage<DetailProps> = ({
             {/* Quantity & Stock */}
             <div className="flex items-center gap-3">
               <div className="text-sm font-medium">Quantity</div>
-              <div className="inline-flex items-center rounded-full border border-gray-200 dark:border-neutral-800">
+              <div className="inline-flex items-center rounded-full border border-gray-200 dark:border-neutral-100">
                 <button
                   className="px-3 py-1 text-lg"
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
@@ -436,7 +439,7 @@ const ProductDetail: NextPage<DetailProps> = ({
                 <textarea
                   value={personalization}
                   onChange={(e) => setPersonalization(e.target.value)}
-                  className="h-24 w-full resize-none rounded-md border border-gray-200 bg-white p-3 text-sm outline-none focus:ring-2 focus:ring-rose-500 dark:border-neutral-800 dark:bg-neutral-900"
+                  className="h-24 w-full resize-none rounded-md border border-gray-200 bg-white p-3 text-sm outline-none focus:ring-2 focus:ring-rose-500 dark:border-gray-200 dark:bg-white"
                   placeholder="Add personalization details (optional)"
                 />
                 <div className="mt-1 text-right text-xs text-muted-foreground">
@@ -449,8 +452,8 @@ const ProductDetail: NextPage<DetailProps> = ({
               Add to cart
             </button>
 
-            <div className="divide-y divide-gray-200 overflow-hidden rounded-lg border border-gray-200 text-sm dark:divide-neutral-800 dark:border-neutral-800">
-              <div className="flex items-center justify-between bg-gray-50 px-4 py-3 font-medium dark:bg-neutral-900/60">
+            <div className="divide-y divide-gray-200 overflow-hidden rounded-lg border border-gray-200 text-sm dark:divide-gray-200 dark:border-gray-200">
+              <div className="flex items-center justify-between bg-gray-50 px-4 py-3 font-medium dark:bg-gray-50">
                 Item details
               </div>
               <div className="grid gap-4 px-4 py-4 sm:grid-cols-2">
@@ -480,12 +483,12 @@ const ProductDetail: NextPage<DetailProps> = ({
 
         {/* Description */}
         <div className="mt-10 grid gap-10 lg:grid-cols-3">
-          <div className="prose prose-sm max-w-none dark:prose-invert lg:col-span-2 px-8">
+          <div className="prose prose-sm max-w-none lg:col-span-2 px-8">
             <h2>Product description</h2>
             <p className="whitespace-pre-line">{desc ?? "No Description!"}</p>
           </div>
           <aside className="space-y-4">
-            <div className="rounded-lg border border-gray-200 p-4 dark:border-neutral-800">
+            <div className="rounded-lg border border-gray-200 p-4 dark:border-gray-200">
               <div className="mb-3 text-sm font-medium">Seller</div>
               <div className="flex items-center gap-3">
                 <img
@@ -511,22 +514,22 @@ const ProductDetail: NextPage<DetailProps> = ({
               </div>
               <div className="mt-4 grid gap-2">
                 <input
-                  className="rounded-md border border-gray-200 bg-white p-2 text-sm outline-none focus:ring-2 focus:ring-rose-500 dark:border-neutral-800 dark:bg-neutral-900"
+                  className="rounded-md border border-gray-200 bg-white p-2 text-sm outline-none focus:ring-2 focus:ring-rose-500 dark:border-gray-200 dark:bg-white"
                   placeholder="Your name"
                 />
                 <input
-                  className="rounded-md border border-gray-200 bg-white p-2 text-sm outline-none focus:ring-2 focus:ring-rose-500 dark:border-neutral-800 dark:bg-neutral-900"
+                  className="rounded-md border border-gray-200 bg-white p-2 text-sm outline-none focus:ring-2 focus:ring-rose-500 dark:border-gray-200 dark:bg-white"
                   placeholder="Phone"
                 />
                 <input
-                  className="rounded-md border border-gray-200 bg-white p-2 text-sm outline-none focus:ring-2 focus:ring-rose-500 dark:border-neutral-800 dark:bg-neutral-900"
+                  className="rounded-md border border-gray-200 bg-white p-2 text-sm outline-none focus:ring-2 focus:ring-rose-500 dark:border-gray-200 dark:bg-white"
                   placeholder="Email"
                 />
                 <textarea
-                  className="h-24 resize-none rounded-md border border-gray-200 bg-white p-2 text-sm outline-none focus:ring-2 focus:ring-rose-500 dark:border-neutral-800 dark:bg-neutral-900"
+                  className="h-24 resize-none rounded-md border border-gray-200 bg-white p-2 text-sm outline-none focus:ring-2 focus:ring-rose-500 dark:border-gray-200 dark:bg-white"
                   placeholder="Message"
                 ></textarea>
-                <button className="rounded-full bg-black px-5 py-2 text-sm font-semibold text-white hover:bg-gray-800">
+                <button className="rounded-full bg-[#FF5A73] px-5 py-2 text-sm font-semibold text-white  hover:bg-[#EC0040] cursor-pointer">
                   Send message
                 </button>
               </div>
