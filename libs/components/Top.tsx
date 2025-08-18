@@ -12,12 +12,28 @@ import { CaretDown } from "phosphor-react";
 import useDeviceDetect from "../hooks/useDeviceDetect";
 import Link from "next/link";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import LanguageIcon from "@mui/icons-material/Language";
-import { useReactiveVar } from "@apollo/client";
+import { useReactiveVar, useLazyQuery } from "@apollo/client";
 import { userVar } from "../../apollo/store";
 import { Logout } from "@mui/icons-material";
 import { REACT_APP_API_URL } from "../config";
 import { Button } from "@/libs/components/ui/button";
+
+// Placeholder notification query; replace with real query when available
+import { gql } from "@apollo/client";
+const GET_NOTIFICATIONS = gql`
+  query GetNotifications($input: OrdinaryInquiry!) {
+    getNotifications(input: $input) {
+      list {
+        _id
+        message
+        createdAt
+        read
+      }
+    }
+  }
+`;
 
 const Top = () => {
   const device = useDeviceDetect();
@@ -35,6 +51,16 @@ const Top = () => {
     null
   );
   const logoutOpen = Boolean(logoutAnchor);
+  const [notificationAnchor, setNotificationAnchor] =
+    React.useState<null | HTMLElement>(null);
+  const notificationOpen = Boolean(notificationAnchor);
+  const [loadNotifications, { data: notificationsData }] = useLazyQuery(
+    GET_NOTIFICATIONS,
+    {
+      fetchPolicy: "network-only",
+      variables: { input: { page: 1, limit: 10 } },
+    }
+  );
 
   /** LIFECYCLES **/
   useEffect(() => {
@@ -212,7 +238,7 @@ const Top = () => {
           </Box>
           <Box
             component={"div"}
-            className="ml-auto flex items-center gap-2 sm:gap-2"
+            className="ml-auto flex items-center gap-4"
             sx={{ display: "flex", flexDirection: "row" }}
           >
             {user?._id ? (
@@ -266,33 +292,82 @@ const Top = () => {
               </>
             )}
 
-            <div className="flex items-center gap-2 rounded-full">
-              {user?._id && (
-                <NotificationsOutlinedIcon className="h-6 w-6 cursor-pointer text-gray-600 hover:text-gray-800 rounded-full" />
-              )}
-              <Button
-                variant="ghost"
-                className="btn-lang flex items-center rounded-full px-2 py-1 hover:bg-gray-100 cursor-pointer"
-                onClick={langClick}
-                aria-label="language"
-              >
-                <LanguageIcon fontSize="medium" className="text-gray-600" />
-              </Button>
+            {user?._id && (
+              <>
+                <Link href={"/cart"}>
+                  <ShoppingCartOutlinedIcon className="h-6 w-6 cursor-pointer text-gray-600 hover:text-gray-800 rounded-full" />
+                </Link>
+                <div className="relative">
+                  <NotificationsOutlinedIcon
+                    className="h-6 w-6 cursor-pointer text-gray-600 hover:text-gray-800 rounded-full"
+                    onClick={(event: any) => {
+                      setNotificationAnchor(event.currentTarget);
+                      loadNotifications();
+                    }}
+                  />
+                  <Menu
+                    id="notification-menu"
+                    anchorEl={notificationAnchor}
+                    open={notificationOpen}
+                    onClose={() => {
+                      setNotificationAnchor(null);
+                    }}
+                    sx={{ mt: "5px" }}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "center",
+                    }}
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "center",
+                    }}
+                  >
+                    {notificationsData?.getNotifications?.list?.length ? (
+                      notificationsData.getNotifications.list.map((n: any) => (
+                        <MenuItem key={n._id}>
+                          <div className="px-4 py-2">
+                            <p className="text-sm font-medium">{n.message}</p>
+                            <p className="text-xs text-gray-500">
+                              {new Date(n.createdAt).toLocaleString()}
+                            </p>
+                          </div>
+                        </MenuItem>
+                      ))
+                    ) : (
+                      <MenuItem>
+                        <div className="px-4 py-2">
+                          <p className="text-sm font-medium">
+                            No new notifications
+                          </p>
+                        </div>
+                      </MenuItem>
+                    )}
+                  </Menu>
+                </div>
+              </>
+            )}
+            <Button
+              variant="link"
+              className="btn-lang flex items-center rounded-full px-0 py-0 cursor-pointer"
+              onClick={langClick}
+              aria-label="language"
+            >
+              <LanguageIcon fontSize="medium" className="text-gray-600" />
+            </Button>
 
-              <StyledMenu
-                anchorEl={anchorEl2}
-                open={drop}
-                onClose={langClose}
-                sx={{ position: "absolute" }}
-              >
-                <MenuItem disableRipple onClick={langChoice} id="en">
-                  {t("English")} (EN)
-                </MenuItem>
-                <MenuItem disableRipple onClick={langChoice} id="kr">
-                  {t("Korean")} (KR)
-                </MenuItem>
-              </StyledMenu>
-            </div>
+            <StyledMenu
+              anchorEl={anchorEl2}
+              open={drop}
+              onClose={langClose}
+              sx={{ position: "absolute" }}
+            >
+              <MenuItem disableRipple onClick={langChoice} id="en">
+                {t("English")} (EN)
+              </MenuItem>
+              <MenuItem disableRipple onClick={langChoice} id="kr">
+                {t("Korean")} (KR)
+              </MenuItem>
+            </StyledMenu>
           </Box>
         </Stack>
       </Stack>

@@ -76,7 +76,7 @@ const Join: NextPage = () => {
   console.log("+input: ", input);
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white flex items-center justify-center pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="flex items-center justify-center">
@@ -99,7 +99,7 @@ const Join: NextPage = () => {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Nickname
+              Username
             </label>
             <input
               type="text"
@@ -204,17 +204,14 @@ const Join: NextPage = () => {
 
           {loginView ? (
             <Button
-              variant="contained"
-              endIcon={<img src="/img/icons/rightup.svg" alt="" />}
               disabled={input.nick == "" || input.password == ""}
               onClick={doLogin}
-              className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full h-11 rounded-full bg-[#ff6b81]! p-2 text-base font-semibold text-white hover:bg-[#ff5a73]! cursor-pointer transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
             >
               LOGIN
             </Button>
           ) : (
             <Button
-              variant="contained"
               disabled={
                 input.nick == "" ||
                 input.password == "" ||
@@ -222,10 +219,9 @@ const Join: NextPage = () => {
                 input.type == ""
               }
               onClick={doSignUp}
-              endIcon={<img src="/img/icons/rightup.svg" alt="" />}
-              className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full h-11 rounded-full bg-[#ff6b81]! p-2 text-base font-semibold text-white hover:bg-[#ff5a73]! cursor-pointer transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              SIGNUP
+              SIGN UP
             </Button>
           )}
         </div>
