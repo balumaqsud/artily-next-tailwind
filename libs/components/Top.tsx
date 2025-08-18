@@ -251,7 +251,7 @@ const Top = () => {
                     src={
                       user?.memberImage
                         ? `${REACT_APP_API_URL}/${user?.memberImage}`
-                        : ""
+                        : "/profile/defaultUser.svg"
                     }
                     alt=""
                     className="h-full w-full object-cover"

@@ -56,8 +56,8 @@ const ProductList: NextPage<ProductListProps> = ({
     variables: { input: searchFilter },
     notifyOnNetworkStatusChange: true,
     onCompleted: (data: T) => {
-      setProducts(data?.getProperties?.list);
-      setTotal(data?.getProperties?.metaCounter[0].total);
+      setProducts(data?.getProducts?.list ?? []);
+      setTotal(data?.getProducts?.metaCounter?.[0]?.total ?? 0);
     },
   });
 
@@ -110,7 +110,7 @@ const ProductList: NextPage<ProductListProps> = ({
       case "lowest":
         setSearchFilter({
           ...searchFilter,
-          sort: "propertyPrice",
+          sort: "productPrice",
           direction: Direction.ASC,
         });
         setFilterSortName("Lowest Price");
@@ -118,7 +118,7 @@ const ProductList: NextPage<ProductListProps> = ({
       case "highest":
         setSearchFilter({
           ...searchFilter,
-          sort: "propertyPrice",
+          sort: "productPrice",
           direction: Direction.DESC,
         });
         setFilterSortName("Highest Price");
@@ -182,7 +182,7 @@ const ProductList: NextPage<ProductListProps> = ({
               <p>No products found!</p>
             </div>
           ) : (
-            products.map((product: Product) => (
+            (products ?? []).map((product: Product) => (
               <ProductCard
                 key={product?._id.toString()}
                 product={product}

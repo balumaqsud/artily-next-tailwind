@@ -31,7 +31,7 @@ const withLayoutBasic = (Component: any) => {
         case "/product":
           title = "Explore our Products";
           desc = "Discover a variety of art products and artworks";
-          bgImage = "/pageBanners/shop.jpeg";
+          bgImage = "/pageBanners/shop2.jpeg";
           break;
         case "/artist":
           title = "Artists";

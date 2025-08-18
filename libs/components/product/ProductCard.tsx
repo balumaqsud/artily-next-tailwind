@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Property as Product } from "../../types/product/product";
+import { Product } from "../../types/product/product";
 import { useReactiveVar } from "@apollo/client";
 import { userVar } from "../../../apollo/store";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -9,28 +9,34 @@ import { REACT_APP_API_URL } from "../../config";
 
 interface ProductCardProps {
   product: Product;
-  likePropertyHandler?: any; // keeping existing name for compatibility with callers
+  likeProductHandler?: any;
+  // Backward compatibility for existing callers
+  likePropertyHandler?: any;
   myFavorites?: boolean;
   recentlyVisited?: boolean;
 }
 
 const ProductCard = ({
   product,
+  likeProductHandler,
   likePropertyHandler,
   myFavorites,
   recentlyVisited,
 }: ProductCardProps) => {
   const user = useReactiveVar(userVar);
-  const image = product?.propertyImages?.[0]
-    ? `${REACT_APP_API_URL}/${product.propertyImages[0]}`
+  const image = (product as any)?.productImages?.[0]
+    ? `${REACT_APP_API_URL}/${(product as any).productImages[0]}`
     : "/img/banner/header1.svg";
-  const price = Number(
-    (product as any)?.productPrice ?? product?.propertyPrice ?? 0
-  );
+  const price = Number((product as any)?.productPrice ?? 0);
 
   return (
-    <div className="w-full overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900">
-      <Link href={{ pathname: "/product/detail", query: { id: product?._id } }}>
+    <div className="w-full overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md dark:border-neutral-100 dark:bg-neutral-100">
+      <Link
+        href={{
+          pathname: "/product/detail",
+          query: { id: String((product as any)?._id) },
+        }}
+      >
         <div
           className="relative aspect-[4/3] w-full bg-cover bg-center"
           style={{ backgroundImage: `url(${image})` }}
@@ -40,17 +46,24 @@ const ProductCard = ({
       <div className="p-4">
         <div className="flex items-start justify-between">
           <Link
-            href={{ pathname: "/product/detail", query: { id: product?._id } }}
+            href={{
+              pathname: "/product/detail",
+              query: { id: String((product as any)?._id) },
+            }}
             className="min-w-0"
           >
             <h3 className="line-clamp-2 pr-2 text-base font-medium text-foreground">
-              {(product as any).productTitle ?? product?.propertyTitle}
+              {(product as any).productTitle}
             </h3>
           </Link>
           {!recentlyVisited && (
             <button
               onClick={() =>
-                likePropertyHandler && likePropertyHandler(user, product?._id)
+                (likeProductHandler || likePropertyHandler) &&
+                (likeProductHandler || likePropertyHandler)(
+                  user,
+                  String((product as any)?._id)
+                )
               }
               className="ml-2 rounded-full p-1 text-gray-500 hover:bg-gray-100 dark:hover:bg-neutral-800"
               aria-label="like"
