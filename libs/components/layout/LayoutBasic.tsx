@@ -74,6 +74,11 @@ const withLayoutBasic = (Component: any) => {
           desc = "Manage your account and preferences";
           bgImage = "/banner/artistic.jpeg";
           break;
+        case "/cart":
+          title = "Shopping Cart";
+          desc = "Check out your cart";
+          bgImage = "/pageBanners/cart3.gif";
+          break;
         default:
           break;
       }

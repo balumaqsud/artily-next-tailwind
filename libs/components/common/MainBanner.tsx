@@ -7,9 +7,7 @@ export default function MainBanner() {
       <div
         className="relative h-[400px] sm:h-[500px] md:h-[580px] w-full rounded-[10px] bg-cover bg-center transition-all duration-1000 ease-in-out"
         style={{
-          backgroundImage: `url('/banner/main${
-            Math.floor(Date.now() / 4000) % 2 === 0 ? "" : "2"
-          }.jpg')`,
+          backgroundImage: `url('/banner/main.jpg')`,
         }}
       >
         <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
