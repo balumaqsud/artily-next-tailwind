@@ -95,7 +95,7 @@ const withLayoutBasic = (Component: any) => {
           <title>Artly</title>
           <meta name={"title"} content={`Artly`} />
         </Head>
-        <div className="min-h-screen w-full bg-background text-foreground">
+        <div className="min-h-screen w-full bg-white text-gray-900">
           <header className="sticky top-0 z-40">
             <Top />
           </header>

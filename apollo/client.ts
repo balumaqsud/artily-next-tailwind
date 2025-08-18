@@ -102,13 +102,19 @@ function createIsomorphicLink() {
       webSocketImpl: LoggingWebSocket,
     });
 
-    const errorLink = onError(({ graphQLErrors, networkError, response }) => {
+    const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
       if (graphQLErrors) {
-        graphQLErrors.map(({ message, locations, path, extensions }) => {
+        graphQLErrors.forEach(({ message, locations, path }) => {
           console.log(
             `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
           );
-          if (!message.includes("input")) sweetErrorAlert(message);
+          // Only alert for mutations, and skip common benign first-load errors
+          const def: any = getMainDefinition(operation.query);
+          const isMutation = def?.operation === "mutation";
+          const isBenign =
+            message.includes("Bad Request Exception") ||
+            message.includes('Variable "$input"');
+          if (isMutation && !isBenign) sweetErrorAlert(message);
         });
       }
       if (networkError) console.log(`[Network error]: ${networkError}`);
