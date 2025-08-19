@@ -2,8 +2,8 @@ import React from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import withLayoutBasic from "../../libs/components/layout/LayoutBasic";
-import Notice from "../../libs/components/cs/Notice";
-import Faq from "../../libs/components/cs/Faq";
+import Notice from "../../libs/components/connect/Notice";
+import Faq from "../../libs/components/connect/Faq";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 export const getStaticProps = async ({ locale }: any) => ({

@@ -19,7 +19,7 @@ export default function ShopHero2({
   imageSrc = "/banner/artistic2.jpeg",
 }: ShopHero2Props) {
   return (
-    <section className="w-full px-4 py-6">
+    <section className="w-full px-8 py-6">
       <div className="mx-auto w-full max-w-7xl overflow-hidden rounded-2xl bg-[#1B938B] text-white">
         <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-2">
           {/* Decorative image (left) */}

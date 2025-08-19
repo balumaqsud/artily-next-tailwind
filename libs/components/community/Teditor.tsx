@@ -116,13 +116,19 @@ const TuiEditor = () => {
           <select
             value={articleCategory}
             onChange={changeCategoryHandler}
-            className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-300"
+            className="mt-1 h-9 w-full rounded-lg border-2 border-gray-100 bg-gradient-to-r from-white to-gray-50 px-4 py-3 text-sm font-medium text-gray-800 shadow-sm transition-all duration-200 hover:border-gray-200 hover:shadow-md focus:border-[#ff6b81] focus:outline-none focus:ring-2 focus:ring-[#ff6b81]/20 focus:shadow-lg"
           >
-            <option value={BoardArticleCategory.FREE}>Free</option>
-            <option value={BoardArticleCategory.HUMOR}>Humor</option>
-            <option value={BoardArticleCategory.NEW}>News</option>
-            <option value={BoardArticleCategory.RECOMMEND}>
-              Recommendation
+            <option value={BoardArticleCategory.FREE} className="py-2">
+              Free Discussion
+            </option>
+            <option value={BoardArticleCategory.HUMOR} className="py-2">
+              Humor & Fun
+            </option>
+            <option value={BoardArticleCategory.NEW} className="py-2">
+              Latest News
+            </option>
+            <option value={BoardArticleCategory.RECOMMEND} className="py-2">
+              Recommendations
             </option>
           </select>
         </div>

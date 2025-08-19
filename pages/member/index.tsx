@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { NextPage } from "next";
 import withLayoutBasic from "../../libs/components/layout/LayoutBasic";
 import MemberMenu from "../../libs/components/member/MemberMenu";
-import MemberProperties from "../../libs/components/member/MemberProperties";
+import MemberProperties from "../../libs/components/member/MemberProducts";
 import { useRouter } from "next/router";
 import MemberFollowers from "../../libs/components/member/MemberFollowers";
 import MemberArticles from "../../libs/components/member/MemberArticles";

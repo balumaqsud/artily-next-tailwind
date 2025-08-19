@@ -33,6 +33,11 @@ export const fallbackCollections: Collection[] = [
     image: "/collections/crafts.jpeg",
   },
   {
+    _id: "ART_COLLECTABLES",
+    title: "ART AND COLLECTABLES",
+    image: "/collections/art.jpeg",
+  },
+  {
     _id: "PET_PRODUCTS",
     title: "PET PRODUCTS",
     image: "/collections/pet.jpeg",
@@ -44,11 +49,6 @@ export const fallbackCollections: Collection[] = [
 
   { _id: "JEWELRY", title: "JEWELRY", image: "/collections/jewelry.jpeg" },
 
-  {
-    _id: "ART_COLLECTABLES",
-    title: "ART AND COLLECTABLES",
-    image: "/collections/art.jpeg",
-  },
   {
     _id: "ACCESSORY",
     title: "ACCESSORY",
