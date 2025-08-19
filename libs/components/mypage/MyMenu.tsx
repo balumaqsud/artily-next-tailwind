@@ -52,11 +52,6 @@ const MyMenu = () => {
             {user?.memberNick}
           </p>
           <div className="mt-1 flex items-center gap-1 text-xs text-gray-600">
-            <img
-              src={"/img/icons/call.svg"}
-              alt={"icon"}
-              className="h-3.5 w-3.5"
-            />
             <span className="truncate">{user?.memberPhone}</span>
           </div>
           <span className="mt-1 inline-block text-xs font-semibold text-red-500">

@@ -1,27 +1,24 @@
-import React from 'react';
-import { NextPage } from 'next';
-import useDeviceDetect from '../../hooks/useDeviceDetect';
-import { Stack, Typography } from '@mui/material';
-import dynamic from 'next/dynamic';
-const TuiEditor = dynamic(() => import('../community/Teditor'), { ssr: false });
+import React from "react";
+import { NextPage } from "next";
+import dynamic from "next/dynamic";
+const TuiEditor = dynamic(() => import("../community/Teditor"), { ssr: false });
 
 const WriteArticle: NextPage = () => {
-	const device = useDeviceDetect();
-
-	if (device === 'mobile') {
-		return <>ARTICLE PAGE MOBILE</>;
-	} else
-		return (
-			<div id="write-article-page">
-				<Stack className="main-title-box">
-					<Stack className="right-box">
-						<Typography className="main-title">Write an Article</Typography>
-						<Typography className="sub-title">Feel free to write your ideas!</Typography>
-					</Stack>
-				</Stack>
-				<TuiEditor />
-			</div>
-		);
+  return (
+    <div id="write-article-page" className="w-full">
+      <div className="mb-6">
+        <h1 className="text-2xl font-extrabold tracking-tight text-gray-900">
+          Write an Article
+        </h1>
+        <p className="text-sm text-gray-500">
+          Share your ideas with the Artly community.
+        </p>
+      </div>
+      <div className="rounded-xl border border-gray-200 bg-white p-2 shadow-sm">
+        <TuiEditor />
+      </div>
+    </div>
+  );
 };
 
 export default WriteArticle;
