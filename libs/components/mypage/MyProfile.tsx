@@ -227,15 +227,7 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
       </div>
     );
 };
-
-MyProfile.defaultProps = {
-  initialValues: {
-    _id: "",
-    memberImage: "",
-    memberNick: "",
-    memberPhone: "",
-    memberAddress: "",
-  },
-};
+// Remove defaultProps as it's not compatible with TypeScript function components
+// Default values should be handled within the component or through other means
 
 export default MyProfile;

@@ -663,14 +663,7 @@ const CommunityDetail: NextPage = ({ initialInput, ...props }: T) => {
     );
   }
 };
-CommunityDetail.defaultProps = {
-  initialInput: {
-    page: 1,
-    limit: 5,
-    sort: "createdAt",
-    direction: "DESC",
-    search: { commentRefId: "" },
-  },
-};
+// Remove defaultProps as it's not compatible with TypeScript function components
+// Default values should be handled within the component or through other means
 
 export default withLayoutBasic(CommunityDetail);

@@ -100,7 +100,16 @@ const withLayoutBasic = (Component: any) => {
           <title>Artly</title>
           <meta name={"title"} content={`Artly`} />
         </Head>
-        <div className="min-h-screen w-full bg-white text-gray-900">
+        <div
+          className="min-h-screen w-full bg-white text-gray-900"
+          style={{
+            // Force light theme tokens even if OS is in dark mode
+            ["--background" as any]: "#ffffff",
+            ["--foreground" as any]: "#171717",
+            ["--muted-foreground" as any]: "#3c4047",
+            colorScheme: "light",
+          }}
+        >
           <header className="sticky top-0 z-40">
             <Top />
           </header>

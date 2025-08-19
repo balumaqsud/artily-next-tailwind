@@ -33,6 +33,11 @@ export const GET_ARTISTS = gql`
         createdAt
         updatedAt
         accessToken
+        meLiked {
+          memberId
+          likeRefId
+          myFavorite
+        }
       }
       metaCounter {
         total

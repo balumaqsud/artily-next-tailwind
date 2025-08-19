@@ -213,7 +213,7 @@ const Top = () => {
                 {t("Products")}
               </div>
             </Link>
-            <Link href={"/artists"}>
+            <Link href={"/artist"}>
               <div className="text-base md:text-lg font-medium text-muted-foreground transition-colors hover:text-foreground">
                 {t("Artists")}
               </div>
