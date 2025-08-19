@@ -13,7 +13,7 @@ const footerCols = [
     ],
   },
   {
-    title: "More",
+    title: "Collections",
     items: [
       { label: "Home and Living", href: "/artist/join" },
       { label: "Jewelry", href: "/product/category/jewelry" },
@@ -25,18 +25,12 @@ const footerCols = [
     ],
   },
   {
-    title: "About",
+    title: "More",
     items: [
-      { label: "Next.js + Vercel", href: "#" },
-      { label: "Open Source Software", href: "#" },
-      { label: "GitHub", href: "#" },
-      { label: "Bluesky", href: "#" },
-      { label: "X", href: "#" },
+      { label: "Privacy Policy", href: "#" },
+      { label: "Terms of Service", href: "#" },
+      { label: "Cookie Settings", href: "#" },
     ],
-  },
-  {
-    title: "Legal",
-    items: [{ label: "Privacy Policy", href: "#" }],
   },
 ];
 
