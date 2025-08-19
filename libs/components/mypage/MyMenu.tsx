@@ -23,8 +23,13 @@ const MyMenu = () => {
   };
 
   const navItemClass = (isActive: boolean) =>
-    `flex items-center gap-2 rounded-md px-3 py-2 text-sm ${
-      isActive ? "bg-gray-900 text-white" : "text-gray-800 hover:bg-gray-50"
+    `flex items-center rounded-md px-3 py-2 text-sm ${
+      isActive ? "bg-[#ff6b81] text-white" : "text-gray-800 hover:bg-gray-50"
+    }`;
+
+  const countClass = (isActive: boolean) =>
+    `ml-auto inline-flex min-w-[1.5rem] items-center justify-center rounded-full px-2 py-0.5 text-xs ${
+      isActive ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
     }`;
 
   return (
@@ -54,19 +59,9 @@ const MyMenu = () => {
             />
             <span className="truncate">{user?.memberPhone}</span>
           </div>
-          {user?.memberType === "ADMIN" ? (
-            <a
-              href="/_admin/users"
-              target={"_blank"}
-              className="mt-1 inline-block text-xs font-semibold text-red-500"
-            >
-              {user?.memberType}
-            </a>
-          ) : (
-            <span className="mt-1 inline-block text-xs font-semibold text-red-500">
-              {user?.memberType}
-            </span>
-          )}
+          <span className="mt-1 inline-block text-xs font-semibold text-red-500">
+            {user?.memberType}
+          </span>
         </div>
       </div>
 
@@ -75,7 +70,7 @@ const MyMenu = () => {
         {/* Manage Listings */}
         <div>
           <p className="mb-2 text-xs font-semibold tracking-wide text-gray-500">
-            MANAGE LISTINGS
+            Manage
           </p>
           <div className="space-y-1">
             {user.memberType === "AGENT" && (
@@ -88,19 +83,9 @@ const MyMenu = () => {
                   scroll={false}
                 >
                   <div className={navItemClass(category === "addProperty")}>
-                    <img
-                      src={
-                        category === "addProperty"
-                          ? "/img/icons/whiteTab.svg"
-                          : "/img/icons/newTab.svg"
-                      }
-                      alt="icon"
-                      className="h-4 w-4"
-                    />
-                    <span>Add Property</span>
+                    Add Product
                   </div>
                 </Link>
-
                 <Link
                   href={{
                     pathname: "/mypage",
@@ -109,16 +94,7 @@ const MyMenu = () => {
                   scroll={false}
                 >
                   <div className={navItemClass(category === "myProperties")}>
-                    <img
-                      src={
-                        category === "myProperties"
-                          ? "/img/icons/homeWhite.svg"
-                          : "/img/icons/home.svg"
-                      }
-                      alt="icon"
-                      className="h-4 w-4"
-                    />
-                    <span>My Properties</span>
+                    <span>My Products</span>
                   </div>
                 </Link>
               </>
@@ -129,16 +105,7 @@ const MyMenu = () => {
               scroll={false}
             >
               <div className={navItemClass(category === "myFavorites")}>
-                <img
-                  src={
-                    category === "myFavorites"
-                      ? "/img/icons/likeWhite.svg"
-                      : "/img/icons/like.svg"
-                  }
-                  alt="icon"
-                  className="h-4 w-4"
-                />
-                <span>My Favorites</span>
+                My Favorites
               </div>
             </Link>
 
@@ -150,16 +117,7 @@ const MyMenu = () => {
               scroll={false}
             >
               <div className={navItemClass(category === "recentlyVisited")}>
-                <img
-                  src={
-                    category === "recentlyVisited"
-                      ? "/img/icons/searchWhite.svg"
-                      : "/img/icons/search.svg"
-                  }
-                  alt="icon"
-                  className="h-4 w-4"
-                />
-                <span>Recently Visited</span>
+                Recently Visited
               </div>
             </Link>
 
@@ -168,11 +126,6 @@ const MyMenu = () => {
               scroll={false}
             >
               <div className={navItemClass(category === "followers")}>
-                <img
-                  className={"h-4 w-4"}
-                  src={"/img/icons/users.svg"}
-                  alt={"icon"}
-                />
                 <span>My Followers</span>
               </div>
             </Link>
@@ -182,11 +135,6 @@ const MyMenu = () => {
               scroll={false}
             >
               <div className={navItemClass(category === "followings")}>
-                <img
-                  className={"h-4 w-4"}
-                  src={"/img/icons/users.svg"}
-                  alt={"icon"}
-                />
                 <span>My Followings</span>
               </div>
             </Link>
@@ -204,15 +152,6 @@ const MyMenu = () => {
               scroll={false}
             >
               <div className={navItemClass(category === "myArticles")}>
-                <img
-                  src={
-                    category === "myArticles"
-                      ? "/img/icons/discoveryWhite.svg"
-                      : "/img/icons/discovery.svg"
-                  }
-                  alt="icon"
-                  className="h-4 w-4"
-                />
                 <span>Articles</span>
               </div>
             </Link>
@@ -225,15 +164,6 @@ const MyMenu = () => {
               scroll={false}
             >
               <div className={navItemClass(category === "writeArticle")}>
-                <img
-                  src={
-                    category === "writeArticle"
-                      ? "/img/icons/whiteTab.svg"
-                      : "/img/icons/newTab.svg"
-                  }
-                  alt="icon"
-                  className="h-4 w-4"
-                />
                 <span>Write Article</span>
               </div>
             </Link>
@@ -243,7 +173,7 @@ const MyMenu = () => {
         {/* Manage Account */}
         <div>
           <p className="mb-2 text-xs font-semibold tracking-wide text-gray-500">
-            MANAGE ACCOUNT
+            Account
           </p>
           <div className="space-y-1">
             <Link
@@ -251,26 +181,12 @@ const MyMenu = () => {
               scroll={false}
             >
               <div className={navItemClass(category === "myProfile")}>
-                <img
-                  src={
-                    category === "myProfile"
-                      ? "/img/icons/userWhite.svg"
-                      : "/img/icons/user.svg"
-                  }
-                  alt="icon"
-                  className="h-4 w-4"
-                />
                 <span>My Profile</span>
               </div>
             </Link>
 
             <button onClick={logoutHandler} className={navItemClass(false)}>
-              <img
-                className={"h-4 w-4"}
-                src={"/img/icons/logout.svg"}
-                alt={"icon"}
-              />
-              <span>Logout</span>
+              Logout
             </button>
           </div>
         </div>

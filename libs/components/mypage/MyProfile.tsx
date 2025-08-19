@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { NextPage } from "next";
-import useDeviceDetect from "../../hooks/useDeviceDetect";
-import { Button, Stack, Typography } from "@mui/material";
 import axios from "axios";
 import { Messages, REACT_APP_API_URL } from "../../config";
 import { getJwtToken, updateStorage, updateUserInfo } from "../../auth";
@@ -12,7 +10,6 @@ import { UPDATE_MEMBER } from "../../../apollo/user/mutation";
 import { sweetErrorHandling, sweetMixinSuccessAlert } from "../../sweetAlert";
 
 const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
-  const device = useDeviceDetect();
   const token = getJwtToken();
   const user = useReactiveVar(userVar);
   const DEFAULT_UPDATE: MemberUpdate = {
@@ -47,27 +44,16 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
   const uploadImage = async (e: any) => {
     try {
       const image = e.target.files[0];
-      console.log("+image:", image);
 
       const formData = new FormData();
       formData.append(
         "operations",
         JSON.stringify({
-          query: `mutation ImageUploader($file: Upload!, $target: String!) {
-						imageUploader(file: $file, target: $target) 
-				  }`,
-          variables: {
-            file: null,
-            target: "member",
-          },
+          query: `mutation ImageUploader($file: Upload!, $target: String!) {\n            imageUploader(file: $file, target: $target) \n          }`,
+          variables: { file: null, target: "member" },
         })
       );
-      formData.append(
-        "map",
-        JSON.stringify({
-          "0": ["variables.file"],
-        })
-      );
+      formData.append("map", JSON.stringify({ "0": ["variables.file"] }));
       formData.append("0", image);
 
       const response = await axios.post(
@@ -83,7 +69,6 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
       );
 
       const responseImage = response.data.data.imageUploader;
-      console.log("+responseImage: ", responseImage);
       updateData.memberImage = responseImage;
       setUpdateData({ ...updateData });
 
@@ -98,11 +83,7 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
       if (!user?._id) throw new Error(Messages.error2);
       updateData._id = user._id;
 
-      const result = await updateMember({
-        variables: {
-          input: updateData,
-        },
-      });
+      const result = await updateMember({ variables: { input: updateData } });
 
       // @ts-ignore
       const jwtToken = result.data.updateMember?.accessToken;
@@ -126,36 +107,37 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
     }
   };
 
-  console.log("+updateData", updateData);
+  return (
+    <div id="my-profile-page" className="w-full">
+      <div className="mx-auto max-w-7xl px-4 py-6">
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-2xl font-extrabold tracking-tight text-gray-900">
+            My Profile
+          </h1>
+          <p className="text-sm text-[color:var(--muted-foreground)]">
+            We’re glad to see you again!
+          </p>
+        </div>
 
-  if (device === "mobile") {
-    return <>MY PROFILE PAGE MOBILE</>;
-  } else
-    return (
-      <div id="my-profile-page">
-        <Stack className="main-title-box">
-          <Stack className="right-box">
-            <Typography className="main-title">My Profile</Typography>
-            <Typography className="sub-title">
-              We are glad to see you again!
-            </Typography>
-          </Stack>
-        </Stack>
-        <Stack className="top-box">
-          <Stack className="photo-box">
-            <Typography className="title">Photo</Typography>
-            <Stack className="image-big-box">
-              <Stack className="image-box">
+        {/* Content card */}
+        <div className="space-y-6">
+          {/* Photo uploader */}
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <h2 className="text-sm font-semibold text-gray-900">Photo</h2>
+            <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-center">
+              <div className="h-24 w-24 overflow-hidden rounded-full bg-gray-100">
                 <img
                   src={
                     updateData?.memberImage
                       ? `${REACT_APP_API_URL}/${updateData?.memberImage}`
                       : `/img/profile/defaultUser.svg`
                   }
-                  alt=""
+                  alt="profile"
+                  className="h-full w-full object-cover"
                 />
-              </Stack>
-              <Stack className="upload-big-box">
+              </div>
+              <div>
                 <input
                   type="file"
                   hidden
@@ -163,18 +145,25 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
                   onChange={uploadImage}
                   accept="image/jpg, image/jpeg, image/png"
                 />
-                <label htmlFor="hidden-input" className="labeler">
-                  <Typography>Upload Profile Image</Typography>
+                <label
+                  htmlFor="hidden-input"
+                  className="inline-flex cursor-pointer items-center rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-50"
+                >
+                  Upload Profile Image
                 </label>
-                <Typography className="upload-text">
-                  A photo must be in JPG, JPEG or PNG format!
-                </Typography>
-              </Stack>
-            </Stack>
-          </Stack>
-          <Stack className="small-input-box">
-            <Stack className="input-box">
-              <Typography className="title">Username</Typography>
+                <p className="mt-2 text-xs text-gray-500">
+                  A photo must be in JPG, JPEG or PNG format.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Inputs */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+              <label className="text-xs font-medium text-gray-700">
+                Username
+              </label>
               <input
                 type="text"
                 placeholder="Your username"
@@ -182,22 +171,25 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
                 onChange={({ target: { value } }) =>
                   setUpdateData({ ...updateData, memberNick: value })
                 }
+                className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
               />
-            </Stack>
-            <Stack className="input-box">
-              <Typography className="title">Phone</Typography>
+            </div>
+            <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+              <label className="text-xs font-medium text-gray-700">Phone</label>
               <input
                 type="text"
-                placeholder="Your Phone"
+                placeholder="Your phone"
                 value={updateData.memberPhone || ""}
                 onChange={({ target: { value } }) =>
                   setUpdateData({ ...updateData, memberPhone: value })
                 }
+                className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
               />
-            </Stack>
-          </Stack>
-          <Stack className="address-box">
-            <Typography className="title">Address</Typography>
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <label className="text-xs font-medium text-gray-700">Address</label>
             <input
               type="text"
               placeholder="Your address"
@@ -205,21 +197,25 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
               onChange={({ target: { value } }) =>
                 setUpdateData({ ...updateData, memberAddress: value })
               }
+              className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
             />
-          </Stack>
-          <Stack className="about-me-box">
-            <Button
-              className="update-button"
+          </div>
+
+          {/* Submit */}
+          <div className="flex justify-end">
+            <button
+              className="inline-flex items-center rounded-md bg-[#ff6b81] px-4 py-2 text-sm font-semibold text-white hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
               onClick={updatePropertyHandler}
               disabled={doDisabledCheck()}
             >
-              <Typography>Update Profile</Typography>
+              Update Profile
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="13"
                 height="13"
                 viewBox="0 0 13 13"
                 fill="none"
+                className="ml-2"
               >
                 <g clipPath="url(#clip0_7065_6985)">
                   <path
@@ -233,13 +229,12 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
                   </clipPath>
                 </defs>
               </svg>
-            </Button>
-          </Stack>
-        </Stack>
+            </button>
+          </div>
+        </div>
       </div>
-    );
+    </div>
+  );
 };
-// Remove defaultProps as it's not compatible with TypeScript function components
-// Default values should be handled within the component or through other means
 
 export default MyProfile;
