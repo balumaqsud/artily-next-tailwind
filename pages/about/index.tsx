@@ -1,154 +1,167 @@
-import React from 'react';
-import { NextPage } from 'next';
-import useDeviceDetect from '../../libs/hooks/useDeviceDetect';
-import withLayoutBasic from '../../libs/components/layout/LayoutBasic';
-import { Stack, Box } from '@mui/material';
+import React from "react";
+import { NextPage } from "next";
+import withLayoutFull from "../../libs/components/layout/LayoutFull";
 
 const About: NextPage = () => {
-	const device = useDeviceDetect();
+  return (
+    <div className="w-full mt-20 px-10">
+      {/* Intro */}
+      <section className="mx-auto w-full max-w-7xl px-4 py-10">
+        <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-2">
+          <div>
+            <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 md:text-4xl">
+              We’re on a mission to celebrate creativity
+            </h1>
+            <p className="mt-4 text-sm leading-6 text-gray-600 md:text-base">
+              Artly connects independent makers with people who love beautiful
+              things. From handmade jewelry to limited-run prints, we help
+              creators share their products with the world — and help shoppers
+              discover items that feel personal, meaningful, and unique.
+            </p>
+            <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#ff6b81]/10">
+                  <img
+                    src="/img/icons/securePayment.svg"
+                    alt="icon"
+                    className="h-4 w-4"
+                  />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">
+                    Secure payments
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    Encrypted checkout. Sellers never see your card.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#ff6b81]/10">
+                  <img
+                    src="/img/icons/keywording.svg"
+                    alt="icon"
+                    className="h-4 w-4"
+                  />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">
+                    Made by artists
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    Support independent creators around the globe.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#ff6b81]/10">
+                  <img
+                    src="/img/icons/investment.svg"
+                    alt="icon"
+                    className="h-4 w-4"
+                  />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">
+                    Fair marketplace
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    Transparent pricing and direct-to-creator value.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#ff6b81]/10">
+                  <img
+                    src="/img/icons/garden.svg"
+                    alt="icon"
+                    className="h-4 w-4"
+                  />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">
+                    Thoughtful curation
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    Find products that feel personal and well-made.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="relative hidden h-64 w-full overflow-hidden rounded-xl bg-gray-100 md:block">
+            <img
+              src="/logo/artly-logo.png"
+              alt="about banner"
+              className="h-full w-full object-cover"
+            />
+          </div>
+        </div>
+      </section>
 
-	if (device === 'mobile') {
-		return <div>ABOUT PAGE MOBILE</div>;
-	} else {
-		return (
-			<Stack className={'about-page'}>
-				<Stack className={'intro'}>
-					<Stack className={'container'}>
-						<Stack className={'left'}>
-							<strong>We're on a Mission to Change View of Real Estate Field.</strong>
-						</Stack>
-						<Stack className={'right'}>
-							<p>
-								It doesn’t matter how organized you are — a surplus of toys will always ensure your house is a mess
-								waiting to happen. Fortunately, getting kids on board with the idea of ditching their stuff is a lot
-								easier than it sounds.
-								<br />
-								<br />
-								Maecenas quis viverra metus, et efficitur ligula. Nam congue augue et ex congue, sed luctus lectus
-								congue. Integer convallis condimentum sem. Duis elementum tortor eget condimentum tempor. Praesent
-								sollicitudin lectus ut pharetra pulvinar.
-							</p>
-							<Stack className={'boxes'}>
-								<div className={'box'}>
-									<div>
-										<img src="/img/icons/garden.svg" alt="" />
-									</div>
-									<span>Modern Villa</span>
-									<p>Nullam sollicitudin blandit Nullam maximus.</p>
-								</div>
-								<div className={'box'}>
-									<div>
-										<img src="/img/icons/securePayment.svg" alt="" />
-									</div>
-									<span>Secure Payment</span>
-									<p>Nullam sollicitudin blandit Nullam maximus.</p>
-								</div>
-							</Stack>
-						</Stack>
-					</Stack>
-				</Stack>
-				<Stack className={'statistics'}>
-					<Stack className={'container'}>
-						<Stack className={'banner'}>
-							<img src="/img/banner/header1.svg" alt="" />
-						</Stack>
-						<Stack className={'info'}>
-							<Box component={'div'}>
-								<strong>4M</strong>
-								<p>Award Winning</p>
-							</Box>
-							<Box component={'div'}>
-								<strong>12K</strong>
-								<p>Property Ready</p>
-							</Box>
-							<Box component={'div'}>
-								<strong>20M</strong>
-								<p>Happy Customer</p>
-							</Box>
-						</Stack>
-					</Stack>
-				</Stack>
-				<Stack className={'agents'}>
-					<Stack className={'container'}>
-						<span className={'title'}>Our Exclusive Agetns</span>
-						<p className={'desc'}>Aliquam lacinia diam quis lacus euismod</p>
-						<Stack className={'wrap'}>
-							{/*{[1, 2, 3, 4, 5].map(() => {*/}
-							{/*	return <AgentCard />;*/}
-							{/*})}*/}
-						</Stack>
-					</Stack>
-				</Stack>
-				<Stack className={'options'}>
-					<img src="/img/banner/aboutBanner.svg" alt="" className={'about-banner'} />
-					<Stack className={'container'}>
-						<strong>Let’s find the right selling option for you</strong>
-						<Stack>
-							<div className={'icon-box'}>
-								<img src="/img/icons/security.svg" alt="" />
-							</div>
-							<div className={'text-box'}>
-								<span>Property Management</span>
-								<p>Nullam sollicitudin blandit eros eu pretium. Nullam maximus ultricies auctor.</p>
-							</div>
-						</Stack>
-						<Stack>
-							<div className={'icon-box'}>
-								<img src="/img/icons/keywording.svg" alt="" />
-							</div>
-							<div className={'text_-box'}>
-								<span>Property Management</span>
-								<p>Nullam sollicitudin blandit eros eu pretium. Nullam maximus ultricies auctor.</p>
-							</div>
-						</Stack>
-						<Stack>
-							<div className={'icon-box'}>
-								<img src="/img/icons/investment.svg" alt="" />
-							</div>
-							<div className={'text-box'}>
-								<span>Property Management</span>
-								<p>Nullam sollicitudin blandit eros eu pretium. Nullam maximus ultricies auctor.</p>
-							</div>
-						</Stack>
-						<Stack className={'btn'}>
-							Learn More
-							<img src="/img/icons/rightup.svg" alt="" />
-						</Stack>
-					</Stack>
-				</Stack>
-				<Stack className={'partners'}>
-					<Stack className={'container'}>
-						<span>Trusted bu the world's best</span>
-						<Stack className={'wrap'}>
-							<img src="/img/icons/brands/amazon.svg" alt="" />
-							<img src="/img/icons/brands/amd.svg" alt="" />
-							<img src="/img/icons/brands/cisco.svg" alt="" />
-							<img src="/img/icons/brands/dropcam.svg" alt="" />
-							<img src="/img/icons/brands/spotify.svg" alt="" />
-						</Stack>
-					</Stack>
-				</Stack>
-				<Stack className={'help'}>
-					<Stack className={'container'}>
-						<Box component={'div'} className={'left'}>
-							<strong>Need help? Talk to our expert.</strong>
-							<p>Talk to our experts or Browse through more properties.</p>
-						</Box>
-						<Box component={'div'} className={'right'}>
-							<div className={'white'}>
-								Contact Us
-								<img src="/img/icons/rightup.svg" alt="" />
-							</div>
-							<div className={'black'}>
-								<img src="/img/icons/call.svg" alt="" />
-								920 851 9087
-							</div>
-						</Box>
-					</Stack>
-				</Stack>
-			</Stack>
-		);
-	}
+      {/* Stats */}
+      <section className="mx-auto w-full max-w-7xl px-4 pb-6">
+        <div className="grid grid-cols-3 gap-4 rounded-xl border border-gray-200 bg-white p-6 text-center shadow-sm">
+          <div>
+            <p className="text-2xl font-extrabold text-gray-900">4M</p>
+            <p className="text-xs text-gray-600">Items shipped</p>
+          </div>
+          <div>
+            <p className="text-2xl font-extrabold text-gray-900">12K</p>
+            <p className="text-xs text-gray-600">Independent sellers</p>
+          </div>
+          <div>
+            <p className="text-2xl font-extrabold text-gray-900">20M</p>
+            <p className="text-xs text-gray-600">Happy customers</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Partners */}
+      <section className="mx-auto w-full max-w-7xl px-4 py-8">
+        <p className="text-center text-xs font-semibold uppercase tracking-wide text-gray-500">
+          Trusted by creators and shoppers worldwide
+        </p>
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-6 opacity-80">
+          <img src="/img/icons/brands/amazon.svg" alt="brand" className="h-6" />
+          <img src="/img/icons/brands/amd.svg" alt="brand" className="h-6" />
+          <img src="/img/icons/brands/cisco.svg" alt="brand" className="h-6" />
+          <img
+            src="/img/icons/brands/dropcam.svg"
+            alt="brand"
+            className="h-6"
+          />
+          <img
+            src="/img/icons/brands/spotify.svg"
+            alt="brand"
+            className="h-6"
+          />
+        </div>
+      </section>
+
+      {/* Help CTA */}
+      <section className="mx-auto w-full max-w-7xl px-4 pb-12">
+        <div className="grid grid-cols-1 items-center gap-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm md:grid-cols-2">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Need help? Talk to our team.
+            </h2>
+            <p className="mt-1 text-sm text-gray-600">
+              Chat with us or browse frequently asked questions.
+            </p>
+          </div>
+          <div className="flex items-center justify-end gap-3">
+            <button className="inline-flex items-center rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-50">
+              Contact Us
+            </button>
+            <button className="inline-flex items-center rounded-md bg-[#ff6b81] px-4 py-2 text-sm font-semibold text-white hover:opacity-95">
+              +1 (555) 555-0199
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
 };
 
-export default withLayoutBasic(About);
+export default withLayoutFull(About);

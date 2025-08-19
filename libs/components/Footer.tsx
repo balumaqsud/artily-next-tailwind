@@ -27,7 +27,7 @@ const footerCols = [
   {
     title: "More",
     items: [
-      { label: "Privacy Policy", href: "#" },
+      { label: "About", href: "/about" },
       { label: "Terms of Service", href: "#" },
       { label: "Cookie Settings", href: "#" },
     ],
