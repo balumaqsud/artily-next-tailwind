@@ -1,14 +1,4 @@
 import React, { useMemo, useRef, useState } from "react";
-import {
-  Box,
-  Button,
-  FormControl,
-  MenuItem,
-  Stack,
-  Typography,
-  Select,
-  TextField,
-} from "@mui/material";
 import { BoardArticleCategory } from "../../enums/board-article.enum";
 import { Editor } from "@toast-ui/react-editor";
 import { getJwtToken } from "../../auth";
@@ -37,7 +27,6 @@ const TuiEditor = () => {
     const articleTitle = "",
       articleContent = "",
       articleImage = "";
-
     return { articleTitle, articleContent, articleImage };
   }, []);
 
@@ -48,21 +37,11 @@ const TuiEditor = () => {
       formData.append(
         "operations",
         JSON.stringify({
-          query: `mutation ImageUploader($file: Upload!, $target: String!) {
-						imageUploader(file: $file, target: $target) 
-				  }`,
-          variables: {
-            file: null,
-            target: "article",
-          },
+          query: `mutation ImageUploader($file: Upload!, $target: String!) {\n            imageUploader(file: $file, target: $target) \n          }`,
+          variables: { file: null, target: "article" },
         })
       );
-      formData.append(
-        "map",
-        JSON.stringify({
-          "0": ["variables.file"],
-        })
-      );
+      formData.append("map", JSON.stringify({ "0": ["variables.file"] }));
       formData.append("0", image);
 
       const response = await axios.post(
@@ -78,9 +57,7 @@ const TuiEditor = () => {
       );
 
       const responseImage = response.data.data.imageUploader;
-      console.log("=responseImage: ", responseImage);
       memoizedValues.articleImage = responseImage;
-
       return `${REACT_APP_API_URL}/${responseImage}`;
     } catch (err) {
       console.log("Error, uploadImage:", err);
@@ -92,7 +69,6 @@ const TuiEditor = () => {
   };
 
   const articleTitleHandler = (e: T) => {
-    console.log(e.target.value);
     memoizedValues.articleTitle = e.target.value;
   };
 
@@ -110,17 +86,12 @@ const TuiEditor = () => {
       }
 
       await createBoardArticle({
-        variables: {
-          input: { ...memoizedValues, articleCategory },
-        },
+        variables: { input: { ...memoizedValues, articleCategory } },
       });
-
-      await sweetTopSuccessAlert("Article is created successfully", 700);
+      await sweetTopSuccessAlert("Article created successfully", 700);
       await router.push({
         pathname: "/mypage",
-        query: {
-          category: "myArticles",
-        },
+        query: { category: "myArticles" },
       });
     } catch (error) {
       await sweetErrorHandling(new Error(Message.INSERT_ALL_INPUTS)).then();
@@ -137,90 +108,69 @@ const TuiEditor = () => {
   };
 
   return (
-    <Stack>
-      <Stack
-        direction="row"
-        style={{ margin: "40px" }}
-        justifyContent="space-evenly"
-      >
-        <Box
-          component={"div"}
-          className={"form_row"}
-          style={{ width: "300px" }}
-        >
-          <Typography style={{ color: "#7f838d", margin: "10px" }} variant="h3">
-            Category
-          </Typography>
-          <FormControl sx={{ width: "100%", background: "white" }}>
-            <Select
-              value={articleCategory}
-              onChange={changeCategoryHandler}
-              displayEmpty
-              inputProps={{ "aria-label": "Without label" }}
-            >
-              <MenuItem value={BoardArticleCategory.FREE}>
-                <span>Free</span>
-              </MenuItem>
-              <MenuItem value={BoardArticleCategory.HUMOR}>Humor</MenuItem>
-              <MenuItem value={BoardArticleCategory.NEW}>News</MenuItem>
-              <MenuItem value={BoardArticleCategory.RECOMMEND}>
-                Recommendation
-              </MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
-        <Box
-          component={"div"}
-          style={{ width: "300px", flexDirection: "column" }}
-        >
-          <Typography style={{ color: "#7f838d", margin: "10px" }} variant="h3">
-            Title
-          </Typography>
-          <TextField
-            onChange={articleTitleHandler}
-            id="filled-basic"
-            label="Type Title"
-            style={{ width: "300px", background: "white" }}
+    <div className="w-full">
+      {/* Controls */}
+      <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label className="text-xs font-medium text-gray-700">Category</label>
+          <select
+            value={articleCategory}
+            onChange={changeCategoryHandler}
+            className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-300"
+          >
+            <option value={BoardArticleCategory.FREE}>Free</option>
+            <option value={BoardArticleCategory.HUMOR}>Humor</option>
+            <option value={BoardArticleCategory.NEW}>News</option>
+            <option value={BoardArticleCategory.RECOMMEND}>
+              Recommendation
+            </option>
+          </select>
+        </div>
+        <div>
+          <label className="text-xs font-medium text-gray-700">Title</label>
+          <input
+            onChange={articleTitleHandler as any}
+            placeholder="Type title"
+            className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
           />
-        </Box>
-      </Stack>
+        </div>
+      </div>
 
-      <Editor
-        initialValue={"Type here"}
-        placeholder={"Type here"}
-        previewStyle={"vertical"}
-        height={"640px"}
-        // @ts-ignore
-        initialEditType={"WYSIWYG"}
-        toolbarItems={[
-          ["heading", "bold", "italic", "strike"],
-          ["image", "table", "link"],
-          ["ul", "ol", "task"],
-        ]}
-        ref={editorRef}
-        hooks={{
-          addImageBlobHook: async (image: any, callback: any) => {
-            const uploadedImageURL = await uploadImage(image);
-            callback(uploadedImageURL);
-            return false;
-          },
-        }}
-        events={{
-          load: function (param: any) {},
-        }}
-      />
+      {/* Editor */}
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        <Editor
+          initialValue={"Type here"}
+          placeholder={"Type here"}
+          previewStyle={"vertical"}
+          height={"640px"}
+          // @ts-ignore
+          initialEditType={"WYSIWYG"}
+          toolbarItems={[
+            ["heading", "bold", "italic", "strike"],
+            ["image", "table", "link"],
+            ["ul", "ol", "task"],
+          ]}
+          ref={editorRef}
+          hooks={{
+            addImageBlobHook: async (image: any, callback: any) => {
+              const uploadedImageURL = await uploadImage(image);
+              callback(uploadedImageURL);
+              return false;
+            },
+          }}
+        />
+      </div>
 
-      <Stack direction="row" justifyContent="center">
-        <Button
-          variant="contained"
-          color="primary"
-          style={{ margin: "30px", width: "250px", height: "45px" }}
+      <div className="mt-4 flex justify-center">
+        <button
           onClick={handleRegisterButton}
+          disabled={doDisabledCheck()}
+          className="inline-flex items-center rounded-md bg-[#ff6b81] px-6 py-3 text-sm font-semibold text-white hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          Register
-        </Button>
-      </Stack>
-    </Stack>
+          Publish
+        </button>
+      </div>
+    </div>
   );
 };
 

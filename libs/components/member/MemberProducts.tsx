@@ -18,7 +18,7 @@ const DEFAULT_INPUT: ProductsInquiry = {
   },
 };
 
-const MyProperties: NextPage = ({
+const MyProducts: NextPage = ({
   initialInput = DEFAULT_INPUT,
   ...props
 }: any) => {
@@ -120,4 +120,4 @@ const MyProperties: NextPage = ({
   );
 };
 
-export default MyProperties;
+export default MyProducts;
