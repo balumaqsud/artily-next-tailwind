@@ -15,7 +15,18 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
   const device = useDeviceDetect();
   const token = getJwtToken();
   const user = useReactiveVar(userVar);
-  const [updateData, setUpdateData] = useState<MemberUpdate>(initialValues);
+  const DEFAULT_UPDATE: MemberUpdate = {
+    _id: "",
+    memberNick: "",
+    memberPhone: "",
+    memberAddress: "",
+    memberImage: "",
+  };
+  const [updateData, setUpdateData] = useState<MemberUpdate>(
+    initialValues && typeof initialValues === "object"
+      ? { ...DEFAULT_UPDATE, ...initialValues }
+      : DEFAULT_UPDATE
+  );
 
   /** APOLLO REQUESTS **/
   const [updateMember] = useMutation(UPDATE_MEMBER);
@@ -24,6 +35,7 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
   useEffect(() => {
     setUpdateData({
       ...updateData,
+      _id: user._id ?? updateData._id,
       memberNick: user.memberNick,
       memberPhone: user.memberPhone,
       memberAddress: user.memberAddress,
@@ -166,7 +178,7 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
               <input
                 type="text"
                 placeholder="Your username"
-                value={updateData.memberNick}
+                value={updateData.memberNick || ""}
                 onChange={({ target: { value } }) =>
                   setUpdateData({ ...updateData, memberNick: value })
                 }
@@ -177,7 +189,7 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
               <input
                 type="text"
                 placeholder="Your Phone"
-                value={updateData.memberPhone}
+                value={updateData.memberPhone || ""}
                 onChange={({ target: { value } }) =>
                   setUpdateData({ ...updateData, memberPhone: value })
                 }
@@ -189,7 +201,7 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
             <input
               type="text"
               placeholder="Your address"
-              value={updateData.memberAddress}
+              value={updateData.memberAddress || ""}
               onChange={({ target: { value } }) =>
                 setUpdateData({ ...updateData, memberAddress: value })
               }

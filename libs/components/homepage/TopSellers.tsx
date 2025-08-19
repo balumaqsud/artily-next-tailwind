@@ -7,6 +7,7 @@ import { SellersInquiry } from "../../types/member/member.input";
 import { GET_ARTISTS } from "../../../apollo/user/query";
 import { useQuery } from "@apollo/client";
 import { T } from "../../types/common";
+import { Direction } from "../../enums/common.enum";
 
 interface TopSellersProps {
   initialInput?: SellersInquiry;
@@ -16,7 +17,7 @@ const DEFAULT_INPUT: SellersInquiry = {
   page: 1,
   limit: 10,
   sort: "memberRank",
-  direction: "DESC" as any,
+  direction: Direction.DESC,
   search: {},
 };
 
@@ -79,7 +80,6 @@ const TopSellers = ({ initialInput = DEFAULT_INPUT }: TopSellersProps) => {
   const sellers = topSellers.length > 0 ? topSellers : mockSellers;
   /** HANDLERS **/
 
-  if (topSellers) console.log("topSellers++:", topSellers);
   if (!topSellers) return null;
 
   return (
@@ -103,7 +103,7 @@ const TopSellers = ({ initialInput = DEFAULT_INPUT }: TopSellersProps) => {
 
         <ScrollArea className="w-full overflow-hidden">
           <div className="flex w-max gap-4 p-4">
-            {mockSellers.map((seller: any) => (
+            {sellers.map((seller: any) => (
               <div key={seller?._id} className="shrink-0">
                 <TopAgentCard seller={seller} />
               </div>

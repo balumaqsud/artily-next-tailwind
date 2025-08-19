@@ -1,8 +1,6 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import { NextPage } from "next";
-import { Stack } from "@mui/material";
-import useDeviceDetect from "../../libs/hooks/useDeviceDetect";
 import withLayoutBasic from "../../libs/components/layout/LayoutBasic";
 import MyProducts from "../../libs/components/mypage/MyProducts";
 import MyFavorites from "../../libs/components/mypage/MyFavorites";
@@ -36,7 +34,6 @@ export const getStaticProps = async ({ locale }: any) => ({
 });
 
 const MyPage: NextPage = () => {
-  const device = useDeviceDetect();
   const user = useReactiveVar(userVar);
   const router = useRouter();
   const category: any = router.query?.category ?? "myProfile";
@@ -118,50 +115,47 @@ const MyPage: NextPage = () => {
     }
   };
 
-  if (device === "mobile") {
-    return <div>MY PAGE</div>;
-  } else {
-    return (
-      <div id="my-page" style={{ position: "relative" }}>
-        <div className="container">
-          <Stack className={"my-page"}>
-            <Stack className={"back-frame"}>
-              <Stack className={"left-config"}>
-                <MyMenu />
-              </Stack>
-              <Stack className="main-config" mb={"76px"}>
-                <Stack className={"list-config"}>
-                  {category === "addProperty" && <AddProperty />}
-                  {category === "myProperties" && <MyProducts />}
-                  {category === "myFavorites" && <MyFavorites />}
-                  {category === "recentlyVisited" && <RecentlyVisited />}
-                  {category === "myArticles" && <MyArticles />}
-                  {category === "writeArticle" && <WriteArticle />}
-                  {category === "myProfile" && <MyProfile />}
-                  {category === "followers" && (
-                    <MemberFollowers
-                      subscribeHandler={subscribeHandler}
-                      likeMemberHandler={likeMemberHandler}
-                      unsubscribeHandler={unsubscribeHandler}
-                      redirectToMemberPageHandler={redirectToMemberPageHandler}
-                    />
-                  )}
-                  {category === "followings" && (
-                    <MemberFollowings
-                      likeMemberHandler={likeMemberHandler}
-                      subscribeHandler={subscribeHandler}
-                      unsubscribeHandler={unsubscribeHandler}
-                      redirectToMemberPageHandler={redirectToMemberPageHandler}
-                    />
-                  )}
-                </Stack>
-              </Stack>
-            </Stack>
-          </Stack>
+  return (
+    <div id="my-page" className="w-full" style={{ position: "relative" }}>
+      <div className="mx-auto max-w-7xl px-4 py-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
+          <aside className="md:col-span-3">
+            <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+              <MyMenu />
+            </div>
+          </aside>
+
+          <section className="md:col-span-9">
+            <div className="space-y-6">
+              {category === "addProperty" && <AddProperty />}
+              {category === "myProperties" && <MyProducts />}
+              {category === "myFavorites" && <MyFavorites />}
+              {category === "recentlyVisited" && <RecentlyVisited />}
+              {category === "myArticles" && <MyArticles />}
+              {category === "writeArticle" && <WriteArticle />}
+              {category === "myProfile" && <MyProfile />}
+              {category === "followers" && (
+                <MemberFollowers
+                  subscribeHandler={subscribeHandler}
+                  likeMemberHandler={likeMemberHandler}
+                  unsubscribeHandler={unsubscribeHandler}
+                  redirectToMemberPageHandler={redirectToMemberPageHandler}
+                />
+              )}
+              {category === "followings" && (
+                <MemberFollowings
+                  likeMemberHandler={likeMemberHandler}
+                  subscribeHandler={subscribeHandler}
+                  unsubscribeHandler={unsubscribeHandler}
+                  redirectToMemberPageHandler={redirectToMemberPageHandler}
+                />
+              )}
+            </div>
+          </section>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 };
 
 export default withLayoutBasic(MyPage);
