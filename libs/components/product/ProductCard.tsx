@@ -10,8 +10,9 @@ import { REACT_APP_API_URL } from "../../config";
 interface ProductCardProps {
   product: Product;
   likeProductHandler?: any;
+  likeTargetProductHandler?: any;
   // Backward compatibility for existing callers
-  likePropertyHandler?: any;
+
   myFavorites?: boolean;
   recentlyVisited?: boolean;
 }
@@ -19,7 +20,7 @@ interface ProductCardProps {
 const ProductCard = ({
   product,
   likeProductHandler,
-  likePropertyHandler,
+  likeTargetProductHandler,
   myFavorites,
   recentlyVisited,
 }: ProductCardProps) => {
@@ -59,8 +60,8 @@ const ProductCard = ({
           {!recentlyVisited && (
             <button
               onClick={() =>
-                (likeProductHandler || likePropertyHandler) &&
-                (likeProductHandler || likePropertyHandler)(
+                (likeProductHandler || likeTargetProductHandler) &&
+                (likeProductHandler || likeTargetProductHandler)(
                   user,
                   String((product as any)?._id)
                 )

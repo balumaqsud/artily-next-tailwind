@@ -7,9 +7,9 @@ const footerCols = [
     items: [
       { label: "Home", href: "/" },
       { label: "Shop", href: "/product" },
-      { label: "Artists", href: "/artists" },
+      { label: "Artists", href: "/artist" },
       { label: "Community", href: "/community" },
-      { label: "Connect", href: "/connect" },
+      { label: "Connect", href: "/Connect" },
     ],
   },
   {

@@ -2,7 +2,7 @@ import React, { ChangeEvent, MouseEvent, useEffect, useState } from "react";
 import { NextPage } from "next";
 import withLayoutBasic from "../../libs/components/layout/LayoutBasic";
 import { Pagination } from "@mui/material";
-import AgentCard from "../../libs/components/common/ArtistCard";
+import ArtistCard from "../../libs/components/common/ArtistCard";
 import { useRouter } from "next/router";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { Member } from "../../libs/types/member/member";
@@ -44,7 +44,7 @@ const ArtistList: NextPage = ({
       ? JSON.parse(router?.query?.input as string)
       : initialInput
   );
-  const [agents, setAgents] = useState<Member[]>([]);
+  const [artists, setArtists] = useState<Member[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchText, setSearchText] = useState<string>("");
@@ -62,7 +62,7 @@ const ArtistList: NextPage = ({
     variables: { input: searchFilter },
     notifyOnNetworkStatusChange: true,
     onCompleted: (data: T) => {
-      setAgents(data?.getSellers?.list);
+      setArtists(data?.getSellers?.list);
       setTotal(data?.getSellers?.metaCounter[0]?.total);
     },
   });
@@ -226,9 +226,8 @@ const ArtistList: NextPage = ({
           </div>
         </div>
 
-        {/* Cards Grid */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {agents?.length === 0 ? (
+          {artists?.length === 0 ? (
             <div className="col-span-full flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-white p-10 text-center">
               <img
                 src="/img/icons/icoAlert.svg"
@@ -238,11 +237,11 @@ const ArtistList: NextPage = ({
               <p className="text-sm text-gray-600">No artists found!</p>
             </div>
           ) : (
-            agents.map((agent: Member) => (
-              <AgentCard
+            artists.map((artist: Member) => (
+              <ArtistCard
                 likeTargetAgentHandler={likeTargetAgentHandler}
-                agent={agent}
-                key={agent._id}
+                artist={artist}
+                key={artist._id}
               />
             ))
           )}
@@ -250,16 +249,17 @@ const ArtistList: NextPage = ({
 
         {/* Pagination */}
         <div className="mt-8 flex flex-col items-center justify-center gap-2">
-          {agents.length !== 0 && Math.ceil(total / searchFilter.limit) > 1 && (
-            <Pagination
-              page={currentPage}
-              count={Math.ceil(total / searchFilter.limit)}
-              onChange={paginationChangeHandler}
-              shape="circular"
-              color="primary"
-            />
-          )}
-          {agents.length !== 0 && (
+          {artists.length !== 0 &&
+            Math.ceil(total / searchFilter.limit) > 1 && (
+              <Pagination
+                page={currentPage}
+                count={Math.ceil(total / searchFilter.limit)}
+                onChange={paginationChangeHandler}
+                shape="circular"
+                color="primary"
+              />
+            )}
+          {artists.length !== 0 && (
             <span className="text-xs text-[color:var(--muted-foreground)]">
               Total {total} artist{total > 1 ? "s" : ""} available
             </span>

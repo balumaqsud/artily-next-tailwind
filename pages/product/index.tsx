@@ -186,7 +186,7 @@ const ProductList: NextPage<ProductListProps> = ({
               <ProductCard
                 key={product?._id.toString()}
                 product={product}
-                likePropertyHandler={likeProductHandler}
+                likeTargetProductHandler={likeProductHandler}
               />
             ))
           )}
