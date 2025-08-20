@@ -65,7 +65,7 @@ const ProductCard = ({
                   String((product as any)?._id)
                 )
               }
-              className="ml-1 rounded-full p-1 text-gray-500 hover:bg-gray-100 dark:hover:bg-neutral-800"
+              className="ml-1 rounded-full p-1 text-gray-500 cursor-pointer"
               aria-label="like"
             >
               {myFavorites ||

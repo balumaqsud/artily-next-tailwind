@@ -115,7 +115,10 @@ export const LIKE_TARGET_MEMBER = gql`
       memberDesc
       memberWarnings
       memberBlocks
-      memberProperties
+      memberProducts
+      memberArticles
+      memberFollowers
+      memberFollowing
       memberRank
       memberPoints
       memberLikes

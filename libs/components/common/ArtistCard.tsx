@@ -12,7 +12,7 @@ interface AgentCardProps {
   likeTargetAgentHandler: any;
 }
 
-const AgentCard = (props: AgentCardProps) => {
+const ArtistCard = (props: AgentCardProps) => {
   const { agent, likeTargetAgentHandler } = props;
   const user = useReactiveVar(userVar);
   const imagePath: string = agent?.memberImage
@@ -34,9 +34,9 @@ const AgentCard = (props: AgentCardProps) => {
             backgroundRepeat: "no-repeat",
           }}
         >
-          {typeof agent?.memberProperties !== "undefined" && (
+          {typeof agent?.memberProducts !== "undefined" && (
             <div className="absolute left-2 top-2 rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white">
-              {agent?.memberProperties} properties
+              {agent?.memberProducts} products
             </div>
           )}
         </div>
@@ -59,13 +59,19 @@ const AgentCard = (props: AgentCardProps) => {
           </div>
           <button
             aria-label="favorite"
-            onClick={() => likeTargetAgentHandler(user, agent?._id)}
+            onClick={() => {
+              if (!user?._id) {
+                alert("Please login to like artists");
+                return;
+              }
+              likeTargetAgentHandler(user, agent?._id);
+            }}
             className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
           >
             {agent?.meLiked && agent?.meLiked[0]?.myFavorite ? (
-              <FavoriteIcon color={"primary"} fontSize="small" />
+              <FavoriteIcon className="text-red-500" fontSize="small" />
             ) : (
-              <FavoriteBorderIcon fontSize="small" />
+              <FavoriteBorderIcon className="text-gray-500" fontSize="small" />
             )}
           </button>
           <span className="text-xs text-gray-600">{agent?.memberLikes}</span>
@@ -75,4 +81,4 @@ const AgentCard = (props: AgentCardProps) => {
   );
 };
 
-export default AgentCard;
+export default ArtistCard;

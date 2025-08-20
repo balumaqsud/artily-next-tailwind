@@ -2,7 +2,7 @@ import React, { ChangeEvent, MouseEvent, useEffect, useState } from "react";
 import { NextPage } from "next";
 import withLayoutBasic from "../../libs/components/layout/LayoutBasic";
 import { Pagination } from "@mui/material";
-import AgentCard from "../../libs/components/common/AgentCard";
+import AgentCard from "../../libs/components/common/ArtistCard";
 import { useRouter } from "next/router";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { Member } from "../../libs/types/member/member";
@@ -96,7 +96,14 @@ const ArtistList: NextPage = ({
       await sweetTopSmallSuccessAlert("success", 800);
     } catch (error: any) {
       console.log("liketargetArtist", error);
-      sweetMixinErrorAlert(error.message).then();
+      if (
+        error.message.includes("401") ||
+        error.message.includes("Unauthorized")
+      ) {
+        sweetMixinErrorAlert("Please login to like artists").then();
+      } else {
+        sweetMixinErrorAlert(error.message).then();
+      }
     }
   };
 

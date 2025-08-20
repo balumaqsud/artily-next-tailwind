@@ -626,10 +626,10 @@ export const GET_MEMBER_FOLLOWERS = gql`
           memberImage
           memberAddress
           memberDesc
-          memberProperties
+          memberProducts
           memberArticles
           memberFollowers
-          memberFollowings
+          memberFollowing
           memberPoints
           memberLikes
           memberViews
@@ -679,10 +679,10 @@ export const GET_MEMBER_FOLLOWINGS = gql`
           memberImage
           memberAddress
           memberDesc
-          memberProperties
+          memberProducts
           memberArticles
           memberFollowers
-          memberFollowings
+          memberFollowing
           memberPoints
           memberLikes
           memberViews
