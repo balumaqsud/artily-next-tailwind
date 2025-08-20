@@ -2,6 +2,7 @@ import * as React from "react";
 import Link from "next/link";
 import { Button } from "@/libs/components/ui/button";
 import { CaretRight } from "phosphor-react";
+import { Meteors } from "../ui/meteors";
 
 type ShopHeroProps = {
   title?: string;
@@ -22,13 +23,15 @@ export default function ShopHero({
     <section className="w-full px-6 py-6">
       <div className="mx-auto w-full max-w-7xl overflow-hidden rounded-2xl bg-[#ff6b81] text-white">
         <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-2">
-          {/* Text + CTA */}
-          <div className="p-8 md:p-12">
-            <h1 className="text-3xl font-extrabold tracking-tight md:text-5xl">
+          <div className="relative p-8 md:p-12 overflow-hidden">
+            <Meteors number={15} />
+            <h1 className="relative z-10 text-3xl font-extrabold tracking-tight md:text-5xl">
               {title}
             </h1>
-            <p className="mt-4 max-w-2xl text-base md:text-lg">{blurb}</p>
-            <Link href={ctaHref} className="mt-6 inline-block">
+            <p className="relative z-10 mt-4 max-w-2xl text-base md:text-lg">
+              {blurb}
+            </p>
+            <Link href={ctaHref} className="relative z-10 mt-6 inline-block">
               <Button className="rounded-full bg-white px-6 py-5 text-base font-semibold text-gray-900 hover:bg-gray-100 cursor-pointer">
                 {ctaLabel}
                 <CaretRight size={16} weight="bold" className="ml-1" />
