@@ -7,8 +7,7 @@ import { Stack, Box } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import { alpha, styled } from "@mui/material/styles";
 import Menu, { MenuProps } from "@mui/material/Menu";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import { CaretDown } from "phosphor-react";
+
 import useDeviceDetect from "../hooks/useDeviceDetect";
 import Link from "next/link";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
@@ -183,7 +182,7 @@ const Top = () => {
             : "bg-transparent"
         } w-full transition-colors duration-300 py-2`}
       >
-        <div className="mx-auto flex w-full h-14 max-w-7xl items-center px-3 sm:px-6 justify-between">
+        <div className="mx-auto flex w-full h-14 max-w-7xl items-center px-2 sm:px-6 justify-between">
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href={"/"}>
@@ -232,19 +231,45 @@ const Top = () => {
           </div>
 
           {/* Right Side Actions */}
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-1 sm:gap-2 md:gap-4">
             {/* User Actions */}
+            {/* Language Selector - Always visible */}
+            <Button
+              variant="link"
+              className="btn-lang flex items-center rounded-full p-0 cursor-pointer"
+              onClick={langClick}
+              aria-label="language"
+            >
+              <LanguageIcon
+                fontSize="medium"
+                className="text-gray-600 sm:text-base"
+              />
+            </Button>
+
+            <StyledMenu
+              anchorEl={anchorEl2}
+              open={drop}
+              onClose={langClose}
+              sx={{ position: "absolute" }}
+            >
+              <MenuItem disableRipple onClick={langChoice} id="en">
+                {t("English")} (EN)
+              </MenuItem>
+              <MenuItem disableRipple onClick={langChoice} id="kr">
+                {t("Korean")} (KR)
+              </MenuItem>
+            </StyledMenu>
             {user?._id ? (
               <>
-                {/* Cart - Show on all screen sizes */}
+                {/* Cart - Always visible */}
                 <Link href={"/cart"}>
-                  <ShoppingCartOutlinedIcon className="h-6 w-6 cursor-pointer text-gray-600 hover:text-gray-800 transition-colors" />
+                  <ShoppingCartOutlinedIcon className="h-5 w-5 sm:h-6 sm:w-6 cursor-pointer text-gray-600 hover:text-gray-800 transition-colors" />
                 </Link>
 
-                {/* Notifications - Show on all screen sizes */}
+                {/* Notifications - Always visible */}
                 <div className="relative">
                   <NotificationsOutlinedIcon
-                    className="h-6 w-6 cursor-pointer text-gray-600 hover:text-gray-800 transition-colors"
+                    className="h-5 w-5 sm:h-6 sm:w-6 cursor-pointer text-gray-600 hover:text-gray-800 transition-colors"
                     onClick={(event: any) => {
                       setNotificationAnchor(event.currentTarget);
                       loadNotifications();
@@ -290,9 +315,9 @@ const Top = () => {
                   </Menu>
                 </div>
 
-                {/* User Profile - Show on all screen sizes */}
+                {/* User Profile - Always visible */}
                 <div
-                  className="h-8 w-8 cursor-pointer overflow-hidden rounded-full ring-1 ring-gray-200"
+                  className="h-7 w-7 sm:h-8 sm:w-8 cursor-pointer overflow-hidden rounded-full ring-1 ring-gray-200"
                   onClick={(event: any) => setLogoutAnchor(event.currentTarget)}
                 >
                   <img
@@ -339,38 +364,14 @@ const Top = () => {
               </>
             )}
 
-            {/* Language Selector - Show on all screen sizes */}
-            <Button
-              variant="link"
-              className="btn-lang flex items-center rounded-full p-0 cursor-pointer"
-              onClick={langClick}
-              aria-label="language"
-            >
-              <LanguageIcon fontSize="medium" className="text-gray-600" />
-            </Button>
-
-            <StyledMenu
-              anchorEl={anchorEl2}
-              open={drop}
-              onClose={langClose}
-              sx={{ position: "absolute" }}
-            >
-              <MenuItem disableRipple onClick={langChoice} id="en">
-                {t("English")} (EN)
-              </MenuItem>
-              <MenuItem disableRipple onClick={langChoice} id="kr">
-                {t("Korean")} (KR)
-              </MenuItem>
-            </StyledMenu>
-
             {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden inline-flex items-center justify-center p-2 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors"
+              className="lg:hidden inline-flex items-center justify-center p-1.5 sm:p-2 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors"
               aria-label="Toggle mobile menu"
             >
               <svg
-                className="h-6 w-6"
+                className="h-5 w-5 sm:h-6 sm:w-6"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

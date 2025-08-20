@@ -146,6 +146,12 @@ export const GET_PRODUCT = gql`
         deletedAt
         createdAt
         updatedAt
+        accessToken
+      }
+      meLiked {
+        memberId
+        likeRefId
+        myFavorite
       }
     }
   }
