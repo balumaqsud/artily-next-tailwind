@@ -145,6 +145,23 @@ const ArtistList: NextPage = ({
     setMenuOpen(false);
   };
 
+  const searchHandler = () => {
+    setSearchFilter({
+      ...searchFilter,
+      page: 1,
+      search: {
+        ...searchFilter.search,
+        text: searchText.trim() || undefined,
+      },
+    });
+  };
+
+  const handleSearchKeyPress = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter") {
+      searchHandler();
+    }
+  };
+
   const paginationChangeHandler = async (
     event: ChangeEvent<unknown>,
     value: number
@@ -165,64 +182,73 @@ const ArtistList: NextPage = ({
       <div className="mx-auto max-w-7xl px-4 py-8">
         {/* Filter Bar */}
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="w-full sm:max-w-md">
+          {/* Search Input */}
+          <div className="relative">
             <input
               type="text"
-              placeholder={"Search for an agent"}
               value={searchText}
-              onChange={(e: any) => setSearchText(e.target.value)}
-              onKeyDown={(event: any) => {
-                if (event.key == "Enter") {
-                  setSearchFilter({
-                    ...searchFilter,
-                    search: { ...searchFilter.search, text: searchText },
-                  });
-                }
-              }}
-              className="w-full rounded-md border border-gray-200 bg-white px-4 py-2 text-sm text-gray-900 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
+              onChange={(e) => setSearchText(e.target.value)}
+              onKeyPress={handleSearchKeyPress}
+              placeholder="Search artists..."
+              className="w-94 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-foreground placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-transparent"
             />
-          </div>
-          <div className="flex items-center justify-end gap-3">
-            <span className="text-sm text-[color:var(--muted-foreground)]">
-              Sort by
-            </span>
-            <div className="relative">
-              <button
-                onClick={() => setMenuOpen((v) => !v)}
-                className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-foreground hover:bg-gray-50 cursor-pointer"
+            <button
+              onClick={searchHandler}
+              className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex h-6 w-6 items-center justify-center rounded-md bg-pink-500 text-white hover:bg-pink-600 transition-colors"
+            >
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                {filterSortName}
-                <span className="ml-1">▾</span>
-              </button>
-              {menuOpen && (
-                <div className="absolute right-0 z-20 mt-2 w-40 rounded-md border border-gray-200 bg-white p-1 shadow">
-                  <button
-                    onClick={() => sortingHandler("recent")}
-                    className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100 cursor-pointer"
-                  >
-                    Recent
-                  </button>
-                  <button
-                    onClick={() => sortingHandler("old")}
-                    className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100 cursor-pointer"
-                  >
-                    Oldest
-                  </button>
-                  <button
-                    onClick={() => sortingHandler("likes")}
-                    className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100 cursor-pointer"
-                  >
-                    Likes
-                  </button>
-                  <button
-                    onClick={() => sortingHandler("views")}
-                    className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100 cursor-pointer"
-                  >
-                    Views
-                  </button>
-                </div>
-              )}
-            </div>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </button>
+          </div>
+
+          {/* Sort Filter */}
+          <div className="relative">
+            <button
+              onClick={() => setMenuOpen((v) => !v)}
+              className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-foreground hover:bg-gray-50 cursor-pointer"
+            >
+              Sort by: {filterSortName}
+              <span className="ml-1">▾</span>
+            </button>
+            {menuOpen && (
+              <div className="absolute right-0 z-20 mt-2 w-40 rounded-md border border-gray-200 bg-white p-1 shadow">
+                <button
+                  onClick={() => sortingHandler("recent")}
+                  className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100 cursor-pointer"
+                >
+                  Recent
+                </button>
+                <button
+                  onClick={() => sortingHandler("old")}
+                  className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100 cursor-pointer"
+                >
+                  Oldest
+                </button>
+                <button
+                  onClick={() => sortingHandler("likes")}
+                  className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100 cursor-pointer"
+                >
+                  Likes
+                </button>
+                <button
+                  onClick={() => sortingHandler("views")}
+                  className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100 cursor-pointer"
+                >
+                  Views
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
