@@ -59,7 +59,7 @@ const TopProductCard = (props: TopProductCardProps) => {
                 e.stopPropagation();
                 likeTargetProductHandler(user, (product as any)._id);
               }}
-              className="ml-2 text-gray-500 hover:text-red-500"
+              className="ml-2 text-gray-500 hover:text-red-500 cursor-pointer"
             >
               {(product as any)?.meLiked &&
               (product as any)?.meLiked[0]?.myFavorite ? (

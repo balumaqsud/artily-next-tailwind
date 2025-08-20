@@ -6,6 +6,7 @@ import { REACT_APP_API_URL } from "../../config";
 import { useRouter } from "next/router";
 import { useReactiveVar } from "@apollo/client";
 import { userVar } from "../../../apollo/store";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
 interface PopularProductCardProps {
   product: Product | any;
@@ -27,6 +28,8 @@ const PopularProductsCard = ({
   const rating = Number(
     product?.productRank ?? product?.propertyRank ?? 4.8
   ).toFixed(1);
+
+  console.log("product", product);
 
   return (
     <div className="w-[260px] sm:w-[280px] md:w-[300px] rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-md cursor-pointer">
@@ -58,12 +61,12 @@ const PopularProductsCard = ({
                 e.stopPropagation();
                 likeTargetProductHandler(user, product._id);
               }}
-              className="ml-2 text-gray-500 hover:text-red-500"
+              className="ml-2 text-gray-500 hover:text-red-500 cursor-pointer"
             >
               {product?.meLiked && product?.meLiked[0]?.myFavorite ? (
                 <FavoriteIcon fontSize="small" className="text-red-500" />
               ) : (
-                <FavoriteIcon fontSize="small" />
+                <FavoriteIcon fontSize="small" className="text-gray-500" />
               )}
             </button>
           </div>

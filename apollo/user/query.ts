@@ -207,6 +207,12 @@ export const GET_PRODUCTS = gql`
           deletedAt
           createdAt
           updatedAt
+          accessToken
+        }
+        meLiked {
+          memberId
+          likeRefId
+          myFavorite
         }
       }
       metaCounter {
