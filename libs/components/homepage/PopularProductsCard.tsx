@@ -1,7 +1,7 @@
 import React from "react";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import StarRateIcon from "@mui/icons-material/StarRate";
-import { Property as Product } from "../../types/product/product";
+import { Product } from "../../types/product/product";
 import { REACT_APP_API_URL } from "../../config";
 import { useRouter } from "next/router";
 import { useReactiveVar } from "@apollo/client";
@@ -29,7 +29,7 @@ const PopularProductsCard = ({
   ).toFixed(1);
 
   return (
-    <div className="w-[360px] rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-1000 ease-in-out hover:scale-105 hover:shadow-md dark:border-gray-200 dark:bg-neutral-100 cursor-pointer">
+    <div className="w-[260px] sm:w-[280px] md:w-[300px] rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-md cursor-pointer">
       <div
         role="button"
         onClick={() => openDetail(product._id)}

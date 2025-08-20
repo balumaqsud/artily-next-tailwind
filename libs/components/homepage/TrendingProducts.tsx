@@ -73,7 +73,7 @@ const TrendingProducts = ({
           Explore Recent Trends
         </h2>
         <ScrollArea className="w-full overflow-hidden">
-          <div className="flex w-max gap-4 p-4">
+          <div className="flex w-max gap-3 sm:gap-4 p-2 sm:p-4">
             {display.map((p: any) => (
               <TrendingProductsCard key={p?._id} product={p} />
             ))}

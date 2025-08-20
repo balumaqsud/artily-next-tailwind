@@ -19,7 +19,7 @@ export default function ShopHero({
   imageSrc = "/banner/artistic.jpeg",
 }: ShopHeroProps) {
   return (
-    <section className="w-full px-8 py-6">
+    <section className="w-full px-6 py-6">
       <div className="mx-auto w-full max-w-7xl overflow-hidden rounded-2xl bg-[#ff6b81] text-white">
         <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-2">
           {/* Text + CTA */}

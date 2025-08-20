@@ -30,7 +30,7 @@ const ProductCard = ({
   const price = Number((product as any)?.productPrice ?? 0);
 
   return (
-    <div className="w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition hover:shadow-md dark:border-neutral-100 dark:bg-neutral-100">
+    <div className="w-[260px] sm:w-[280px] md:w-[300px] rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-md cursor-pointer">
       <Link
         href={{
           pathname: "/product/detail",
@@ -72,7 +72,10 @@ const ProductCard = ({
               (product?.meLiked && product?.meLiked[0]?.myFavorite) ? (
                 <FavoriteIcon sx={{ fontSize: 16 }} className="text-red-500" />
               ) : (
-                <FavoriteBorderIcon sx={{ fontSize: 16 }} />
+                <FavoriteBorderIcon
+                  sx={{ fontSize: 16 }}
+                  className="text-gray-500"
+                />
               )}
             </button>
           )}

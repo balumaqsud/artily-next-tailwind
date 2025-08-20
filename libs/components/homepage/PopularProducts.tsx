@@ -45,7 +45,7 @@ const PopularProducts = ({
     try {
       if (!id) return;
       if (!(user as any)._id) throw new Error(Message.SOMETHING_WENT_WRONG);
-      await likeTargetProduct({ variables: { input: id } });
+      await likeTargetProduct({ variables: { productId: id } });
       await refetchProducts({ input: initialInput });
       await sweetTopSmallSuccessAlert("success", 800);
     } catch (error: any) {
@@ -115,7 +115,7 @@ const PopularProducts = ({
         </div>
 
         <ScrollArea className="w-full overflow-hidden">
-          <div className="flex w-max gap-4 p-4">
+          <div className="flex w-max gap-3 sm:gap-4 p-2 sm:p-4">
             {items.map((product: any) => (
               <div key={product?._id} className="shrink-0">
                 <PopularProductsCard

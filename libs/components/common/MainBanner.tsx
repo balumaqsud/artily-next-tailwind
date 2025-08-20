@@ -6,7 +6,7 @@ import { Vortex } from "@/libs/components/ui/vortex";
 export default function MainBanner() {
   const router = useRouter();
   return (
-    <div className="mt-19 w-full px-8 py-1">
+    <div className="mt-19 w-full px-6">
       <div
         className="relative h-[400px] sm:h-[500px] md:h-[580px] w-full rounded-[15px] bg-cover bg-center transition-all duration-1000 ease-in-out overflow-hidden"
         style={{

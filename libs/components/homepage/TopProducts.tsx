@@ -46,7 +46,7 @@ const TopProducts = ({ initialInput = DEFAULT_INPUT }: TopProductsProps) => {
       if (!user._id) throw new Error(Message.SOMETHING_WENT_WRONG);
 
       //important
-      await likeTargetProduct({ variables: { input: id } });
+      await likeTargetProduct({ variables: { productId: id } });
 
       //refetch
       await refetchProducts({ input: initialInput });
@@ -114,7 +114,7 @@ const TopProducts = ({ initialInput = DEFAULT_INPUT }: TopProductsProps) => {
         </div>
 
         <ScrollArea className="w-full overflow-hidden">
-          <div className="flex w-max gap-4 p-4 ">
+          <div className="flex w-max gap-3 sm:gap-4 p-2 sm:p-4 ">
             {displayProducts.map((product: any) => (
               <div key={product?._id} className="shrink-0 cursor-pointer">
                 <TopProductCard

@@ -77,8 +77,8 @@ const ProductList: NextPage<ProductListProps> = ({
     try {
       if (!id) return;
       if (!(user as any)._id) throw new Error(Message.SOMETHING_WENT_WRONG);
-      await likeTargetProduct({ variables: { input: id } });
-      await refetchProducts({ input: initialInput });
+      await likeTargetProduct({ variables: { productId: id } });
+      await refetchProducts({ input: searchFilter });
       await sweetTopSmallSuccessAlert("success", 800);
     } catch (error: any) {
       console.log("likeTargetProduct", error);
