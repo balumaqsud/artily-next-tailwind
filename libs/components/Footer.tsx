@@ -15,21 +15,83 @@ const footerCols = [
   {
     title: "Collections",
     items: [
-      { label: "Home and Living", href: "/artist/join" },
-      { label: "Jewelry", href: "/product/category/jewelry" },
-      { label: "Art", href: "/artist/join" },
-      { label: "Pet Products", href: "/artist/join" },
-      { label: "Vintage", href: "/artists" },
-      { label: "Children", href: "/artists" },
-      { label: "Accessories", href: "/artists" },
+      {
+        label: "Home and Living",
+        href: `/product?input=${JSON.stringify({
+          page: 1,
+          limit: 9,
+          sort: "createdAt",
+          direction: "DESC",
+          search: { typeList: ["HOME_LIVING"] },
+        })}`,
+      },
+      {
+        label: "Jewelry",
+        href: `/product?input=${JSON.stringify({
+          page: 1,
+          limit: 9,
+          sort: "createdAt",
+          direction: "DESC",
+          search: { typeList: ["JEWELRY"] },
+        })}`,
+      },
+      {
+        label: "Art",
+        href: `/product?input=${JSON.stringify({
+          page: 1,
+          limit: 9,
+          sort: "createdAt",
+          direction: "DESC",
+          search: { typeList: ["ART_COLLECTABLES"] },
+        })}`,
+      },
+      {
+        label: "Pet Products",
+        href: `/product?input=${JSON.stringify({
+          page: 1,
+          limit: 9,
+          sort: "createdAt",
+          direction: "DESC",
+          search: { typeList: ["PET_PRODUCTS"] },
+        })}`,
+      },
+      {
+        label: "Vintage",
+        href: `/product?input=${JSON.stringify({
+          page: 1,
+          limit: 9,
+          sort: "createdAt",
+          direction: "DESC",
+          search: { typeList: ["VINTAGE"] },
+        })}`,
+      },
+      {
+        label: "Children",
+        href: `/product?input=${JSON.stringify({
+          page: 1,
+          limit: 9,
+          sort: "createdAt",
+          direction: "DESC",
+          search: { typeList: ["CHILDREN"] },
+        })}`,
+      },
+      {
+        label: "Accessories",
+        href: `/product?input=${JSON.stringify({
+          page: 1,
+          limit: 9,
+          sort: "createdAt",
+          direction: "DESC",
+          search: { typeList: ["ACCESSORY"] },
+        })}`,
+      },
     ],
   },
   {
     title: "More",
     items: [
       { label: "About", href: "/about" },
-      { label: "Terms of Service", href: "#" },
-      { label: "Cookie Settings", href: "#" },
+      { label: "Profile", href: "/mypage" },
     ],
   },
 ];

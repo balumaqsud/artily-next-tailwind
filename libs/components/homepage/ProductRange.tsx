@@ -19,7 +19,15 @@ const ProductRange = () => {
             {fallbackCollections.map((collection: any) => (
               <div key={collection._id} className="shrink-0 w-[360px]">
                 <ProductRangeCard
-                  href={`/product/${collection._id}`}
+                  href={`/product?input=${JSON.stringify({
+                    page: 1,
+                    limit: 9,
+                    sort: "createdAt",
+                    direction: "DESC",
+                    search: {
+                      typeList: [collection._id],
+                    },
+                  })}`}
                   title={collection.title}
                   image={collection.image}
                 />

@@ -16,7 +16,13 @@ export default function ShopHero({
   title = "Artisan Creations",
   blurb = "Discover unique handcrafted treasures from talented artists worldwide — where quality meets creativity.",
   ctaLabel = "Browse Collection",
-  ctaHref = "/product",
+  ctaHref = `/product?input=${JSON.stringify({
+    page: 1,
+    limit: 9,
+    sort: "createdAt",
+    direction: "DESC",
+    search: {},
+  })}`,
   imageSrc = "/banner/artistic.jpeg",
 }: ShopHeroProps) {
   return (

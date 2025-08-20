@@ -38,10 +38,10 @@ const TopSellerCard = ({ seller }: TopSellerProps) => {
         </p>
         <div className="mt-4 flex justify-center">
           <button
-            onClick={() => router.push("/artists")}
+            onClick={() => router.push(`/artist/detail?artistId=${seller._id}`)}
             className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-gray-900 shadow hover:bg-gray-100 cursor-pointer"
           >
-            View Shop
+            View Artist
           </button>
         </div>
       </div>

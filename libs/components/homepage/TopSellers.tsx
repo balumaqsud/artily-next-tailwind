@@ -93,7 +93,7 @@ const TopSellers = ({ initialInput = DEFAULT_INPUT }: TopSellersProps) => {
           </div>
           <div>
             <button
-              onClick={() => router.push("/artists")}
+              onClick={() => router.push("/artist")}
               className="text-sm text-foreground hover:underline cursor-pointer"
             >
               See all artists

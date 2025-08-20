@@ -16,7 +16,13 @@ export default function ShopHero2({
   title = "Inspire Your Space",
   blurb = "Thoughtfully crafted goods to elevate everyday living — handmade, unique, and responsibly sourced.",
   ctaLabel = "Start Shopping",
-  ctaHref = "/product",
+  ctaHref = `/product?input=${JSON.stringify({
+    page: 1,
+    limit: 9,
+    sort: "createdAt",
+    direction: "DESC",
+    search: {},
+  })}`,
   imageSrc = "/banner/artistic2.jpeg",
 }: ShopHero2Props) {
   return (
