@@ -25,6 +25,7 @@ import {
 } from "../../apollo/user/query";
 import { T } from "../../libs/types/common";
 import { Direction, Message } from "../../libs/enums/common.enum";
+import ReviewCard from "../../libs/components/artist/ReviewCard";
 import {
   sweetErrorHandling,
   sweetMixinErrorAlert,
@@ -33,6 +34,8 @@ import {
 import {
   CREATE_COMMENT,
   LIKE_TARGET_PRODUCT,
+  UPDATE_COMMENT,
+  REMOVE_COMMENT,
 } from "../../apollo/user/mutation";
 
 SwiperCore.use([Autoplay, Navigation, Pagination]);
@@ -102,6 +105,8 @@ const ProductDetail: NextPage<DetailProps> = ({
   /** APOLLO REQUESTS **/
   const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
   const [createComment] = useMutation(CREATE_COMMENT);
+  const [updateComment] = useMutation(UPDATE_COMMENT);
+  const [removeComment] = useMutation(REMOVE_COMMENT);
 
   const {
     loading: getPropertyLoading,
@@ -245,6 +250,39 @@ const ProductDetail: NextPage<DetailProps> = ({
       await sweetTopSmallSuccessAlert("Review submitted successfully!", 800);
     } catch (error) {
       console.error("Error creating comment:", error);
+      sweetErrorHandling(error);
+    }
+  };
+
+  const updateCommentHandler = async (
+    commentId: string,
+    newContent: string
+  ) => {
+    try {
+      if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
+
+      await updateComment({
+        variables: {
+          input: {
+            _id: commentId,
+            commentContent: newContent,
+          },
+        },
+      });
+
+      await getCommentsRefetch({ input: commentInquiry });
+      await sweetTopSmallSuccessAlert("Review updated successfully!", 800);
+    } catch (error) {
+      sweetErrorHandling(error);
+    }
+  };
+
+  const removeCommentHandler = async (commentId: string) => {
+    try {
+      await removeComment({ variables: { input: commentId } });
+      await getCommentsRefetch({ input: commentInquiry });
+      await sweetTopSmallSuccessAlert("Review removed successfully!", 800);
+    } catch (error) {
       sweetErrorHandling(error);
     }
   };
@@ -795,35 +833,12 @@ const ProductDetail: NextPage<DetailProps> = ({
             {commentTotal > 0 ? (
               <div className="space-y-4">
                 {propertyComments?.map((comment: Comment) => (
-                  <div
-                    key={comment._id}
-                    className="border-b border-gray-100 pb-4 last:border-b-0"
-                  >
-                    <div className="flex items-start gap-3">
-                      <img
-                        className="h-8 w-8 rounded-full object-cover"
-                        src={
-                          comment.memberData?.memberImage
-                            ? `${REACT_APP_API_URL}/${comment.memberData.memberImage}`
-                            : "/profile/defaultUser.svg"
-                        }
-                        alt={comment.memberData?.memberNick}
-                      />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-gray-900">
-                            {comment.memberData?.memberNick}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            {new Date(comment.createdAt).toLocaleDateString()}
-                          </span>
-                        </div>
-                        <p className="mt-1 text-sm text-gray-700">
-                          {comment.commentContent}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                  <ReviewCard
+                    comment={comment}
+                    key={comment?._id}
+                    onUpdateComment={updateCommentHandler}
+                    onRemoveComment={removeCommentHandler}
+                  />
                 ))}
               </div>
             ) : (
