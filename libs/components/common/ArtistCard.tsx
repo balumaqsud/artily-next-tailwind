@@ -46,7 +46,7 @@ const ArtistCard = (props: AgentCardProps) => {
           <Link
             href={{
               pathname: "/artist/detail",
-              query: { agentId: artist?._id },
+              query: { artistId: artist?._id },
             }}
           >
             <p className="truncate text-sm font-semibold text-gray-900">

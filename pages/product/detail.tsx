@@ -231,11 +231,20 @@ const ProductDetail: NextPage<DetailProps> = ({
   const createCommentHandler = async () => {
     try {
       if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
-      await createComment({ variables: { input: insertCommentData } });
+
+      console.log("Creating comment with data:", insertCommentData);
+
+      const result = await createComment({
+        variables: { input: insertCommentData },
+      });
+
+      console.log("Comment creation result:", result);
 
       setInsertCommentData({ ...insertCommentData, commentContent: "" });
       await getCommentsRefetch({ input: commentInquiry });
+      await sweetTopSmallSuccessAlert("Review submitted successfully!", 800);
     } catch (error) {
+      console.error("Error creating comment:", error);
       sweetErrorHandling(error);
     }
   };
@@ -695,7 +704,7 @@ const ProductDetail: NextPage<DetailProps> = ({
               <div className="flex-1">
                 <div className="flex items-center gap-3">
                   <Link
-                    href={`/artist/detail?agentId=${product?.memberData?._id}`}
+                    href={`/artist/detail?artistId=${product?.memberData?._id}`}
                     className="text-lg font-semibold text-gray-900 hover:text-pink-600 transition-colors"
                   >
                     {product?.memberData?.memberFullName ||
@@ -731,7 +740,7 @@ const ProductDetail: NextPage<DetailProps> = ({
                 <div className="mt-4 grid grid-cols-4 gap-4 text-center">
                   <div>
                     <div className="text-lg font-bold text-gray-900">
-                      {product?.memberData?.memberProperties || 0}
+                      {product?.memberData?.memberProducts || 0}
                     </div>
                     <div className="text-xs text-gray-600">Products</div>
                   </div>

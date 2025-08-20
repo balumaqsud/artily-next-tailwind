@@ -189,7 +189,7 @@ const ArtistList: NextPage = ({
             <div className="relative">
               <button
                 onClick={() => setMenuOpen((v) => !v)}
-                className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-foreground hover:bg-gray-50"
+                className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-foreground hover:bg-gray-50 cursor-pointer"
               >
                 {filterSortName}
                 <span className="ml-1">▾</span>
@@ -198,25 +198,25 @@ const ArtistList: NextPage = ({
                 <div className="absolute right-0 z-20 mt-2 w-40 rounded-md border border-gray-200 bg-white p-1 shadow">
                   <button
                     onClick={() => sortingHandler("recent")}
-                    className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100"
+                    className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100 cursor-pointer"
                   >
                     Recent
                   </button>
                   <button
                     onClick={() => sortingHandler("old")}
-                    className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100"
+                    className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100 cursor-pointer"
                   >
                     Oldest
                   </button>
                   <button
                     onClick={() => sortingHandler("likes")}
-                    className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100"
+                    className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100 cursor-pointer"
                   >
                     Likes
                   </button>
                   <button
                     onClick={() => sortingHandler("views")}
-                    className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100"
+                    className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100 cursor-pointer"
                   >
                     Views
                   </button>

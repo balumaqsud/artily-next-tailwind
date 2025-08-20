@@ -27,6 +27,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import {
   CREATE_COMMENT,
   LIKE_TARGET_PRODUCT,
+  UPDATE_COMMENT,
+  REMOVE_COMMENT,
 } from "../../apollo/user/mutation";
 import { T } from "../../libs/types/common";
 import {
@@ -70,14 +72,14 @@ const SellerDetail: NextPage = ({
   const router = useRouter();
   const user = useReactiveVar(userVar);
   const [mbId, setMbId] = useState<string | null>(null);
-  const [agent, setAgent] = useState<Member | null>(null);
+  const [artist, setartist] = useState<Member | null>(null);
   const [searchFilter, setSearchFilter] =
     useState<ProductsInquiry>(initialInput);
-  const [artistProducts, setartistProducts] = useState<Product[]>([]);
-  const [productTotal, setPropertyTotal] = useState<number>(0);
+  const [artistProducts, setArtistProducts] = useState<Product[]>([]);
+  const [productTotal, setProductsTotal] = useState<number>(0);
   const [commentInquiry, setCommentInquiry] =
     useState<CommentsInquiry>(initialComment);
-  const [agentComments, setAgentComments] = useState<Comment[]>([]);
+  const [artistComments, setArtistComments] = useState<Comment[]>([]);
   const [commentTotal, setCommentTotal] = useState<number>(0);
   const [insertCommentData, setInsertCommentData] = useState<CommentInput>({
     commentGroup: CommentGroup.MEMBER,
@@ -87,6 +89,8 @@ const SellerDetail: NextPage = ({
 
   /** APOLLO REQUESTS **/
   const [createComment] = useMutation(CREATE_COMMENT);
+  const [updateComment] = useMutation(UPDATE_COMMENT);
+  const [removeComment] = useMutation(REMOVE_COMMENT);
   const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
 
   const {
@@ -100,7 +104,7 @@ const SellerDetail: NextPage = ({
     skip: !mbId,
     notifyOnNetworkStatusChange: true,
     onCompleted: (data: T) => {
-      setAgent(data?.getMember);
+      setartist(data?.getMember);
       setSearchFilter({
         ...searchFilter,
         search: { memberId: data.getMember?._id },
@@ -127,8 +131,8 @@ const SellerDetail: NextPage = ({
     skip: !searchFilter.search.memberId,
     notifyOnNetworkStatusChange: true,
     onCompleted: (data: T) => {
-      setartistProducts(data?.getProducts?.list);
-      setPropertyTotal(data?.getProducts?.metaCounter[0]?.total ?? 0);
+      setArtistProducts(data?.getProducts?.list);
+      setProductsTotal(data?.getProducts?.metaCounter[0]?.total ?? 0);
     },
   });
 
@@ -143,14 +147,14 @@ const SellerDetail: NextPage = ({
     skip: !commentInquiry.search.commentRefId,
     notifyOnNetworkStatusChange: true,
     onCompleted: (data: T) => {
-      setAgentComments(data?.getComments?.list);
+      setArtistComments(data?.getComments?.list);
       setCommentTotal(data?.getComments?.metaCounter[0]?.total ?? 0);
     },
   });
 
   /** LIFECYCLES **/
   useEffect(() => {
-    if (router.query.agentId) setMbId(router.query.agentId as string);
+    if (router.query.artistId) setMbId(router.query.artistId as string);
   }, [router]);
 
   useEffect(() => {
@@ -223,6 +227,39 @@ const SellerDetail: NextPage = ({
     }
   };
 
+  const removeCommentHandler = async (commentId: string) => {
+    try {
+      await removeComment({ variables: { input: commentId } });
+      await getCommentsRefetch({ input: commentInquiry });
+      await sweetTopSmallSuccessAlert("Review removed successfully!", 800);
+    } catch (error) {
+      sweetErrorHandling(error);
+    }
+  };
+
+  const updateCommentHandler = async (
+    commentId: string,
+    newContent: string
+  ) => {
+    try {
+      if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
+
+      await updateComment({
+        variables: {
+          input: {
+            _id: commentId,
+            commentContent: newContent,
+          },
+        },
+      });
+
+      await getCommentsRefetch({ input: commentInquiry });
+      await sweetTopSmallSuccessAlert("Review updated successfully!", 800);
+    } catch (error) {
+      sweetErrorHandling(error);
+    }
+  };
+
   return (
     <div className="w-full bg-background">
       <div className="mx-auto max-w-7xl px-4 py-8">
@@ -235,8 +272,8 @@ const SellerDetail: NextPage = ({
                 <div className="relative">
                   <img
                     src={
-                      agent?.memberImage
-                        ? `${REACT_APP_API_URL}/${agent?.memberImage}`
+                      artist?.memberImage
+                        ? `${REACT_APP_API_URL}/${artist?.memberImage}`
                         : "/profile/defaultUser.svg"
                     }
                     alt="artist"
@@ -246,7 +283,7 @@ const SellerDetail: NextPage = ({
                 </div>
                 <div className="flex-1 min-w-0">
                   <h1 className="text-xl font-bold text-white drop-shadow-lg sm:text-2xl">
-                    {agent?.memberFullName ?? agent?.memberNick}
+                    {artist?.memberFullName ?? artist?.memberNick}
                   </h1>
                   <p className="text-sm text-white/90 drop-shadow-sm">
                     Creative Artist & Designer
@@ -257,36 +294,54 @@ const SellerDetail: NextPage = ({
           </div>
 
           <div className="p-6">
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-7 gap-4">
               {/* Stats */}
               <div className="text-center">
                 <div className="text-2xl font-bold text-gray-900">
-                  {agent?.memberProperties || 0}
+                  {artist?.memberProducts || 0}
                 </div>
                 <div className="text-sm text-gray-600">Products</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-gray-900">
-                  {agent?.memberFollowers || 0}
+                  {artist?.memberFollowers || 0}
                 </div>
                 <div className="text-sm text-gray-600">Followers</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-gray-900">
-                  {agent?.memberLikes || 0}
+                  {artist?.memberFollowings || 0}
+                </div>
+                <div className="text-sm text-gray-600">Followings</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-gray-900">
+                  {artist?.memberArticles || 0}
+                </div>
+                <div className="text-sm text-gray-600">Articles</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-gray-900">
+                  {artist?.memberPoints || 0}
+                </div>
+                <div className="text-sm text-gray-600">Points</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-gray-900">
+                  {artist?.memberLikes || 0}
                 </div>
                 <div className="text-sm text-gray-600">Likes</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-gray-900">
-                  {agent?.memberViews || 0}
+                  {artist?.memberViews || 0}
                 </div>
                 <div className="text-sm text-gray-600">Views</div>
               </div>
             </div>
 
             {/* Contact Info */}
-            {agent?.memberPhone && (
+            {artist?.memberPhone && (
               <div className="mt-6 flex items-center gap-2 text-sm text-gray-600">
                 <svg
                   className="h-4 w-4"
@@ -295,15 +350,15 @@ const SellerDetail: NextPage = ({
                 >
                   <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                 </svg>
-                <span>{agent?.memberPhone}</span>
+                <span>{artist?.memberPhone}</span>
               </div>
             )}
 
             {/* Description */}
-            {agent?.memberDesc && (
+            {artist?.memberDesc && (
               <div className="mt-4">
                 <p className="text-sm text-gray-700 leading-relaxed">
-                  {agent.memberDesc}
+                  {artist.memberDesc}
                 </p>
               </div>
             )}
@@ -329,7 +384,7 @@ const SellerDetail: NextPage = ({
           </div>
 
           {artistProducts.length > 0 ? (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {artistProducts.map((product: Product) => (
                 <div key={product?._id.toString()} className="group">
                   <ProductCard
@@ -400,8 +455,13 @@ const SellerDetail: NextPage = ({
                 </span>
               </div>
               <div className="space-y-4">
-                {agentComments?.map((comment: Comment) => (
-                  <ReviewCard comment={comment} key={comment?._id} />
+                {artistComments?.map((comment: Comment) => (
+                  <ReviewCard
+                    comment={comment}
+                    key={comment?._id}
+                    onUpdateComment={updateCommentHandler}
+                    onRemoveComment={removeCommentHandler}
+                  />
                 ))}
               </div>
               {Math.ceil(commentTotal / commentInquiry.limit) > 1 && (
@@ -472,7 +532,7 @@ const SellerDetail: NextPage = ({
                       insertCommentData.commentContent === "" || !user?._id
                     }
                     onClick={createCommentHandler}
-                    className="inline-flex items-center rounded-lg bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:from-pink-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 transition-all duration-200"
+                    className="inline-flex items-center rounded-lg bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:from-pink-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 transition-all duration-200"
                   >
                     Submit Review
                     <svg
