@@ -508,7 +508,6 @@ const ProductDetail: NextPage<DetailProps> = ({
                   </div>
                 </div>
 
-                {/* Tags and Categories */}
                 <div className="flex flex-wrap items-center gap-2">
                   {product?.productTags?.map((tag) => (
                     <span
@@ -535,7 +534,6 @@ const ProductDetail: NextPage<DetailProps> = ({
                   )}
                 </div>
 
-                {/* Location */}
                 {location && (
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <svg
@@ -554,7 +552,6 @@ const ProductDetail: NextPage<DetailProps> = ({
                 )}
               </div>
 
-              {/* Colors */}
               {colors?.length > 0 && (
                 <div className="space-y-3">
                   <div className="text-sm font-semibold text-gray-900">

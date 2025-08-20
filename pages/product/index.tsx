@@ -1,4 +1,10 @@
-import React, { ChangeEvent, MouseEvent, useEffect, useState } from "react";
+import React, {
+  ChangeEvent,
+  MouseEvent,
+  useEffect,
+  useState,
+  useRef,
+} from "react";
 import { NextPage } from "next";
 import Link from "next/link";
 import ProductCard from "../../libs/components/product/ProductCard";
@@ -8,6 +14,7 @@ import { ProductsInquiry } from "../../libs/types/product/product.input";
 import { Product } from "../../libs/types/product/product";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { Direction, Message } from "../../libs/enums/common.enum";
+import { ProductType } from "../../libs/enums/product.enum";
 import { GET_PRODUCTS } from "../../apollo/user/query";
 import { LIKE_TARGET_PRODUCT } from "../../apollo/user/mutation";
 import { useMutation, useQuery } from "@apollo/client";
@@ -49,6 +56,19 @@ const ProductList: NextPage<ProductListProps> = ({
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [menuOpen, setMenuOpen] = useState(false);
   const [filterSortName, setFilterSortName] = useState("New");
+  const [collectionMenuOpen, setCollectionMenuOpen] = useState(false);
+  const [selectedCollection, setSelectedCollection] =
+    useState<string>("All Collections");
+  const [searchText, setSearchText] = useState<string>("");
+  const [priceMenuOpen, setPriceMenuOpen] = useState(false);
+  const [selectedPriceRange, setSelectedPriceRange] =
+    useState<string>("All Prices");
+  const [periodMenuOpen, setPeriodMenuOpen] = useState(false);
+  const [selectedPeriod, setSelectedPeriod] = useState<string>("All Time");
+  const collectionMenuRef = useRef<HTMLDivElement>(null);
+  const sortMenuRef = useRef<HTMLDivElement>(null);
+  const priceMenuRef = useRef<HTMLDivElement>(null);
+  const periodMenuRef = useRef<HTMLDivElement>(null);
 
   /** APOLLO REQUESTS **/
   const { refetch: refetchProducts } = useQuery(GET_PRODUCTS, {
@@ -63,6 +83,94 @@ const ProductList: NextPage<ProductListProps> = ({
 
   const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
 
+  // Collection options
+  const collectionOptions = [
+    { id: "all", name: "All Collections", value: null },
+    { id: "clothing", name: "Clothing", value: ProductType.CLOTHING },
+    {
+      id: "home-living",
+      name: "Home & Living",
+      value: ProductType.HOME_LIVING,
+    },
+    { id: "accessory", name: "Accessories", value: ProductType.ACCESSORY },
+    { id: "handmade", name: "Handmade", value: ProductType.HANDMADE },
+    { id: "vintage", name: "Vintage", value: ProductType.VINTAGE },
+    {
+      id: "craft-supplies",
+      name: "Craft Supplies",
+      value: ProductType.CRAFT_SUPPLIES,
+    },
+    { id: "jewelry", name: "Jewelry", value: ProductType.JEWELRY },
+    {
+      id: "pet-products",
+      name: "Pet Products",
+      value: ProductType.PET_PRODUCTS,
+    },
+    {
+      id: "art-collectables",
+      name: "Art & Collectables",
+      value: ProductType.ART_COLLECTABLES,
+    },
+    { id: "children", name: "Children", value: ProductType.CHILDREN },
+  ];
+
+  // Price range options
+  const priceRangeOptions = [
+    { id: "all", name: "All Prices", value: null },
+    { id: "under-50", name: "Under $50", value: { start: 0, end: 50 } },
+    { id: "50-100", name: "$50 - $100", value: { start: 50, end: 100 } },
+    { id: "100-200", name: "$100 - $200", value: { start: 100, end: 200 } },
+    { id: "200-500", name: "$200 - $500", value: { start: 200, end: 500 } },
+    { id: "500-1000", name: "$500 - $1,000", value: { start: 500, end: 1000 } },
+    {
+      id: "over-1000",
+      name: "Over $1,000",
+      value: { start: 1000, end: 2000000 },
+    },
+  ];
+
+  // Period range options
+  const periodRangeOptions = [
+    { id: "all", name: "All Time", value: null },
+    {
+      id: "today",
+      name: "Today",
+      value: { start: new Date(), end: new Date() },
+    },
+    {
+      id: "week",
+      name: "This Week",
+      value: {
+        start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        end: new Date(),
+      },
+    },
+    {
+      id: "month",
+      name: "This Month",
+      value: {
+        start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        end: new Date(),
+      },
+    },
+    {
+      id: "quarter",
+      name: "This Quarter",
+      value: {
+        start: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
+        end: new Date(),
+      },
+    },
+    {
+      id: "year",
+      name: "This Year",
+      value: {
+        start: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000),
+        end: new Date(),
+      },
+    },
+  ];
+
   /** LIFECYCLES **/
   useEffect(() => {
     if (router.query.input) {
@@ -71,6 +179,41 @@ const ProductList: NextPage<ProductListProps> = ({
     }
     setCurrentPage(searchFilter.page === undefined ? 1 : searchFilter.page);
   }, [router]);
+
+  // Click outside handler for dropdowns
+  useEffect(() => {
+    const handleClickOutside = (event: globalThis.MouseEvent) => {
+      if (
+        collectionMenuRef.current &&
+        !collectionMenuRef.current.contains(event.target as Node)
+      ) {
+        setCollectionMenuOpen(false);
+      }
+      if (
+        sortMenuRef.current &&
+        !sortMenuRef.current.contains(event.target as Node)
+      ) {
+        setMenuOpen(false);
+      }
+      if (
+        priceMenuRef.current &&
+        !priceMenuRef.current.contains(event.target as Node)
+      ) {
+        setPriceMenuOpen(false);
+      }
+      if (
+        periodMenuRef.current &&
+        !periodMenuRef.current.contains(event.target as Node)
+      ) {
+        setPeriodMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   /** HANDLERS **/
   const likeProductHandler = async (user: T, id: string) => {
@@ -127,6 +270,113 @@ const ProductList: NextPage<ProductListProps> = ({
     setMenuOpen(false);
   };
 
+  const collectionHandler = (collection: {
+    id: string;
+    name: string;
+    value: ProductType | null;
+  }) => {
+    setSelectedCollection(collection.name);
+
+    if (collection.value === null) {
+      // Reset to all collections
+      setSearchFilter({
+        ...searchFilter,
+        search: {
+          ...searchFilter.search,
+          typeList: undefined,
+        },
+      });
+    } else {
+      // Filter by specific collection
+      setSearchFilter({
+        ...searchFilter,
+        search: {
+          ...searchFilter.search,
+          typeList: [collection.value],
+        },
+      });
+    }
+
+    setCollectionMenuOpen(false);
+  };
+
+  const searchHandler = () => {
+    setSearchFilter({
+      ...searchFilter,
+      page: 1, // Reset to first page when searching
+      search: {
+        ...searchFilter.search,
+        text: searchText.trim() || undefined,
+      },
+    });
+  };
+
+  const handleSearchKeyPress = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter") {
+      searchHandler();
+    }
+  };
+
+  const priceRangeHandler = (priceRange: {
+    id: string;
+    name: string;
+    value: { start: number; end: number } | null;
+  }) => {
+    setSelectedPriceRange(priceRange.name);
+
+    if (priceRange.value === null) {
+      // Reset to all prices
+      setSearchFilter({
+        ...searchFilter,
+        search: {
+          ...searchFilter.search,
+          pricesRange: undefined,
+        },
+      });
+    } else {
+      // Filter by specific price range
+      setSearchFilter({
+        ...searchFilter,
+        search: {
+          ...searchFilter.search,
+          pricesRange: priceRange.value,
+        },
+      });
+    }
+
+    setPriceMenuOpen(false);
+  };
+
+  const periodRangeHandler = (periodRange: {
+    id: string;
+    name: string;
+    value: { start: Date; end: Date } | null;
+  }) => {
+    setSelectedPeriod(periodRange.name);
+
+    if (periodRange.value === null) {
+      // Reset to all time
+      setSearchFilter({
+        ...searchFilter,
+        search: {
+          ...searchFilter.search,
+          periodsRange: undefined,
+        },
+      });
+    } else {
+      // Filter by specific period range
+      setSearchFilter({
+        ...searchFilter,
+        search: {
+          ...searchFilter.search,
+          periodsRange: periodRange.value,
+        },
+      });
+    }
+
+    setPeriodMenuOpen(false);
+  };
+
   const totalPages = Math.max(1, Math.ceil(total / (searchFilter.limit || 9)));
 
   return (
@@ -137,36 +387,141 @@ const ProductList: NextPage<ProductListProps> = ({
           <h1 className="text-lg font-semibold text-foreground">
             Explore Products
           </h1>
-          <div className="relative">
-            <button
-              onClick={() => setMenuOpen((v) => !v)}
-              className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-foreground hover:bg-gray-50"
-            >
-              Sort by: {filterSortName}
-              <span className="ml-1">▾</span>
-            </button>
-            {menuOpen && (
-              <div className="absolute right-0 z-20 mt-2 w-40 rounded-md border border-gray-200 bg-white p-1 shadow">
-                <button
-                  onClick={() => sortingHandler("new")}
-                  className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100"
+          <div className="flex items-center gap-3">
+            {/* Search Input */}
+            <div className="relative">
+              <input
+                type="text"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                onKeyPress={handleSearchKeyPress}
+                placeholder="Search products..."
+                className="w-94 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-foreground placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-transparent"
+              />
+              <button
+                onClick={searchHandler}
+                className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex h-6 w-6 items-center justify-center rounded-md bg-pink-500 text-white hover:bg-pink-600 transition-colors"
+              >
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  New
-                </button>
-                <button
-                  onClick={() => sortingHandler("lowest")}
-                  className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100"
-                >
-                  Lowest Price
-                </button>
-                <button
-                  onClick={() => sortingHandler("highest")}
-                  className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100"
-                >
-                  Highest Price
-                </button>
-              </div>
-            )}
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            {/* Collection Filter */}
+            <div className="relative" ref={collectionMenuRef}>
+              <button
+                onClick={() => setCollectionMenuOpen((v) => !v)}
+                className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-foreground hover:bg-gray-50"
+              >
+                Collection: {selectedCollection}
+                <span className="ml-1">▾</span>
+              </button>
+              {collectionMenuOpen && (
+                <div className="absolute left-0 z-20 mt-2 w-48 rounded-md border border-gray-200 bg-white p-1 shadow max-h-60 overflow-y-auto">
+                  {collectionOptions.map((collection) => (
+                    <button
+                      key={collection.id}
+                      onClick={() => collectionHandler(collection)}
+                      className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100"
+                    >
+                      {collection.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Price Range Filter */}
+            <div className="relative" ref={priceMenuRef}>
+              <button
+                onClick={() => setPriceMenuOpen((v) => !v)}
+                className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-foreground hover:bg-gray-50"
+              >
+                Price: {selectedPriceRange}
+                <span className="ml-1">▾</span>
+              </button>
+              {priceMenuOpen && (
+                <div className="absolute left-0 z-20 mt-2 w-40 rounded-md border border-gray-200 bg-white p-1 shadow">
+                  {priceRangeOptions.map((priceRange) => (
+                    <button
+                      key={priceRange.id}
+                      onClick={() => priceRangeHandler(priceRange)}
+                      className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100"
+                    >
+                      {priceRange.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Period Range Filter */}
+            <div className="relative" ref={periodMenuRef}>
+              <button
+                onClick={() => setPeriodMenuOpen((v) => !v)}
+                className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-foreground hover:bg-gray-50"
+              >
+                Period: {selectedPeriod}
+                <span className="ml-1">▾</span>
+              </button>
+              {periodMenuOpen && (
+                <div className="absolute left-0 z-20 mt-2 w-40 rounded-md border border-gray-200 bg-white p-1 shadow">
+                  {periodRangeOptions.map((periodRange) => (
+                    <button
+                      key={periodRange.id}
+                      onClick={() => periodRangeHandler(periodRange)}
+                      className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100"
+                    >
+                      {periodRange.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Sort Filter */}
+            <div className="relative" ref={sortMenuRef}>
+              <button
+                onClick={() => setMenuOpen((v) => !v)}
+                className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-foreground hover:bg-gray-50"
+              >
+                Sort by: {filterSortName}
+                <span className="ml-1">▾</span>
+              </button>
+              {menuOpen && (
+                <div className="absolute right-0 z-20 mt-2 w-40 rounded-md border border-gray-200 bg-white p-1 shadow">
+                  <button
+                    onClick={() => sortingHandler("new")}
+                    className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100"
+                  >
+                    New
+                  </button>
+                  <button
+                    onClick={() => sortingHandler("lowest")}
+                    className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100"
+                  >
+                    Lowest Price
+                  </button>
+                  <button
+                    onClick={() => sortingHandler("highest")}
+                    className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100"
+                  >
+                    Highest Price
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
