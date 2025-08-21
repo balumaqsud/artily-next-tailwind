@@ -36,6 +36,7 @@ import {
   GET_MEMBER,
   GET_PRODUCTS,
 } from "../../apollo/user/query";
+import { SUBSCRIBE, UNSUBSCRIBE } from "../../apollo/user/mutation";
 import { Direction, Message } from "../../libs/enums/common.enum";
 import ProductCard from "@/libs/components/product/ProductCard";
 
@@ -92,6 +93,8 @@ const SellerDetail: NextPage = ({
   const [updateComment] = useMutation(UPDATE_COMMENT);
   const [removeComment] = useMutation(REMOVE_COMMENT);
   const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
+  const [followArtist] = useMutation(SUBSCRIBE);
+  const [unfollowArtist] = useMutation(UNSUBSCRIBE);
 
   const {
     loading: getMemberLoading,
@@ -260,6 +263,34 @@ const SellerDetail: NextPage = ({
     }
   };
 
+  const followHandler = async () => {
+    try {
+      if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
+
+      await followArtist({ variables: { input: artist?._id } });
+      await sweetTopSmallSuccessAlert("Followed successfully!", 800);
+
+      // Refetch artist data to update follow status and follower count
+      await getMemberRefetch({ input: mbId });
+    } catch (error) {
+      sweetErrorHandling(error);
+    }
+  };
+
+  const unfollowHandler = async () => {
+    try {
+      if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
+
+      await unfollowArtist({ variables: { input: artist?._id } });
+      await sweetTopSmallSuccessAlert("Unfollowed successfully!", 800);
+
+      // Refetch artist data to update follow status and follower count
+      await getMemberRefetch({ input: mbId });
+    } catch (error) {
+      sweetErrorHandling(error);
+    }
+  };
+
   return (
     <div className="w-full bg-background">
       <div className="mx-auto max-w-7xl px-4 py-8">
@@ -288,13 +319,25 @@ const SellerDetail: NextPage = ({
                   <p className="text-sm text-white/90 drop-shadow-sm">
                     Creative Artist & Designer
                   </p>
+                  <button
+                    onClick={
+                      artist?.meFollowed?.some((follow) => follow.myFollowing)
+                        ? unfollowHandler
+                        : followHandler
+                    }
+                    className="rounded-full bg-white px-3 py-2 m-2 text-sm font-semibold text-gray-900 shadow hover:bg-gray-100 cursor-pointer transition-colors"
+                  >
+                    {artist?.meFollowed?.some((follow) => follow.myFollowing)
+                      ? "Unfollow"
+                      : "Follow"}
+                  </button>
                 </div>
               </div>
             </div>
           </div>
 
           <div className="p-6">
-            <div className="grid grid-cols-7 gap-4">
+            <div className="grid grid-cols-4 gap-4 sm:grid-cols-7">
               {/* Stats */}
               <div className="text-center">
                 <div className="text-2xl font-bold text-gray-900">
@@ -376,11 +419,13 @@ const SellerDetail: NextPage = ({
                 Discover unique creations from this talented artist
               </p>
             </div>
-            {productTotal > 0 && (
-              <span className="text-sm text-gray-500">
-                {productTotal} product{productTotal > 1 ? "s" : ""} available
-              </span>
-            )}
+            <div className="flex items-center gap-4">
+              {productTotal > 0 && (
+                <span className="text-sm text-gray-500">
+                  {productTotal} product{productTotal > 1 ? "s" : ""} available
+                </span>
+              )}
+            </div>
           </div>
 
           {artistProducts.length > 0 ? (

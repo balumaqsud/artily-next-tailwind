@@ -380,51 +380,58 @@ const ProductList: NextPage<ProductListProps> = ({
   const totalPages = Math.max(1, Math.ceil(total / (searchFilter.limit || 9)));
 
   return (
-    <div id="product-list-page" className="relative w-full">
-      <div className="mx-auto w-full max-w-7xl px-4 py-6">
-        {/* Header controls */}
-        <div className="mb-4 flex items-center justify-between">
-          <h1 className="text-lg font-semibold text-foreground">
+    <div className="w-full bg-background">
+      <div className="mx-auto max-w-7xl px-4 py-8">
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-xl font-semibold text-foreground mb-4">
             Explore Products
           </h1>
-          <div className="flex items-center gap-3">
-            {/* Search Input */}
-            <div className="relative">
-              <input
-                type="text"
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                onKeyPress={handleSearchKeyPress}
-                placeholder="Search products..."
-                className="w-94 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-foreground placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-transparent"
-              />
-              <button
-                onClick={searchHandler}
-                className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex h-6 w-6 items-center justify-center rounded-md bg-pink-500 text-white hover:bg-pink-600 transition-colors"
-              >
-                <svg
-                  className="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-              </button>
-            </div>
+        </div>
 
+        {/* Filter Bar - Mobile Friendly */}
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          {/* Search Input */}
+          <div className="relative w-full sm:w-auto">
+            <input
+              type="text"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              onKeyPress={handleSearchKeyPress}
+              placeholder="Search products..."
+              className="w-full sm:w-80 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-foreground placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-transparent"
+            />
+            <button
+              onClick={searchHandler}
+              className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex h-6 w-6 items-center justify-center rounded-md bg-pink-500 text-white hover:bg-pink-600 transition-colors"
+            >
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </button>
+          </div>
+
+          {/* Filter Controls - Stacked on mobile */}
+          <div className="flex flex-wrap gap-2 sm:gap-3">
             {/* Collection Filter */}
             <div className="relative" ref={collectionMenuRef}>
               <button
                 onClick={() => setCollectionMenuOpen((v) => !v)}
-                className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-foreground hover:bg-gray-50"
+                className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-foreground hover:bg-gray-50 cursor-pointer"
               >
-                Collection: {selectedCollection}
+                <span className="hidden sm:inline">Collection:</span>
+                <span className="sm:hidden">Collection</span>
+                <span className="hidden sm:inline">{selectedCollection}</span>
                 <span className="ml-1">▾</span>
               </button>
               {collectionMenuOpen && (
@@ -433,7 +440,7 @@ const ProductList: NextPage<ProductListProps> = ({
                     <button
                       key={collection.id}
                       onClick={() => collectionHandler(collection)}
-                      className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100"
+                      className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100 cursor-pointer"
                     >
                       {collection.name}
                     </button>
@@ -446,9 +453,11 @@ const ProductList: NextPage<ProductListProps> = ({
             <div className="relative" ref={priceMenuRef}>
               <button
                 onClick={() => setPriceMenuOpen((v) => !v)}
-                className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-foreground hover:bg-gray-50"
+                className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-foreground hover:bg-gray-50 cursor-pointer"
               >
-                Price: {selectedPriceRange}
+                <span className="hidden sm:inline">Price:</span>
+                <span className="sm:hidden">Price</span>
+                <span className="hidden sm:inline">{selectedPriceRange}</span>
                 <span className="ml-1">▾</span>
               </button>
               {priceMenuOpen && (
@@ -457,7 +466,7 @@ const ProductList: NextPage<ProductListProps> = ({
                     <button
                       key={priceRange.id}
                       onClick={() => priceRangeHandler(priceRange)}
-                      className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100"
+                      className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100 cursor-pointer"
                     >
                       {priceRange.name}
                     </button>
@@ -470,9 +479,11 @@ const ProductList: NextPage<ProductListProps> = ({
             <div className="relative" ref={periodMenuRef}>
               <button
                 onClick={() => setPeriodMenuOpen((v) => !v)}
-                className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-foreground hover:bg-gray-50"
+                className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-foreground hover:bg-gray-50 cursor-pointer"
               >
-                Period: {selectedPeriod}
+                <span className="hidden sm:inline">Period:</span>
+                <span className="sm:hidden">Period</span>
+                <span className="hidden sm:inline">{selectedPeriod}</span>
                 <span className="ml-1">▾</span>
               </button>
               {periodMenuOpen && (
@@ -481,7 +492,7 @@ const ProductList: NextPage<ProductListProps> = ({
                     <button
                       key={periodRange.id}
                       onClick={() => periodRangeHandler(periodRange)}
-                      className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100"
+                      className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100 cursor-pointer"
                     >
                       {periodRange.name}
                     </button>
@@ -494,28 +505,30 @@ const ProductList: NextPage<ProductListProps> = ({
             <div className="relative" ref={sortMenuRef}>
               <button
                 onClick={() => setMenuOpen((v) => !v)}
-                className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-foreground hover:bg-gray-50"
+                className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-foreground hover:bg-gray-50 cursor-pointer"
               >
-                Sort by: {filterSortName}
+                <span className="hidden sm:inline">Sort by:</span>
+                <span className="sm:hidden">Sort</span>
+                <span className="hidden sm:inline">{filterSortName}</span>
                 <span className="ml-1">▾</span>
               </button>
               {menuOpen && (
                 <div className="absolute right-0 z-20 mt-2 w-40 rounded-md border border-gray-200 bg-white p-1 shadow">
                   <button
                     onClick={() => sortingHandler("new")}
-                    className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100"
+                    className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100 cursor-pointer"
                   >
                     New
                   </button>
                   <button
                     onClick={() => sortingHandler("lowest")}
-                    className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100"
+                    className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100 cursor-pointer"
                   >
                     Lowest Price
                   </button>
                   <button
                     onClick={() => sortingHandler("highest")}
-                    className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100"
+                    className="block w-full rounded px-2 py-1 text-left text-sm hover:bg-gray-100 cursor-pointer"
                   >
                     Highest Price
                   </button>
@@ -525,49 +538,53 @@ const ProductList: NextPage<ProductListProps> = ({
           </div>
         </div>
 
-        {/* Content */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {/* Content - Responsive Grid */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {products?.length === 0 ? (
-            <div className="col-span-full flex flex-col items-center justify-center rounded-md border border-dashed p-8 text-muted-foreground">
+            <div className="col-span-full flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-white p-10 text-center">
               <img
                 src="/img/icons/icoAlert.svg"
                 alt="no data"
-                className="mb-2 h-8 w-8"
+                className="mb-3 h-10 w-10 opacity-60"
               />
-              <p>No products found!</p>
+              <p className="text-sm text-gray-600">No products found!</p>
             </div>
           ) : (
             (products ?? []).map((product: Product) => (
-              <ProductCard
+              <div
                 key={product?._id.toString()}
-                product={product}
-                likeTargetProductHandler={likeProductHandler}
-              />
+                className="flex justify-center sm:block"
+              >
+                <ProductCard
+                  product={product}
+                  likeTargetProductHandler={likeProductHandler}
+                />
+              </div>
             ))
           )}
         </div>
 
-        {/* Pagination */}
+        {/* Pagination - Mobile Friendly */}
         {products.length !== 0 && (
-          <div className="mt-6 flex items-center justify-between">
-            <div className="text-sm text-muted-foreground">
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row sm:justify-between">
+            <div className="text-sm text-muted-foreground text-center sm:text-left">
               Total {total} product{total > 1 ? "s" : ""} available
             </div>
             <div className="flex items-center gap-2">
               <button
                 disabled={currentPage <= 1}
                 onClick={() => handlePaginationChange(currentPage - 1)}
-                className="rounded-md border border-gray-300 bg-white px-3 py-1 text-sm disabled:opacity-50"
+                className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm disabled:opacity-50 hover:bg-gray-50 cursor-pointer"
               >
                 Prev
               </button>
-              <span className="text-sm">
+              <span className="text-sm px-2">
                 Page {currentPage} of {totalPages}
               </span>
               <button
                 disabled={currentPage >= totalPages}
                 onClick={() => handlePaginationChange(currentPage + 1)}
-                className="rounded-md border border-gray-300 bg-white px-3 py-1 text-sm disabled:opacity-50"
+                className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm disabled:opacity-50 hover:bg-gray-50 cursor-pointer"
               >
                 Next
               </button>
