@@ -284,6 +284,12 @@ export const GET_ARTIST_PRODUCTS = gql`
           deletedAt
           createdAt
           updatedAt
+          accessToken
+        }
+        meLiked {
+          memberId
+          likeRefId
+          myFavorite
         }
       }
       metaCounter {
@@ -419,6 +425,7 @@ export const GET_VISITED = gql`
           deletedAt
           createdAt
           updatedAt
+          accessToken
         }
       }
       metaCounter {

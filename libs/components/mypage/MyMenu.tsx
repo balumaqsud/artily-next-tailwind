@@ -68,27 +68,27 @@ const MyMenu = () => {
             Manage
           </p>
           <div className="space-y-1">
-            {user.memberType === "AGENT" && (
+            {(user.memberType === "ARTIST" || user.memberType === "SELLER") && (
               <>
                 <Link
                   href={{
                     pathname: "/mypage",
-                    query: { category: "addProperty" },
+                    query: { category: "addProduct" },
                   }}
                   scroll={false}
                 >
-                  <div className={navItemClass(category === "addProperty")}>
+                  <div className={navItemClass(category === "addProduct")}>
                     Add Product
                   </div>
                 </Link>
                 <Link
                   href={{
                     pathname: "/mypage",
-                    query: { category: "myProperties" },
+                    query: { category: "myProducts" },
                   }}
                   scroll={false}
                 >
-                  <div className={navItemClass(category === "myProperties")}>
+                  <div className={navItemClass(category === "myProducts")}>
                     <span>My Products</span>
                   </div>
                 </Link>

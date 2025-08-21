@@ -17,7 +17,7 @@ import CommunityCard from "../common/CommunityCard";
 
 const DEFAULT_INPUT: ArticlesInquiry = {
   page: 1,
-  limit: 10,
+  limit: 6,
   sort: "createdAt",
   direction: "DESC" as any,
   search: { articleCategory: BoardArticleCategory.FREE },
@@ -78,7 +78,7 @@ const MyArticles: NextPage = ({
   const totalPages = Math.ceil(totalCount / searchCommunity.limit);
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div id="my-articles-page" className="w-full">
       <div className="mb-6">
         <h1 className="text-2xl font-extrabold tracking-tight text-gray-900">
           My Articles
@@ -86,30 +86,29 @@ const MyArticles: NextPage = ({
         <p className="text-sm text-gray-500">We are happy to see you again!</p>
       </div>
 
-      <div className="space-y-4 mb-8">
-        {boardArticles?.length > 0 ? (
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {boardArticles?.length ? (
           boardArticles?.map((boardArticle: BoardArticle) => (
             <CommunityCard
               likeBoArticleHandler={likeBoArticleHandler}
               boardArticle={boardArticle}
               key={boardArticle?._id}
-              size={"small"}
             />
           ))
         ) : (
-          <div className="flex flex-col items-center justify-center py-12 space-y-4">
+          <div className="col-span-full flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-white p-10 text-center">
             <img
               src="/img/icons/icoAlert.svg"
               alt=""
-              className="w-16 h-16 opacity-50"
+              className="mb-3 h-10 w-10 opacity-60"
             />
-            <p className="text-gray-500 text-center">No Articles found!</p>
+            <p className="text-sm text-gray-600">No Articles found!</p>
           </div>
         )}
       </div>
 
       {boardArticles?.length > 0 && (
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="mt-6 flex flex-col items-center justify-center gap-2">
           <div className="flex items-center gap-2">
             <button
               onClick={() => paginationHandler(searchCommunity.page - 1)}
@@ -140,7 +139,7 @@ const MyArticles: NextPage = ({
             </button>
           </div>
           <div className="text-sm text-gray-500">
-            Total {totalCount ?? 0} article(s) available
+            Total {totalCount ?? 0} article{totalCount > 1 ? "s" : ""}
           </div>
         </div>
       )}

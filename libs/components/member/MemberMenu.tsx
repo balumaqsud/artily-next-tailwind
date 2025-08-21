@@ -1,261 +1,267 @@
-import React, { useState } from 'react';
-import { useRouter } from 'next/router';
-import { Stack, Typography, Box, List, ListItem, Button } from '@mui/material';
-import useDeviceDetect from '../../hooks/useDeviceDetect';
-import Link from 'next/link';
-import { Member } from '../../types/member/member';
-import { REACT_APP_API_URL } from '../../config';
-import { GET_MEMBER } from '../../../apollo/user/query';
-import { useQuery } from '@apollo/client';
-import { T } from '../../types/common';
+import React, { useState } from "react";
+import { useRouter } from "next/router";
+import useDeviceDetect from "../../hooks/useDeviceDetect";
+import Link from "next/link";
+import { Member } from "../../types/member/member";
+import { REACT_APP_API_URL } from "../../config";
+import { GET_MEMBER } from "../../../apollo/user/query";
+import { useQuery } from "@apollo/client";
+import { T } from "../../types/common";
 
 interface MemberMenuProps {
-	subscribeHandler: any;
-	unsubscribeHandler: any;
+  subscribeHandler: any;
+  unsubscribeHandler: any;
 }
 
 const MemberMenu = (props: MemberMenuProps) => {
-	const { subscribeHandler, unsubscribeHandler } = props;
-	const device = useDeviceDetect();
-	const router = useRouter();
-	const category: any = router.query?.category;
-	const [member, setMember] = useState<Member | null>(null);
-	const { memberId } = router.query;
+  const { subscribeHandler, unsubscribeHandler } = props;
+  const device = useDeviceDetect();
+  const router = useRouter();
+  const category: any = router.query?.category;
+  const [member, setMember] = useState<Member | null>(null);
+  const { memberId } = router.query;
 
-	/** APOLLO REQUESTS **/
+  /** APOLLO REQUESTS **/
 
-	const {
-		loading: getMemberLoading,
-		data: getMemberData,
-		error: getMemberError,
-		refetch: getMemberRefetch,
-	} = useQuery(GET_MEMBER, {
-		fetchPolicy: 'network-only',
-		variables: { input: memberId },
-		skip: !memberId,
-		notifyOnNetworkStatusChange: true,
-		onCompleted: (data: T) => {
-			setMember(data?.getMember);
-		},
-	});
+  const {
+    loading: getMemberLoading,
+    data: getMemberData,
+    error: getMemberError,
+    refetch: getMemberRefetch,
+  } = useQuery(GET_MEMBER, {
+    fetchPolicy: "network-only",
+    variables: { input: memberId },
+    skip: !memberId,
+    notifyOnNetworkStatusChange: true,
+    onCompleted: (data: T) => {
+      setMember(data?.getMember);
+    },
+  });
 
-	if (device === 'mobile') {
-		return <div>MEMBER MENU MOBILE</div>;
-	} else {
-		return (
-			<Stack width={'100%'} padding={'30px 24px'}>
-				<Stack className={'profile'}>
-					<Box component={'div'} className={'profile-img'}>
-						<img
-							src={member?.memberImage ? `${REACT_APP_API_URL}/${member?.memberImage}` : '/img/profile/defaultUser.svg'}
-							alt={'member-photo'}
-						/>
-					</Box>
-					<Stack className={'user-info'}>
-						<Typography className={'user-name'}>{member?.memberNick}</Typography>
-						<Box component={'div'} className={'user-phone'}>
-							<img src={'/img/icons/call.svg'} alt={'icon'} />
-							<Typography className={'p-number'}>{member?.memberPhone}</Typography>
-						</Box>
-						<Typography className={'view-list'}>{member?.memberType}</Typography>
-					</Stack>
-				</Stack>
-				<Stack className="follow-button-box">
-					{member?.meFollowed && member?.meFollowed[0]?.myFollowing ? (
-						<>
-							<Button
-								variant="outlined"
-								sx={{ background: '#b9b9b9' }}
-								onClick={() => unsubscribeHandler(member?._id, getMemberRefetch, memberId)}
-							>
-								Unfollow
-							</Button>
-							<Typography>Following</Typography>
-						</>
-					) : (
-						<Button
-							variant="contained"
-							sx={{ background: '#ff5d18', ':hover': { background: '#ff5d18' } }}
-							onClick={() => subscribeHandler(member?._id, getMemberRefetch, memberId)}
-						>
-							Follow
-						</Button>
-					)}
-				</Stack>
-				<Stack className={'sections'}>
-					<Stack className={'section'}>
-						<Typography className="title" variant={'h5'}>
-							Details
-						</Typography>
-						<List className={'sub-section'}>
-							{member?.memberType === 'AGENT' && (
-								<ListItem className={category === 'properties' ? 'focus' : ''}>
-									<Link
-										href={{
-											pathname: '/member',
-											query: { ...router.query, category: 'properties' },
-										}}
-										scroll={false}
-										style={{ width: '100%' }}
-									>
-										<div className={'flex-box'}>
-											{category === 'properties' ? (
-												<img className={'com-icon'} src={'/img/icons/homeWhite.svg'} alt={'com-icon'} />
-											) : (
-												<img className={'com-icon'} src={'/img/icons/home.svg'} alt={'com-icon'} />
-											)}
-											<Typography className={'sub-title'} variant={'subtitle1'} component={'p'}>
-												Properties
-											</Typography>
-											<Typography className="count-title" variant="subtitle1">
-												{member?.memberProperties}
-											</Typography>
-										</div>
-									</Link>
-								</ListItem>
-							)}
-							<ListItem className={category === 'followers' ? 'focus' : ''}>
-								<Link
-									href={{
-										pathname: '/member',
-										query: { ...router.query, category: 'followers' },
-									}}
-									scroll={false}
-									style={{ width: '100%' }}
-								>
-									<div className={'flex-box'}>
-										<svg
-											className={'com-icon'}
-											fill={category === 'followers' ? 'white' : 'black'}
-											height="800px"
-											width="800px"
-											version="1.1"
-											id="Layer_1"
-											xmlns="http://www.w3.org/2000/svg"
-											viewBox="0 0 328 328"
-										>
-											<g id="XMLID_350_">
-												<path
-													id="XMLID_351_"
-													d="M52.25,64.001c0,34.601,28.149,62.749,62.75,62.749c34.602,0,62.751-28.148,62.751-62.749
-		S149.602,1.25,115,1.25C80.399,1.25,52.25,29.4,52.25,64.001z"
-												/>
-												<path
-													id="XMLID_352_"
-													d="M217.394,262.357c2.929,2.928,6.768,4.393,10.606,4.393c3.839,0,7.678-1.465,10.607-4.394
-		c5.857-5.858,5.857-15.356-0.001-21.214l-19.393-19.391l19.395-19.396c5.857-5.858,5.857-15.356-0.001-21.214
-		c-5.858-5.857-15.356-5.856-21.214,0.001l-30,30.002c-2.813,2.814-4.393,6.629-4.393,10.607c0,3.979,1.58,7.794,4.394,10.607
-		L217.394,262.357z"
-												/>
-												<path
-													id="XMLID_439_"
-													d="M15,286.75h125.596c19.246,24.348,49.031,40,82.404,40c57.896,0,105-47.103,105-105
-		c0-57.896-47.104-105-105-105c-34.488,0-65.145,16.716-84.297,42.47c-7.764-1.628-15.695-2.47-23.703-2.47
-		c-63.411,0-115,51.589-115,115C0,280.034,6.716,286.75,15,286.75z M223,146.75c41.355,0,75,33.645,75,75s-33.645,75-75,75
-		s-75-33.645-75-75S181.644,146.75,223,146.75z"
-												/>
-											</g>
-										</svg>
-										<Typography className={'sub-title'} variant={'subtitle1'} component={'p'}>
-											Followers
-										</Typography>
-										<Typography className="count-title" variant="subtitle1">
-											{member?.memberFollowers}
-										</Typography>
-									</div>
-								</Link>
-							</ListItem>
-							<ListItem className={category === 'followings' ? 'focus' : ''}>
-								<Link
-									href={{
-										pathname: '/member',
-										query: { ...router.query, category: 'followings' },
-									}}
-									scroll={false}
-									style={{ width: '100%' }}
-								>
-									<div className={'flex-box'}>
-										<svg
-											className={'com-icon'}
-											fill={category === 'followings' ? 'white' : 'black'}
-											height="800px"
-											width="800px"
-											version="1.1"
-											id="Layer_1"
-											xmlns="http://www.w3.org/2000/svg"
-											viewBox="0 0 328 328"
-										>
-											<g id="XMLID_334_">
-												<path
-													id="XMLID_337_"
-													d="M177.75,64.001C177.75,29.4,149.601,1.25,115,1.25c-34.602,0-62.75,28.15-62.75,62.751
-		S80.398,126.75,115,126.75C149.601,126.75,177.75,98.602,177.75,64.001z"
-												/>
-												<path
-													id="XMLID_338_"
-													d="M228.606,181.144c-5.858-5.857-15.355-5.858-21.214-0.001c-5.857,5.857-5.857,15.355,0,21.214
-		l19.393,19.396l-19.393,19.391c-5.857,5.857-5.857,15.355,0,21.214c2.93,2.929,6.768,4.394,10.607,4.394
-		c3.838,0,7.678-1.465,10.605-4.393l30-29.998c2.813-2.814,4.395-6.629,4.395-10.607c0-3.978-1.58-7.793-4.394-10.607
-		L228.606,181.144z"
-												/>
-												<path
-													id="XMLID_340_"
-													d="M223,116.75c-34.488,0-65.145,16.716-84.298,42.47c-7.763-1.628-15.694-2.47-23.702-2.47
-		c-63.412,0-115,51.589-115,115c0,8.284,6.715,15,15,15h125.596c19.246,24.348,49.03,40,82.404,40c57.896,0,105-47.103,105-105
-		C328,163.854,280.896,116.75,223,116.75z M223,296.75c-41.356,0-75-33.645-75-75s33.644-75,75-75c41.354,0,75,33.645,75,75
-		S264.354,296.75,223,296.75z"
-												/>
-											</g>
-										</svg>
-										<Typography className={'sub-title'} variant={'subtitle1'} component={'p'}>
-											Followings
-										</Typography>
-										<Typography className="count-title" variant="subtitle1">
-											{member?.memberFollowings}
-										</Typography>
-									</div>
-								</Link>
-							</ListItem>
-						</List>
-					</Stack>
-					<Stack className={'section'} sx={{ marginTop: '10px' }}>
-						<div>
-							<Typography className="title" variant={'h5'}>
-								Community
-							</Typography>
-							<List className={'sub-section'}>
-								<ListItem className={category === 'articles' ? 'focus' : ''}>
-									<Link
-										href={{
-											pathname: '/member',
-											query: { ...router.query, category: 'articles' },
-										}}
-										scroll={false}
-										style={{ width: '100%' }}
-									>
-										<div className={'flex-box'}>
-											{category === 'articles' ? (
-												<img className={'com-icon'} src={'/img/icons/discoveryWhite.svg'} alt={'com-icon'} />
-											) : (
-												<img className={'com-icon'} src={'/img/icons/discovery.svg'} alt={'com-icon'} />
-											)}
+  return (
+    <div className="w-full bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+      {/* Profile Section */}
+      <div className="mb-6">
+        <div className="flex flex-col items-center text-center sm:flex-row sm:text-left sm:items-start gap-4">
+          <div className="relative">
+            <img
+              src={
+                member?.memberImage
+                  ? `${REACT_APP_API_URL}/${member?.memberImage}`
+                  : "/img/profile/defaultUser.svg"
+              }
+              alt="member-photo"
+              className="h-20 w-20 sm:h-24 sm:w-24 rounded-full object-cover border-4 border-white shadow-lg"
+            />
+            <div className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-green-500 border-2 border-white"></div>
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1">
+              {member?.memberNick}
+            </h3>
+            <div className="flex items-center justify-center sm:justify-start gap-2 text-sm text-gray-600 mb-2">
+              <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+              </svg>
+              <span>{member?.memberPhone}</span>
+            </div>
+            <span className="inline-flex items-center rounded-full bg-pink-100 px-2.5 py-0.5 text-xs font-medium text-pink-800">
+              {member?.memberType}
+            </span>
+          </div>
+        </div>
+      </div>
 
-											<Typography className={'sub-title'} variant={'subtitle1'} component={'p'}>
-												Articles
-											</Typography>
-											<Typography className="count-title" variant="subtitle1">
-												{member?.memberArticles}
-											</Typography>
-										</div>
-									</Link>
-								</ListItem>
-							</List>
-						</div>
-					</Stack>
-				</Stack>
-			</Stack>
-		);
-	}
+      {/* Follow Button Section */}
+      <div className="mb-6 text-center sm:text-left">
+        {member?.meFollowed && member?.meFollowed[0]?.myFollowing ? (
+          <div className="space-y-2">
+            <button
+              onClick={() =>
+                unsubscribeHandler(member?._id, getMemberRefetch, memberId)
+              }
+              className="w-full sm:w-auto px-6 py-2.5 text-sm font-semibold text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              Unfollow
+            </button>
+            <p className="text-xs text-gray-500">Following</p>
+          </div>
+        ) : (
+          <button
+            onClick={() =>
+              subscribeHandler(member?._id, getMemberRefetch, memberId)
+            }
+            className="w-full sm:w-auto px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-pink-500 to-purple-500 rounded-lg hover:from-pink-600 hover:to-purple-600 transition-all duration-200 shadow-sm"
+          >
+            Follow
+          </button>
+        )}
+      </div>
+
+      {/* Navigation Sections */}
+      <div className="space-y-6">
+        {/* Details Section */}
+        <div>
+          <h4 className="text-lg font-semibold text-gray-900 mb-3">Details</h4>
+          <div className="space-y-1">
+            {member?.memberType === "AGENT" && (
+              <Link
+                href={{
+                  pathname: "/member",
+                  query: { ...router.query, category: "properties" },
+                }}
+                scroll={false}
+                className={`block w-full rounded-lg p-3 transition-all duration-200 ${
+                  category === "properties"
+                    ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-sm"
+                    : "text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex-shrink-0">
+                      {category === "properties" ? (
+                        <svg
+                          className="h-5 w-5"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                        </svg>
+                      ) : (
+                        <svg
+                          className="h-5 w-5"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                        </svg>
+                      )}
+                    </div>
+                    <span className="font-medium">Properties</span>
+                  </div>
+                  <span className="text-sm font-semibold">
+                    {member?.memberProducts}
+                  </span>
+                </div>
+              </Link>
+            )}
+
+            <Link
+              href={{
+                pathname: "/member",
+                query: { ...router.query, category: "followers" },
+              }}
+              scroll={false}
+              className={`block w-full rounded-lg p-3 transition-all duration-200 ${
+                category === "followers"
+                  ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-sm"
+                  : "text-gray-700 hover:bg-gray-50"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex-shrink-0">
+                    <svg
+                      className="h-5 w-5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
+                    </svg>
+                  </div>
+                  <span className="font-medium">Followers</span>
+                </div>
+                <span className="text-sm font-semibold">
+                  {member?.memberFollowers}
+                </span>
+              </div>
+            </Link>
+
+            <Link
+              href={{
+                pathname: "/member",
+                query: { ...router.query, category: "followings" },
+              }}
+              scroll={false}
+              className={`block w-full rounded-lg p-3 transition-all duration-200 ${
+                category === "followings"
+                  ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-sm"
+                  : "text-gray-700 hover:bg-gray-50"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex-shrink-0">
+                    <svg
+                      className="h-5 w-5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
+                    </svg>
+                  </div>
+                  <span className="font-medium">Followings</span>
+                </div>
+                <span className="text-sm font-semibold">
+                  {member?.memberFollowings}
+                </span>
+              </div>
+            </Link>
+          </div>
+        </div>
+
+        {/* Community Section */}
+        <div>
+          <h4 className="text-lg font-semibold text-gray-900 mb-3">
+            Community
+          </h4>
+          <div className="space-y-1">
+            <Link
+              href={{
+                pathname: "/member",
+                query: { ...router.query, category: "articles" },
+              }}
+              scroll={false}
+              className={`block w-full rounded-lg p-3 transition-all duration-200 ${
+                category === "articles"
+                  ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-sm"
+                  : "text-gray-700 hover:bg-gray-50"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex-shrink-0">
+                    {category === "articles" ? (
+                      <svg
+                        className="h-5 w-5"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    ) : (
+                      <svg
+                        className="h-5 w-5"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    )}
+                  </div>
+                  <span className="font-medium">Articles</span>
+                </div>
+                <span className="text-sm font-semibold">
+                  {member?.memberArticles}
+                </span>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default MemberMenu;

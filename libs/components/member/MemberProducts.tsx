@@ -69,7 +69,7 @@ const MyProducts: NextPage = ({
     <div id="member-properties-page">
       <Stack className="main-title-box">
         <Stack className="right-box">
-          <Typography className="main-title">Properties</Typography>
+          <Typography className="main-title">Products</Typography>
         </Stack>
       </Stack>
       <Stack className="properties-list-box">
@@ -110,7 +110,7 @@ const MyProducts: NextPage = ({
                 />
               </Stack>
               <Stack className="total-result">
-                <Typography>{total} property available</Typography>
+                <Typography>{total} product available</Typography>
               </Stack>
             </Stack>
           )}

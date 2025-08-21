@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { NextPage } from "next";
-import { Pagination, Stack, Typography } from "@mui/material";
 import useDeviceDetect from "../../hooks/useDeviceDetect";
-import { ProductCard } from "./ProductCard";
+import PropertyCard from "../product/ProductCard";
 import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
 import { Product } from "../../types/product/product";
 import { SellerProductsInquiry } from "../../types/product/product.input";
@@ -20,7 +19,7 @@ import {
 
 const DEFAULT_INPUT: SellerProductsInquiry = {
   page: 1,
-  limit: 5,
+  limit: 6,
   sort: "createdAt",
   search: {
     productStatus: ProductStatus.ACTIVE,
@@ -49,23 +48,31 @@ const MyProducts = ({ initialInput = DEFAULT_INPUT }) => {
     variables: { input: searchFilter },
     notifyOnNetworkStatusChange: true,
     onCompleted: (data: T) => {
-      setSellerProperties(data?.getSellerProducts?.list);
-      setTotal(data?.getSellerProducts?.metaCounter[0].total ?? 0);
+      console.log("getSellerProducts data:", data);
+      setSellerProperties(data?.getSellerProducts?.list || []);
+      setTotal(data?.getSellerProducts?.metaCounter?.[0]?.total ?? 0);
+    },
+    onError: (error) => {
+      console.error("getSellerProducts error:", error);
     },
   });
 
   /** HANDLERS **/
-  const paginationHandler = (e: T, value: number) => {
-    setSearchFilter({ ...searchFilter, page: value });
+  const paginationHandler = (page: number) => {
+    setSearchFilter({ ...searchFilter, page });
   };
 
   const changeStatusHandler = (value: ProductStatus) => {
-    setSearchFilter({ ...searchFilter, search: { productStatus: value } });
+    setSearchFilter({
+      ...searchFilter,
+      search: { productStatus: value },
+      page: 1,
+    });
   };
 
   const deleteProductHandler = async (id: string) => {
     try {
-      if (await sweetConfirmAlert("do you want to delete?")) {
+      if (await sweetConfirmAlert("Do you want to delete this product?")) {
         await updateProduct({
           variables: {
             input: {
@@ -74,9 +81,11 @@ const MyProducts = ({ initialInput = DEFAULT_INPUT }) => {
             },
           },
         });
+        await getSellerProductsRefetch({ input: searchFilter });
+        await sweetErrorAlert("Product deleted successfully!");
       }
-      await getSellerProductsRefetch({ input: searchFilter });
     } catch (error) {
+      console.error("deleteProductHandler error:", error);
       await sweetErrorHandling(error);
     }
   };
@@ -84,112 +93,125 @@ const MyProducts = ({ initialInput = DEFAULT_INPUT }) => {
   const updateProductHandler = async (status: string, id: string) => {
     try {
       if (
-        await sweetConfirmAlert(`do you want to change status to ${status}?`)
+        await sweetConfirmAlert(`Do you want to change status to ${status}?`)
       ) {
         await updateProduct({
           variables: {
             input: {
               _id: id,
-              propertyStatus: status,
+              productStatus: status,
             },
           },
         });
+        await getSellerProductsRefetch({ input: searchFilter });
+        await sweetErrorAlert(`Product status updated to ${status}!`);
       }
-      await getSellerProductsRefetch({ input: searchFilter });
     } catch (error) {
+      console.error("updateProductHandler error:", error);
       await sweetErrorHandling(error);
     }
   };
 
-  if (user?.memberType !== "ARTIST") {
+  if (user?.memberType !== "ARTIST" && user?.memberType !== "SELLER") {
     router.back();
+    return null;
   }
 
-  if (device === "mobile") {
-    return <div>NESTAR PROPERTIES MOBILE</div>;
-  } else {
-    return (
-      <div id="my-product-page">
-        <Stack className="main-title-box">
-          <Stack className="right-box">
-            <Typography className="main-title">My Products</Typography>
-            <Typography className="sub-title">
-              We are glad to see you again!
-            </Typography>
-          </Stack>
-        </Stack>
-        <Stack className="product-list-box">
-          <Stack className="tab-name-box">
-            <Typography
-              onClick={() => changeStatusHandler(ProductStatus.ACTIVE)}
-              className={
-                searchFilter.search.productStatus === "ACTIVE"
-                  ? "active-tab-name"
-                  : "tab-name"
-              }
-            >
-              On Sale
-            </Typography>
-            <Typography
-              onClick={() => changeStatusHandler(ProductStatus.SOLD)}
-              className={
-                searchFilter.search.productStatus === "SOLD"
-                  ? "active-tab-name"
-                  : "tab-name"
-              }
-            >
-              On Sold
-            </Typography>
-          </Stack>
-          <Stack className="list-box">
-            <Stack className="listing-title-box">
-              <Typography className="title-text">Listing title</Typography>
-              <Typography className="title-text">Date Published</Typography>
-              <Typography className="title-text">Status</Typography>
-              <Typography className="title-text">View</Typography>
-              {searchFilter.search.productStatus === "ACTIVE" && (
-                <Typography className="title-text">Action</Typography>
-              )}
-            </Stack>
+  const totalPages = Math.ceil(total / searchFilter.limit);
 
-            {sellerProducts?.length === 0 ? (
-              <div className={"no-data"}>
-                <img src="/img/icons/icoAlert.svg" alt="" />
-                <p>No Product found!</p>
-              </div>
-            ) : (
-              sellerProducts.map((product: Product) => {
-                return (
-                  <ProductCard
-                    product={product}
-                    deleteProductHandler={deleteProductHandler}
-                    updateProductHandler={updateProductHandler}
-                  />
-                );
-              })
-            )}
-
-            {sellerProducts.length !== 0 && (
-              <Stack className="pagination-config">
-                <Stack className="pagination-box">
-                  <Pagination
-                    count={Math.ceil(total / searchFilter.limit)}
-                    page={searchFilter.page}
-                    shape="circular"
-                    color="primary"
-                    onChange={paginationHandler}
-                  />
-                </Stack>
-                <Stack className="total-result">
-                  <Typography>{total} product available</Typography>
-                </Stack>
-              </Stack>
-            )}
-          </Stack>
-        </Stack>
+  return (
+    <div id="my-product-page" className="w-full">
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-extrabold tracking-tight text-gray-900">
+          My Products
+        </h1>
+        <p className="text-sm text-gray-500">We are glad to see you again!</p>
       </div>
-    );
-  }
+
+      {/* Status Tabs */}
+      <div className="mb-6">
+        <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+          <button
+            onClick={() => changeStatusHandler(ProductStatus.ACTIVE)}
+            className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+              searchFilter.search.productStatus === "ACTIVE"
+                ? "bg-white text-pink-600 shadow-sm"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
+          >
+            On Sale
+          </button>
+          <button
+            onClick={() => changeStatusHandler(ProductStatus.SOLD)}
+            className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+              searchFilter.search.productStatus === "SOLD"
+                ? "bg-white text-pink-600 shadow-sm"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
+          >
+            Sold
+          </button>
+        </div>
+      </div>
+
+      {/* Products Grid */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {sellerProducts?.length ? (
+          sellerProducts?.map((product: Product) => (
+            <PropertyCard key={product._id.toString()} product={product} />
+          ))
+        ) : (
+          <div className="col-span-full flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-white p-10 text-center">
+            <img
+              src="/img/icons/icoAlert.svg"
+              alt=""
+              className="mb-3 h-10 w-10 opacity-60"
+            />
+            <p className="text-sm text-gray-600">No products found!</p>
+          </div>
+        )}
+      </div>
+
+      {/* Pagination */}
+      {sellerProducts?.length > 0 && (
+        <div className="mt-6 flex flex-col items-center justify-center gap-2">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => paginationHandler(searchFilter.page - 1)}
+              disabled={searchFilter.page <= 1}
+              className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => paginationHandler(page)}
+                className={`px-3 py-2 text-sm font-medium rounded-md ${
+                  page === searchFilter.page
+                    ? "bg-[#ff6b81] text-white"
+                    : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              onClick={() => paginationHandler(searchFilter.page + 1)}
+              disabled={searchFilter.page >= totalPages}
+              className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </div>
+          <div className="text-sm text-gray-500">
+            Total {total} product{total > 1 ? "s" : ""}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default MyProducts;

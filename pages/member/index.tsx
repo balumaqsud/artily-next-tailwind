@@ -21,6 +21,7 @@ import {
   SUBSCRIBE,
   UNSUBSCRIBE,
 } from "../../apollo/user/mutation";
+import MemberProducts from "../../libs/components/member/MemberProducts";
 
 export const getStaticProps = async ({ locale }: any) => ({
   props: {
@@ -126,7 +127,7 @@ const MemberPage: NextPage = () => {
 
           <section className="md:col-span-9">
             <div className="space-y-6">
-              {category === "properties" && <MemberProperties />}
+              {category === "products" && <MemberProducts />}
               {category === "followers" && (
                 <MemberFollowers
                   likeMemberHandler={likeMemberHandler}

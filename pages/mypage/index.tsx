@@ -5,7 +5,7 @@ import withLayoutBasic from "../../libs/components/layout/LayoutBasic";
 import MyProducts from "../../libs/components/mypage/MyProducts";
 import MyFavorites from "../../libs/components/mypage/MyFavorites";
 import RecentlyVisited from "../../libs/components/mypage/RecentlyVisited";
-import AddProperty from "../../libs/components/mypage/AddNewProduct";
+import AddProduct from "../../libs/components/mypage/AddNewProduct";
 import MyProfile from "../../libs/components/mypage/MyProfile";
 import MyArticles from "../../libs/components/mypage/MyArticles";
 import { useMutation, useReactiveVar } from "@apollo/client";
@@ -127,8 +127,8 @@ const MyPage: NextPage = () => {
 
           <section className="md:col-span-9">
             <div className="space-y-6">
-              {category === "addProperty" && <AddProperty />}
-              {category === "myProperties" && <MyProducts />}
+              {category === "addProduct" && <AddProduct />}
+              {category === "myProducts" && <MyProducts />}
               {category === "myFavorites" && <MyFavorites />}
               {category === "recentlyVisited" && <RecentlyVisited />}
               {category === "myArticles" && <MyArticles />}

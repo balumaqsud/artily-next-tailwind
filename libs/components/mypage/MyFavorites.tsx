@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { NextPage } from "next";
 import useDeviceDetect from "../../hooks/useDeviceDetect";
-import { Pagination, Stack, Typography } from "@mui/material";
 import PropertyCard from "../product/ProductCard";
 import { Product } from "../../types/product/product";
 import { T } from "../../types/common";
@@ -42,8 +41,8 @@ const MyFavorites: NextPage = () => {
   });
 
   /** HANDLERS **/
-  const paginationHandler = (e: T, value: number) => {
-    setSearchFavorites({ ...searchFavorites, page: value });
+  const paginationHandler = (page: number) => {
+    setSearchFavorites({ ...searchFavorites, page });
   };
 
   const likeProductHandler = async (user: T, id: string) => {
@@ -64,59 +63,75 @@ const MyFavorites: NextPage = () => {
     }
   };
 
+  const totalPages = Math.ceil(total / searchFavorites.limit);
+
   return (
     <div id="my-favorites-page" className="w-full">
-      <div className="mx-auto w-full max-w-7xl px-4 py-6">
-        <div className="mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">My Favorites</h1>
-            <p className="text-muted-foreground">
-              We are glad to see you again!
-            </p>
-          </div>
-        </div>
-        <div className="mb-6">
-          {myFavorites?.length ? (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              {myFavorites?.map((product: Product) => {
-                return (
-                  <PropertyCard
-                    key={product._id.toString()}
-                    likeProductHandler={likeProductHandler}
-                    product={product}
-                    myFavorites={true}
-                  />
-                );
-              })}
-            </div>
-          ) : (
-            <div className="col-span-full flex flex-col items-center justify-center rounded-md border border-dashed p-8 text-muted-foreground">
-              <img
-                src="/img/icons/icoAlert.svg"
-                alt="no data"
-                className="mb-2 h-8 w-8"
-              />
-              <p>No Favorites found!</p>
-            </div>
-          )}
-        </div>
-        {myFavorites?.length ? (
-          <div className="mt-6 flex items-center justify-between">
-            <div className="text-sm text-muted-foreground">
-              Total {total} favorite product{total > 1 ? "s" : ""}
-            </div>
-            <div className="flex items-center">
-              <Pagination
-                count={Math.ceil(total / searchFavorites.limit)}
-                page={searchFavorites.page}
-                shape="circular"
-                color="primary"
-                onChange={paginationHandler}
-              />
-            </div>
-          </div>
-        ) : null}
+      <div className="mb-6">
+        <h1 className="text-2xl font-extrabold tracking-tight text-gray-900">
+          My Favorites
+        </h1>
+        <p className="text-sm text-gray-500">We are glad to see you again!</p>
       </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {myFavorites?.length ? (
+          myFavorites?.map((product: Product) => (
+            <PropertyCard
+              key={product._id.toString()}
+              likeProductHandler={likeProductHandler}
+              product={product}
+              myFavorites={true}
+            />
+          ))
+        ) : (
+          <div className="col-span-full flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-white p-10 text-center">
+            <img
+              src="/img/icons/icoAlert.svg"
+              alt=""
+              className="mb-3 h-10 w-10 opacity-60"
+            />
+            <p className="text-sm text-gray-600">No Favorites found!</p>
+          </div>
+        )}
+      </div>
+
+      {myFavorites?.length > 0 && (
+        <div className="mt-6 flex flex-col items-center justify-center gap-2">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => paginationHandler(searchFavorites.page - 1)}
+              disabled={searchFavorites.page <= 1}
+              className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => paginationHandler(page)}
+                className={`px-3 py-2 text-sm font-medium rounded-md ${
+                  page === searchFavorites.page
+                    ? "bg-[#ff6b81] text-white"
+                    : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              onClick={() => paginationHandler(searchFavorites.page + 1)}
+              disabled={searchFavorites.page >= totalPages}
+              className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </div>
+          <div className="text-sm text-gray-500">
+            Total {total} favorite product{total > 1 ? "s" : ""}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

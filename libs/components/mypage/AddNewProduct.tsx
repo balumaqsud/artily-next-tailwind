@@ -1,7 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import useDeviceDetect from "../../hooks/useDeviceDetect";
-import { ProductType } from "../../enums/product.enum";
+import {
+  ProductType,
+  ProductStatus,
+  SHippingTimeType,
+} from "../../enums/product.enum";
 import { REACT_APP_API_URL } from "../../config";
 import axios from "axios";
 import { getJwtToken } from "../../auth";
@@ -14,12 +18,14 @@ import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
 import { userVar } from "../../../apollo/store";
 import { CREATE_PRODUCT, UPDATE_PRODUCT } from "../../../apollo/user/mutation";
 import { GET_PRODUCT } from "../../../apollo/user/query";
+import { Product } from "../../types/product/product";
+import { ProductInput } from "../../types/product/product.input";
 
 const AddProduct = ({ initialValues, ...props }: any) => {
   const router = useRouter();
   const inputRef = useRef<any>(null);
   const [insertProductData, setInsertProductData] =
-    useState<any>(initialValues);
+    useState<ProductInput>(initialValues);
   const [productType, setProductType] = useState<ProductType[]>(
     Object.values(ProductType)
   );
@@ -35,31 +41,41 @@ const AddProduct = ({ initialValues, ...props }: any) => {
     {
       fetchPolicy: "network-only",
       variables: { input: router.query.productId },
+      skip: !router.query.productId,
+      onCompleted: (data: any) => {
+        console.log("getProduct data:", data);
+      },
+      onError: (error) => {
+        console.error("getProduct error:", error);
+      },
     }
   );
 
   /** LIFECYCLES **/
   useEffect(() => {
-    setInsertProductData({
-      ...insertProductData,
-      productTitle: getProductData?.getProduct
-        ? getProductData?.getProduct?.productTitle
-        : "",
-      productPrice: getProductData?.getProduct
-        ? getProductData?.getProduct?.productPrice
-        : 0,
-      productType: getProductData?.getProduct
-        ? getProductData?.getProduct?.productType
-        : "",
-      productDesc: getProductData?.getProduct
-        ? getProductData?.getProduct?.productDesc
-        : "",
-      productImages: getProductData?.getProduct
-        ? getProductData?.getProduct?.productImages
-        : [],
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getProductLoading, getProductData]);
+    if (getProductData?.getProduct) {
+      const product = getProductData.getProduct;
+      setInsertProductData({
+        productType: product.productType || ProductType.ART_COLLECTABLES,
+        productCategory: product.productCategory || "",
+        productLocation: product.productLocation || "",
+        productShippingTime:
+          product.productShippingTime || SHippingTimeType.FAST,
+        productTitle: product.productTitle || "",
+        productPrice: product.productPrice || 0,
+        productImages: product.productImages || [],
+        productMaterials: product.productMaterials || [],
+        productTags: product.productTags || [],
+        productStock: product.productStock || 1,
+        productColor: product.productColor || [],
+        productDesc: product.productDesc || "",
+        productShippingCost: product.productShippingCost || 0,
+        productWrapAvailable: product.productWrapAvailable || false,
+        productPersonalizable: product.productPersonalizable || false,
+        memberId: user?._id,
+      });
+    }
+  }, [getProductLoading, getProductData, user?._id]);
 
   /** HANDLERS **/
   async function uploadImages() {
@@ -119,57 +135,72 @@ const AddProduct = ({ initialValues, ...props }: any) => {
 
   const doDisabledCheck = () => {
     if (
-      insertProductData.productTitle === "" ||
-      insertProductData.productPrice === 0 ||
-      insertProductData.productType === "" ||
-      insertProductData.productDesc === "" ||
-      insertProductData.productImages.length === 0
+      !insertProductData?.productTitle ||
+      !insertProductData?.productPrice ||
+      insertProductData?.productPrice <= 0 ||
+      !insertProductData?.productType ||
+      !insertProductData?.productCategory ||
+      !insertProductData?.productLocation ||
+      !insertProductData?.productImages ||
+      insertProductData?.productImages?.length < 1
     ) {
       return true;
     }
+    return false;
   };
 
   const insertProductHandler = useCallback(async () => {
     try {
-      // @ts-ignore
-      insertProductData._id = getProductData?.getProduct?._id;
-      await createProduct({ variables: { input: insertProductData } });
-      await sweetMixinSuccessAlert("Created successfully");
+      const productData = {
+        ...insertProductData,
+        memberId: user?._id,
+      };
+      await createProduct({ variables: { input: productData } });
+      await sweetMixinSuccessAlert("Product created successfully");
       await router.push({
         pathname: "/mypage",
         query: { category: "myProducts" },
       });
     } catch (error) {
+      console.error("insertProductHandler error:", error);
       await sweetErrorHandling(error).then();
     }
-  }, [insertProductData]);
+  }, [insertProductData, user?._id]);
 
   const updateProductHandler = useCallback(async () => {
     try {
-      // @ts-ignore
-      insertProductData._id = getProductData?.getProduct?._id;
-      await updateProduct({ variables: { input: insertProductData } });
-      await sweetMixinSuccessAlert("Updated successfully");
+      const updateData = {
+        _id: getProductData?.getProduct?._id,
+        ...insertProductData,
+      };
+      await updateProduct({ variables: { input: updateData } });
+      await sweetMixinSuccessAlert("Product updated successfully");
       await router.push({
         pathname: "/mypage",
         query: { category: "myProducts" },
       });
     } catch (error) {
+      console.error("updateProductHandler error:", error);
       await sweetErrorHandling(error).then();
     }
-  }, [insertProductData]);
+  }, [insertProductData, getProductData]);
 
-  if (user?.memberType !== "ARTIST") {
+  if (user?.memberType !== "ARTIST" && user?.memberType !== "SELLER") {
     router.back();
+    return null;
   }
 
   return (
     <div id="add-product-page" className="w-full">
       <div className="mb-6">
         <h1 className="text-2xl font-extrabold tracking-tight text-gray-900">
-          Add New Product
+          {router.query.productId ? "Edit Product" : "Add New Product"}
         </h1>
-        <p className="text-sm text-gray-500">We are glad to see you again!</p>
+        <p className="text-sm text-gray-500">
+          {router.query.productId
+            ? "Update your product information"
+            : "We are glad to see you again!"}
+        </p>
       </div>
 
       <div className="space-y-6">
@@ -179,8 +210,8 @@ const AddProduct = ({ initialValues, ...props }: any) => {
           <input
             type="text"
             className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
-            placeholder={"Title"}
-            value={insertProductData.productTitle}
+            placeholder={"Product Title"}
+            value={insertProductData?.productTitle || ""}
             onChange={({ target: { value } }) =>
               setInsertProductData({
                 ...insertProductData,
@@ -198,11 +229,11 @@ const AddProduct = ({ initialValues, ...props }: any) => {
               type="number"
               className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
               placeholder={"Price"}
-              value={insertProductData.productPrice}
+              value={insertProductData?.productPrice || 0}
               onChange={({ target: { value } }) =>
                 setInsertProductData({
                   ...insertProductData,
-                  productPrice: parseInt(value),
+                  productPrice: parseInt(value) || 0,
                 })
               }
             />
@@ -213,18 +244,15 @@ const AddProduct = ({ initialValues, ...props }: any) => {
             </label>
             <select
               className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-300"
-              defaultValue={insertProductData.productType || "select"}
-              value={insertProductData.productType || "select"}
+              value={insertProductData?.productType || ""}
               onChange={({ target: { value } }) =>
                 setInsertProductData({
                   ...insertProductData,
-                  productType: value,
+                  productType: value as ProductType,
                 })
               }
             >
-              <option disabled value={"select"}>
-                Select
-              </option>
+              <option value="">Select Type</option>
               {productType.map((type: any) => (
                 <option value={`${type}`} key={type}>
                   {type}
@@ -234,23 +262,86 @@ const AddProduct = ({ initialValues, ...props }: any) => {
           </div>
         </div>
 
-        {/* Short Description */}
-        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-          <label className="text-xs font-medium text-gray-700">
-            Short Description
-          </label>
-          <input
-            type="text"
-            className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
-            placeholder={"Description"}
-            value={insertProductData.productDesc}
-            onChange={({ target: { value } }) =>
-              setInsertProductData({ ...insertProductData, productDesc: value })
-            }
-          />
+        {/* Category & Location */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <label className="text-xs font-medium text-gray-700">
+              Category
+            </label>
+            <input
+              type="text"
+              className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
+              placeholder={"Product Category"}
+              value={insertProductData?.productCategory || ""}
+              onChange={({ target: { value } }) =>
+                setInsertProductData({
+                  ...insertProductData,
+                  productCategory: value,
+                })
+              }
+            />
+          </div>
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <label className="text-xs font-medium text-gray-700">
+              Location
+            </label>
+            <input
+              type="text"
+              className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
+              placeholder={"Product Location"}
+              value={insertProductData?.productLocation || ""}
+              onChange={({ target: { value } }) =>
+                setInsertProductData({
+                  ...insertProductData,
+                  productLocation: value,
+                })
+              }
+            />
+          </div>
         </div>
 
-        {/* Long Description */}
+        {/* Stock & Shipping Time */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <label className="text-xs font-medium text-gray-700">Stock</label>
+            <input
+              type="number"
+              className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
+              placeholder={"Available Stock"}
+              value={insertProductData?.productStock || 1}
+              onChange={({ target: { value } }) =>
+                setInsertProductData({
+                  ...insertProductData,
+                  productStock: parseInt(value) || 1,
+                })
+              }
+            />
+          </div>
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <label className="text-xs font-medium text-gray-700">
+              Shipping Time
+            </label>
+            <select
+              className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-300"
+              value={insertProductData?.productShippingTime || ""}
+              onChange={({ target: { value } }) =>
+                setInsertProductData({
+                  ...insertProductData,
+                  productShippingTime: value as SHippingTimeType,
+                })
+              }
+            >
+              <option value="">Select Shipping Time</option>
+              {Object.values(SHippingTimeType).map((time: any) => (
+                <option value={`${time}`} key={time}>
+                  {time}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Description */}
         <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
           <label className="text-xs font-medium text-gray-700">
             Product Description
@@ -258,7 +349,8 @@ const AddProduct = ({ initialValues, ...props }: any) => {
           <textarea
             className="mt-1 w-full rounded-md border border-gray-200 bg-white p-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
             rows={5}
-            value={insertProductData.productDesc}
+            placeholder="Describe your product..."
+            value={insertProductData?.productDesc || ""}
             onChange={({ target: { value } }) =>
               setInsertProductData({ ...insertProductData, productDesc: value })
             }
@@ -336,11 +428,21 @@ const AddProduct = ({ initialValues, ...props }: any) => {
 
 AddProduct.defaultProps = {
   initialValues: {
+    productType: ProductType.ART_COLLECTABLES,
+    productCategory: "",
+    productLocation: "",
+    productShippingTime: SHippingTimeType.FAST,
     productTitle: "",
     productPrice: 0,
-    productType: "",
-    productDesc: "",
     productImages: [],
+    productMaterials: [],
+    productTags: [],
+    productStock: 1,
+    productColor: [],
+    productDesc: "",
+    productShippingCost: 0,
+    productWrapAvailable: false,
+    productPersonalizable: false,
   },
 };
 

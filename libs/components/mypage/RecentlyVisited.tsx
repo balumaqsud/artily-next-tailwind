@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { NextPage } from "next";
-import PropertyCard from "../product/ProductCard";
-import { Property } from "../../types/product/product";
+import ProductCard from "../product/ProductCard";
+import { Product } from "../../types/product/product";
 import { T } from "../../types/common";
-import { GET_VISITED } from "../../../apollo/user/query";
 import { useQuery } from "@apollo/client";
+import { GET_VISITED } from "../../../apollo/user/query";
 
 const RecentlyVisited: NextPage = () => {
-  const [recentlyVisited, setRecentlyVisited] = useState<Property[]>([]);
+  const [recentlyVisited, setRecentlyVisited] = useState<Product[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [searchVisited, setSearchVisited] = useState<T>({ page: 1, limit: 6 });
 
@@ -39,10 +39,10 @@ const RecentlyVisited: NextPage = () => {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {recentlyVisited?.length ? (
-          recentlyVisited?.map((property: Property) => (
-            <PropertyCard
-              key={property?._id}
-              property={property}
+          recentlyVisited?.map((product: Product) => (
+            <ProductCard
+              key={product?._id.toString()}
+              product={product}
               recentlyVisited={true}
             />
           ))
