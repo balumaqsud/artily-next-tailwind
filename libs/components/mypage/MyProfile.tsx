@@ -16,7 +16,9 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
     _id: "",
     memberNick: "",
     memberPhone: "",
+    memberFullName: "",
     memberAddress: "",
+    memberDesc: "",
     memberImage: "",
   };
   const [updateData, setUpdateData] = useState<MemberUpdate>(
@@ -35,7 +37,9 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
       _id: user._id ?? updateData._id,
       memberNick: user.memberNick,
       memberPhone: user.memberPhone,
+      memberFullName: user.memberFullName,
       memberAddress: user.memberAddress,
+      memberDesc: user.memberDesc,
       memberImage: user.memberImage,
     });
   }, [user]);
@@ -98,13 +102,15 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
 
   const doDisabledCheck = () => {
     if (
-      updateData.memberNick === "" ||
-      updateData.memberPhone === "" ||
-      updateData.memberAddress === "" ||
-      updateData.memberImage === ""
+      !updateData?.memberNick ||
+      !updateData?.memberPhone ||
+      !updateData?.memberFullName ||
+      !updateData?.memberAddress ||
+      !updateData?.memberImage
     ) {
       return true;
     }
+    return false;
   };
 
   return (
@@ -116,7 +122,7 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
             My Profile
           </h1>
           <p className="text-sm text-[color:var(--muted-foreground)]">
-            We’re glad to see you again!
+            We're glad to see you again!
           </p>
         </div>
 
@@ -158,7 +164,7 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
             </div>
           </div>
 
-          {/* Inputs */}
+          {/* Basic Information */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
               <label className="text-xs font-medium text-gray-700">
@@ -167,7 +173,7 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
               <input
                 type="text"
                 placeholder="Your username"
-                value={updateData.memberNick || ""}
+                value={updateData?.memberNick || ""}
                 onChange={({ target: { value } }) =>
                   setUpdateData({ ...updateData, memberNick: value })
                 }
@@ -175,30 +181,68 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
               />
             </div>
             <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-              <label className="text-xs font-medium text-gray-700">Phone</label>
+              <label className="text-xs font-medium text-gray-700">
+                Full Name
+              </label>
               <input
                 type="text"
-                placeholder="Your phone"
-                value={updateData.memberPhone || ""}
+                placeholder="Your full name"
+                value={updateData?.memberFullName || ""}
                 onChange={({ target: { value } }) =>
-                  setUpdateData({ ...updateData, memberPhone: value })
+                  setUpdateData({ ...updateData, memberFullName: value })
                 }
                 className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
               />
             </div>
           </div>
 
+          {/* Contact Information */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+              <label className="text-xs font-medium text-gray-700">Phone</label>
+              <input
+                type="text"
+                placeholder="Your phone number"
+                value={updateData?.memberPhone || ""}
+                onChange={({ target: { value } }) =>
+                  setUpdateData({ ...updateData, memberPhone: value })
+                }
+                className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
+              />
+            </div>
+            <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+              <label className="text-xs font-medium text-gray-700">
+                Address
+              </label>
+              <input
+                type="text"
+                placeholder="Your address"
+                value={updateData?.memberAddress || ""}
+                onChange={({ target: { value } }) =>
+                  setUpdateData({ ...updateData, memberAddress: value })
+                }
+                className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
+              />
+            </div>
+          </div>
+
+          {/* Description */}
           <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-            <label className="text-xs font-medium text-gray-700">Address</label>
-            <input
-              type="text"
-              placeholder="Your address"
-              value={updateData.memberAddress || ""}
+            <label className="text-xs font-medium text-gray-700">
+              About Me
+            </label>
+            <textarea
+              placeholder="Tell us about yourself..."
+              value={updateData?.memberDesc || ""}
               onChange={({ target: { value } }) =>
-                setUpdateData({ ...updateData, memberAddress: value })
+                setUpdateData({ ...updateData, memberDesc: value })
               }
+              rows={4}
               className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
             />
+            <p className="mt-2 text-xs text-gray-500">
+              Share your story, interests, or what makes you unique.
+            </p>
           </div>
 
           {/* Submit */}

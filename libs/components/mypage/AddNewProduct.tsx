@@ -72,10 +72,9 @@ const AddProduct = ({ initialValues, ...props }: any) => {
         productShippingCost: product.productShippingCost || 0,
         productWrapAvailable: product.productWrapAvailable || false,
         productPersonalizable: product.productPersonalizable || false,
-        memberId: user?._id,
       });
     }
-  }, [getProductLoading, getProductData, user?._id]);
+  }, [getProductLoading, getProductData]);
 
   /** HANDLERS **/
   async function uploadImages() {
@@ -152,8 +151,21 @@ const AddProduct = ({ initialValues, ...props }: any) => {
   const insertProductHandler = useCallback(async () => {
     try {
       const productData = {
-        ...insertProductData,
-        memberId: user?._id,
+        productType: insertProductData?.productType,
+        productCategory: insertProductData?.productCategory,
+        productLocation: insertProductData?.productLocation,
+        productShippingTime: insertProductData?.productShippingTime,
+        productTitle: insertProductData?.productTitle,
+        productPrice: insertProductData?.productPrice,
+        productImages: insertProductData?.productImages,
+        productMaterials: insertProductData?.productMaterials,
+        productTags: insertProductData?.productTags,
+        productStock: insertProductData?.productStock,
+        productColor: insertProductData?.productColor,
+        productDesc: insertProductData?.productDesc,
+        productShippingCost: insertProductData?.productShippingCost,
+        productWrapAvailable: insertProductData?.productWrapAvailable,
+        productPersonalizable: insertProductData?.productPersonalizable,
       };
       await createProduct({ variables: { input: productData } });
       await sweetMixinSuccessAlert("Product created successfully");
@@ -165,13 +177,27 @@ const AddProduct = ({ initialValues, ...props }: any) => {
       console.error("insertProductHandler error:", error);
       await sweetErrorHandling(error).then();
     }
-  }, [insertProductData, user?._id]);
+  }, [insertProductData]);
 
   const updateProductHandler = useCallback(async () => {
     try {
       const updateData = {
         _id: getProductData?.getProduct?._id,
-        ...insertProductData,
+        productType: insertProductData?.productType,
+        productCategory: insertProductData?.productCategory,
+        productLocation: insertProductData?.productLocation,
+        productShippingTime: insertProductData?.productShippingTime,
+        productTitle: insertProductData?.productTitle,
+        productPrice: insertProductData?.productPrice,
+        productImages: insertProductData?.productImages,
+        productMaterials: insertProductData?.productMaterials,
+        productTags: insertProductData?.productTags,
+        productStock: insertProductData?.productStock,
+        productColor: insertProductData?.productColor,
+        productDesc: insertProductData?.productDesc,
+        productShippingCost: insertProductData?.productShippingCost,
+        productWrapAvailable: insertProductData?.productWrapAvailable,
+        productPersonalizable: insertProductData?.productPersonalizable,
       };
       await updateProduct({ variables: { input: updateData } });
       await sweetMixinSuccessAlert("Product updated successfully");
@@ -332,13 +358,77 @@ const AddProduct = ({ initialValues, ...props }: any) => {
               }
             >
               <option value="">Select Shipping Time</option>
-              {Object.values(SHippingTimeType).map((time: any) => (
-                <option value={`${time}`} key={time}>
-                  {time}
-                </option>
-              ))}
+              <option value={SHippingTimeType.TURBO}>TURBO</option>
+              <option value={SHippingTimeType.FAST}>FAST</option>
+              <option value={SHippingTimeType.SLOW}>SLOW</option>
             </select>
           </div>
+        </div>
+
+        {/* Materials & Tags */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <label className="text-xs font-medium text-gray-700">
+              Materials (comma separated)
+            </label>
+            <input
+              type="text"
+              className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
+              placeholder={"Cotton, Polyester, etc."}
+              value={insertProductData?.productMaterials?.join(", ") || ""}
+              onChange={({ target: { value } }) =>
+                setInsertProductData({
+                  ...insertProductData,
+                  productMaterials: value
+                    .split(",")
+                    .map((item) => item.trim())
+                    .filter((item) => item),
+                })
+              }
+            />
+          </div>
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <label className="text-xs font-medium text-gray-700">
+              Tags (comma separated)
+            </label>
+            <input
+              type="text"
+              className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
+              placeholder={"Summer, Casual, etc."}
+              value={insertProductData?.productTags?.join(", ") || ""}
+              onChange={({ target: { value } }) =>
+                setInsertProductData({
+                  ...insertProductData,
+                  productTags: value
+                    .split(",")
+                    .map((item) => item.trim())
+                    .filter((item) => item),
+                })
+              }
+            />
+          </div>
+        </div>
+
+        {/* Colors */}
+        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+          <label className="text-xs font-medium text-gray-700">
+            Colors (comma separated)
+          </label>
+          <input
+            type="text"
+            className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
+            placeholder={"Red, Blue, Green, etc."}
+            value={insertProductData?.productColor?.join(", ") || ""}
+            onChange={({ target: { value } }) =>
+              setInsertProductData({
+                ...insertProductData,
+                productColor: value
+                  .split(",")
+                  .map((item) => item.trim())
+                  .filter((item) => item),
+              })
+            }
+          />
         </div>
 
         {/* Description */}
