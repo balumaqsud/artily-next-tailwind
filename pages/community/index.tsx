@@ -59,8 +59,8 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
     variables: { input: searchCommunity },
     notifyOnNetworkStatusChange: true,
     onCompleted: (data: T) => {
-      setBoardArticles(data?.getBoardArticles?.list);
-      setTotalCount(data?.getBoardArticles?.metaCounter[0].total);
+      setBoardArticles(data?.getArticles?.list);
+      setTotalCount(data?.getArticles?.metaCounter[0].total);
     },
   });
 
@@ -95,26 +95,25 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
       { shallow: true }
     );
   };
-
   const paginationHandler = (e: T, value: number) => {
     setSearchCommunity({ ...searchCommunity, page: value });
   };
+
   const likeArticleHandler = async (e: any, user: T, id: string) => {
     try {
       e.stopPropagation();
       if (!id) return;
 
-      if (!user._id) throw new Error(Message.SOMETHING_WENT_WRONG);
+      if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
 
-      //important
       await likeTargetBoardArticle({ variables: { input: id } });
 
-      //refetch
       await getBoardArticlesRefetch({ input: searchCommunity });
-      await sweetTopSmallSuccessAlert("success", 800);
+
+      await sweetTopSmallSuccessAlert("Article liked successfully", 800);
     } catch (error: any) {
-      console.log("liketargetArticle", error);
-      sweetMixinErrorAlert(error.message).then();
+      console.log("likeTargetArticle error:", error);
+      await sweetMixinErrorAlert(error.message || "Failed to like article");
     }
   };
 
@@ -157,13 +156,8 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
                       className="!items-start !justify-start !text-left"
                     />
                     <Tab
-                      value={"NEWS"}
+                      value={"NEW"}
                       label={"News"}
-                      className="!items-start !justify-start !text-left"
-                    />
-                    <Tab
-                      value={"HUMOR"}
-                      label={"Humor"}
                       className="!items-start !justify-start !text-left"
                     />
                   </TabList>
@@ -199,7 +193,7 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
                 </div>
 
                 <TabPanel value="FREE" className="!p-0">
-                  <div className="grid grid-cols-1 gap-4">
+                  <div className="grid grid-cols-3 gap-4">
                     {totalCount ? (
                       boardArticles?.map((boardArticle: BoardArticle) => (
                         <CommunityCard
@@ -209,7 +203,7 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
                         />
                       ))
                     ) : (
-                      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-white p-10 text-center">
+                      <div className="col-span-3 flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-white p-10 text-center">
                         <img
                           src="/img/icons/icoAlert.svg"
                           alt=""
@@ -224,7 +218,7 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
                 </TabPanel>
 
                 <TabPanel value="RECOMMEND" className="!p-0">
-                  <div className="grid grid-cols-1 gap-4">
+                  <div className="grid grid-cols-3 gap-4">
                     {totalCount ? (
                       boardArticles?.map((boardArticle: BoardArticle) => (
                         <CommunityCard
@@ -234,7 +228,7 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
                         />
                       ))
                     ) : (
-                      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-white p-10 text-center">
+                      <div className="col-span-3 flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-white p-10 text-center">
                         <img
                           src="/img/icons/icoAlert.svg"
                           alt=""
@@ -248,8 +242,8 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
                   </div>
                 </TabPanel>
 
-                <TabPanel value="NEWS" className="!p-0">
-                  <div className="grid grid-cols-1 gap-4">
+                <TabPanel value="NEW" className="!p-0">
+                  <div className="grid grid-cols-3 gap-4">
                     {totalCount ? (
                       boardArticles?.map((boardArticle: BoardArticle) => (
                         <CommunityCard
@@ -259,32 +253,7 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
                         />
                       ))
                     ) : (
-                      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-white p-10 text-center">
-                        <img
-                          src="/img/icons/icoAlert.svg"
-                          alt=""
-                          className="mb-3 h-10 w-10 opacity-60"
-                        />
-                        <p className="text-sm text-gray-600">
-                          No Article found!
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </TabPanel>
-
-                <TabPanel value="HUMOR" className="!p-0">
-                  <div className="grid grid-cols-1 gap-4">
-                    {totalCount ? (
-                      boardArticles?.map((boardArticle: BoardArticle) => (
-                        <CommunityCard
-                          boardArticle={boardArticle}
-                          key={boardArticle?._id}
-                          likeBoArticleHandler={likeArticleHandler}
-                        />
-                      ))
-                    ) : (
-                      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-white p-10 text-center">
+                      <div className="col-span-3 flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-white p-10 text-center">
                         <img
                           src="/img/icons/icoAlert.svg"
                           alt=""

@@ -447,6 +447,11 @@ export const GET_BOARD_ARTICLE = gql`
       memberId
       createdAt
       updatedAt
+      meLiked {
+        memberId
+        likeRefId
+        myFavorite
+      }
       memberData {
         _id
         memberType
@@ -523,6 +528,7 @@ export const GET_BOARD_ARTICLES = gql`
           deletedAt
           createdAt
           updatedAt
+          accessToken
         }
       }
       metaCounter {

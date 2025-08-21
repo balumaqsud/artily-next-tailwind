@@ -121,9 +121,6 @@ const TuiEditor = () => {
             <option value={BoardArticleCategory.FREE} className="py-2">
               Free Discussion
             </option>
-            <option value={BoardArticleCategory.HUMOR} className="py-2">
-              Humor & Fun
-            </option>
             <option value={BoardArticleCategory.NEW} className="py-2">
               Latest News
             </option>

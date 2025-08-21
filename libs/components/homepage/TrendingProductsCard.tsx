@@ -1,18 +1,27 @@
 import React from "react";
 import { Product } from "../../types/product/product";
 import { REACT_APP_API_URL } from "../../config";
+import { useRouter } from "next/router";
 
 interface TrendingProductsCardProps {
   product: Product | any;
 }
 
 const TrendingProductsCard = ({ product }: TrendingProductsCardProps) => {
+  const router = useRouter();
   const price = Number(product?.productPrice ?? product?.productPrice ?? 0);
   const image =
     product?.productImages?.[0] ?? product?.propertyImages?.[0] ?? "";
 
+  const openDetail = async (id: string) => {
+    await router.push({ pathname: "product/detail", query: { id } });
+  };
+
   return (
-    <div className="w-[320px] shrink-0 transition-all duration-1000 ease-in-out hover:scale-105 cursor-pointer">
+    <div
+      className="w-[320px] shrink-0 transition-all duration-1000 ease-in-out hover:scale-105 cursor-pointer"
+      onClick={() => openDetail(product._id)}
+    >
       <div
         className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl bg-cover bg-center shadow-sm"
         style={{ backgroundImage: `url(${REACT_APP_API_URL}/${image})` }}

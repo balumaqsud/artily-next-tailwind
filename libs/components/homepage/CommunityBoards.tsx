@@ -10,13 +10,19 @@ import { T } from "../../types/common";
 const CommunityBoards = () => {
   const [searchCommunity, setSearchCommunity] = useState({
     page: 1,
-    sort: "articleViews",
+    limit: 8,
+    sort: "createdAt",
     direction: "DESC",
+    search: {},
   });
   const [newsArticles, setNewsArticles] = useState<BoardArticle[]>([]);
   const [freeArticles, setFreeArticles] = useState<BoardArticle[]>([]);
 
-  const { refetch: refetchNews } = useQuery(GET_BOARD_ARTICLES, {
+  const {
+    loading: newsLoading,
+    error: newsError,
+    refetch: refetchNews,
+  } = useQuery(GET_BOARD_ARTICLES, {
     fetchPolicy: "network-only",
     variables: {
       input: {
@@ -27,11 +33,19 @@ const CommunityBoards = () => {
     },
     notifyOnNetworkStatusChange: true,
     onCompleted: (data: T) => {
-      setNewsArticles(data?.getBoardArticles?.list);
+      console.log("News articles data:", data);
+      setNewsArticles(data?.getArticles?.list || []);
+    },
+    onError: (error) => {
+      console.error("News articles error:", error);
     },
   });
 
-  const { refetch: refetchFree } = useQuery(GET_BOARD_ARTICLES, {
+  const {
+    loading: freeLoading,
+    error: freeError,
+    refetch: refetchFree,
+  } = useQuery(GET_BOARD_ARTICLES, {
     fetchPolicy: "network-only",
     variables: {
       input: {
@@ -42,18 +56,27 @@ const CommunityBoards = () => {
     },
     notifyOnNetworkStatusChange: true,
     onCompleted: (data: T) => {
-      setFreeArticles(data?.getBoardArticles?.list);
+      console.log("Free articles data:", data);
+      setFreeArticles(data?.getArticles?.list || []);
+    },
+    onError: (error) => {
+      console.error("Free articles error:", error);
     },
   });
 
+  console.log("newsArticles", newsArticles);
+  console.log("freeArticles", freeArticles);
+  console.log("News loading:", newsLoading, "News error:", newsError);
+  console.log("Free loading:", freeLoading, "Free error:", freeError);
+
   return (
-    <section className="w-full px-4 py-10">
+    <section className="w-full px-6 py-10">
       <div className="mx-auto w-full max-w-7xl">
         <h2 className="text-xl mb-6 md:mb-8 md:text-2xl font-bold tracking-tight text-muted-foreground">
           Community Highlights
         </h2>
 
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-5 px-4">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-5 px-4">
           <div className="md:col-span-3">
             <div className="mb-4 flex items-center gap-2">
               <Link
@@ -65,7 +88,15 @@ const CommunityBoards = () => {
               <span className="text-muted-foreground">›</span>
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {newsArticles &&
+              {newsLoading ? (
+                <div className="col-span-full text-center py-8">
+                  Loading news articles...
+                </div>
+              ) : newsError ? (
+                <div className="col-span-full text-center py-8 text-red-500">
+                  Error loading news articles: {newsError.message}
+                </div>
+              ) : newsArticles && newsArticles.length > 0 ? (
                 newsArticles.map((article, index) => (
                   <CommunityCard
                     vertical
@@ -73,7 +104,12 @@ const CommunityBoards = () => {
                     index={index}
                     key={article?._id}
                   />
-                ))}
+                ))
+              ) : (
+                <div className="col-span-full text-center py-8 text-gray-500">
+                  No news articles found
+                </div>
+              )}
             </div>
           </div>
 
@@ -89,9 +125,13 @@ const CommunityBoards = () => {
               <span className="text-muted-foreground">›</span>
             </div>
             <div className="flex flex-col gap-3">
-              {/* @ts-ignore */}
-              {freeArticles &&
-                freeArticles.length > 0 &&
+              {freeLoading ? (
+                <div className="text-center py-8">Loading free articles...</div>
+              ) : freeError ? (
+                <div className="text-center py-8 text-red-500">
+                  Error loading free articles: {freeError.message}
+                </div>
+              ) : freeArticles && freeArticles.length > 0 ? (
                 freeArticles.map((article, index) => (
                   <CommunityCard
                     vertical={false}
@@ -99,7 +139,12 @@ const CommunityBoards = () => {
                     index={index}
                     key={article?._id}
                   />
-                ))}
+                ))
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  No free articles found
+                </div>
+              )}
             </div>
           </div>
         </div>

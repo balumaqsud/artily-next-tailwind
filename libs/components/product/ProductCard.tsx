@@ -31,7 +31,7 @@ const ProductCard = ({
   const price = Number((product as any)?.productPrice ?? 0);
 
   return (
-    <div className="w-[260px] sm:w-[280px] md:w-[300px] rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-md cursor-pointer">
+    <div className="w-full sm:w-[280px] md:w-[300px] mx-auto rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-md cursor-pointer">
       <Link
         href={{
           pathname: "/product/detail",

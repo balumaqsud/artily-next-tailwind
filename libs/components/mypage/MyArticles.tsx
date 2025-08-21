@@ -50,8 +50,8 @@ const MyArticles: NextPage = ({
     },
     notifyOnNetworkStatusChange: false,
     onCompleted: (data: T) => {
-      setBoardArticles(data?.getBoardArticles?.list);
-      setTotalCount(data?.getBoardArticles?.metaCounter?.total);
+      setBoardArticles(data?.getArticles?.list);
+      setTotalCount(data?.getArticles?.metaCounter?.total);
     },
   });
 

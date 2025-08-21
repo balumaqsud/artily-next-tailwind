@@ -44,9 +44,9 @@ const MemberArticles: NextPage = ({
     fetchPolicy: "network-only",
     variables: { input: searchFilter },
     notifyOnNetworkStatusChange: true,
-    onCompleted: (data: any) => {
-      setMemberBoArticles(data?.getBoardArticles?.list);
-      setTotal(data?.getBoardArticles?.metaCounter?.[0]?.total || 0);
+    onCompleted: (data: T) => {
+      setMemberBoArticles(data?.getArticles?.list);
+      setTotal(data?.getArticles?.metaCounter?.[0]?.total || 0);
     },
   });
 

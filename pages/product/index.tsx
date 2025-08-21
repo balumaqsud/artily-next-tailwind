@@ -8,6 +8,7 @@ import React, {
 import { NextPage } from "next";
 import Link from "next/link";
 import ProductCard from "../../libs/components/product/ProductCard";
+import ReviewCard from "../../libs/components/artist/ReviewCard";
 import withLayoutBasic from "../../libs/components/layout/LayoutBasic";
 import { useRouter } from "next/router";
 import { ProductsInquiry } from "../../libs/types/product/product.input";
@@ -17,12 +18,28 @@ import { Direction, Message } from "../../libs/enums/common.enum";
 import { ProductType } from "../../libs/enums/product.enum";
 import { GET_PRODUCTS } from "../../apollo/user/query";
 import { LIKE_TARGET_PRODUCT } from "../../apollo/user/mutation";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
 import { T } from "../../libs/types/common";
 import {
   sweetMixinErrorAlert,
   sweetTopSmallSuccessAlert,
+  sweetErrorHandling,
 } from "../../libs/sweetAlert";
+import { userVar } from "../../apollo/store";
+import {
+  CommentInput,
+  CommentsInquiry,
+} from "../../libs/types/comment/comment.input";
+import { Comment } from "../../libs/types/comment/comment";
+import { CommentGroup } from "../../libs/enums/comment.enum";
+import { GET_COMMENTS } from "../../apollo/user/query";
+import {
+  CREATE_COMMENT,
+  UPDATE_COMMENT,
+  REMOVE_COMMENT,
+} from "../../apollo/user/mutation";
+import { Pagination } from "@mui/material";
+import StarIcon from "@mui/icons-material/Star";
 
 export const getStaticProps = async ({ locale }: any) => ({
   props: {
@@ -42,10 +59,21 @@ const DEFAULT_INPUT: ProductsInquiry = {
   },
 };
 
+const DEFAULT_COMMENT_INPUT: CommentsInquiry = {
+  page: 1,
+  limit: 5,
+  sort: "createdAt",
+  direction: Direction.ASC,
+  search: {
+    commentRefId: "",
+  },
+};
+
 const ProductList: NextPage<ProductListProps> = ({
   initialInput = DEFAULT_INPUT,
 }) => {
   const router = useRouter();
+  const user = useReactiveVar(userVar);
   const [searchFilter, setSearchFilter] = useState<ProductsInquiry>(
     router?.query?.input
       ? JSON.parse(router?.query?.input as string)
@@ -70,6 +98,18 @@ const ProductList: NextPage<ProductListProps> = ({
   const priceMenuRef = useRef<HTMLDivElement>(null);
   const periodMenuRef = useRef<HTMLDivElement>(null);
 
+  // Comments state
+  const [commentInquiry, setCommentInquiry] = useState<CommentsInquiry>(
+    DEFAULT_COMMENT_INPUT
+  );
+  const [productComments, setProductComments] = useState<Comment[]>([]);
+  const [commentTotal, setCommentTotal] = useState<number>(0);
+  const [insertCommentData, setInsertCommentData] = useState<CommentInput>({
+    commentGroup: CommentGroup.PRODUCT,
+    commentContent: "",
+    commentRefId: "",
+  });
+
   /** APOLLO REQUESTS **/
   const { refetch: refetchProducts } = useQuery(GET_PRODUCTS, {
     fetchPolicy: "network-only",
@@ -82,6 +122,26 @@ const ProductList: NextPage<ProductListProps> = ({
   });
 
   const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
+  const [createComment] = useMutation(CREATE_COMMENT);
+  const [updateComment] = useMutation(UPDATE_COMMENT);
+  const [removeComment] = useMutation(REMOVE_COMMENT);
+
+  // Comments query
+  const {
+    loading: getCommentsLoading,
+    data: getCommentsData,
+    error: getCommentsError,
+    refetch: getCommentsRefetch,
+  } = useQuery(GET_COMMENTS, {
+    fetchPolicy: "network-only",
+    variables: { input: commentInquiry },
+    skip: !commentInquiry.search.commentRefId,
+    notifyOnNetworkStatusChange: true,
+    onCompleted: (data: T) => {
+      setProductComments(data?.getComments?.list ?? []);
+      setCommentTotal(data?.getComments?.metaCounter?.[0]?.total ?? 0);
+    },
+  });
 
   // Collection options
   const collectionOptions = [
@@ -214,6 +274,13 @@ const ProductList: NextPage<ProductListProps> = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  // Comments effect
+  useEffect(() => {
+    if (commentInquiry.search.commentRefId) {
+      getCommentsRefetch({ variables: { input: commentInquiry } }).then();
+    }
+  }, [commentInquiry]);
 
   /** HANDLERS **/
   const likeProductHandler = async (user: T, id: string) => {
@@ -375,6 +442,61 @@ const ProductList: NextPage<ProductListProps> = ({
     }
 
     setPeriodMenuOpen(false);
+  };
+
+  // Comments handlers
+  const commentPaginationChangeHandler = async (
+    event: ChangeEvent<unknown>,
+    value: number
+  ) => {
+    commentInquiry.page = value;
+    setCommentInquiry({ ...commentInquiry });
+  };
+
+  const createCommentHandler = async () => {
+    try {
+      if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
+      await createComment({ variables: { input: insertCommentData } });
+
+      setInsertCommentData({ ...insertCommentData, commentContent: "" });
+      await getCommentsRefetch({ input: commentInquiry });
+      await sweetTopSmallSuccessAlert("success", 800);
+    } catch (error) {
+      sweetErrorHandling(error);
+    }
+  };
+
+  const removeCommentHandler = async (commentId: string) => {
+    try {
+      await removeComment({ variables: { input: commentId } });
+      await getCommentsRefetch({ input: commentInquiry });
+      await sweetTopSmallSuccessAlert("Review removed successfully!", 800);
+    } catch (error) {
+      sweetErrorHandling(error);
+    }
+  };
+
+  const updateCommentHandler = async (
+    commentId: string,
+    newContent: string
+  ) => {
+    try {
+      if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
+
+      await updateComment({
+        variables: {
+          input: {
+            _id: commentId,
+            commentContent: newContent,
+          },
+        },
+      });
+
+      await getCommentsRefetch({ input: commentInquiry });
+      await sweetTopSmallSuccessAlert("Review updated successfully!", 800);
+    } catch (error) {
+      sweetErrorHandling(error);
+    }
   };
 
   const totalPages = Math.max(1, Math.ceil(total / (searchFilter.limit || 9)));
@@ -591,6 +713,136 @@ const ProductList: NextPage<ProductListProps> = ({
             </div>
           </div>
         )}
+
+        {/* Product Reviews Section */}
+        <div className="mt-12">
+          <div className="mb-6">
+            <h2 className="text-xl font-bold text-gray-900">Product Reviews</h2>
+            <p className="text-sm text-gray-600">
+              What people are saying about our products
+            </p>
+          </div>
+
+          {commentTotal > 0 ? (
+            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+              <div className="mb-4 flex items-center gap-2 text-sm text-gray-700">
+                <StarIcon className="text-yellow-400" fontSize="small" />
+                <span className="font-medium">
+                  {commentTotal} review{commentTotal > 1 ? "s" : ""}
+                </span>
+              </div>
+              <div className="space-y-4">
+                {productComments?.map((comment: Comment) => (
+                  <ReviewCard
+                    comment={comment}
+                    key={comment?._id}
+                    onUpdateComment={updateCommentHandler}
+                    onRemoveComment={removeCommentHandler}
+                  />
+                ))}
+              </div>
+              {Math.ceil(commentTotal / commentInquiry.limit) > 1 && (
+                <div className="mt-6 flex items-center justify-center">
+                  <Pagination
+                    page={commentInquiry.page}
+                    count={Math.ceil(commentTotal / commentInquiry.limit) || 1}
+                    onChange={commentPaginationChangeHandler}
+                    shape="circular"
+                    color="primary"
+                  />
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="rounded-xl border border-dashed border-gray-200 bg-white p-8 text-center">
+              <div className="mb-4 rounded-full bg-gray-100 p-3 mx-auto w-fit">
+                <svg
+                  className="h-8 w-8 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">
+                No reviews yet
+              </h3>
+              <p className="text-sm text-gray-600">
+                Be the first to leave a review for our products!
+              </p>
+            </div>
+          )}
+
+          {/* Leave review form */}
+          {user?._id && (
+            <div className="mt-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Leave a Review
+              </h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Your Review
+                  </label>
+                  <textarea
+                    onChange={({ target: { value } }: any) => {
+                      setInsertCommentData({
+                        ...insertCommentData,
+                        commentContent: value,
+                      });
+                    }}
+                    value={insertCommentData.commentContent}
+                    placeholder="Share your experience with our products..."
+                    className="w-full rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-transparent resize-none"
+                    rows={4}
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <button
+                    disabled={
+                      insertCommentData.commentContent === "" || !user?._id
+                    }
+                    onClick={createCommentHandler}
+                    className="inline-flex items-center rounded-lg bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:from-pink-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 transition-all duration-200"
+                  >
+                    Submit Review
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="17"
+                      height="17"
+                      viewBox="0 0 17 17"
+                      fill="none"
+                      className="ml-2"
+                    >
+                      <g clipPath="url(#clip0_6975_3642)">
+                        <path
+                          d="M16.1571 0.5H6.37936C6.1337 0.5 5.93491 0.698792 5.93491 0.944458C5.93491 1.19012 6.1337 1.38892 6.37936 1.38892H15.0842L0.731781 15.7413C0.558156 15.915 0.558156 16.1962 0.731781 16.3698C0.818573 16.4566 0.932323 16.5 1.04603 16.5C1.15974 16.5 1.27345 16.4566 1.36028 16.3698L15.7127 2.01737V10.7222C15.7127 10.9679 15.9115 11.1667 16.1572 11.1667C16.4028 11.1667 16.6016 10.9679 16.6016 10.7222V0.944458C16.6016 0.698792 16.4028 0.5 16.1571 0.5Z"
+                          fill="#ffffff"
+                        />
+                      </g>
+                      <defs>
+                        <clipPath id="clip0_6975_3642">
+                          <rect
+                            width="16"
+                            height="16"
+                            fill="white"
+                            transform="translate(0.601562 0.5)"
+                          />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
