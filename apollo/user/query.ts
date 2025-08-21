@@ -447,11 +447,6 @@ export const GET_BOARD_ARTICLE = gql`
       memberId
       createdAt
       updatedAt
-      meLiked {
-        memberId
-        likeRefId
-        myFavorite
-      }
       memberData {
         _id
         memberType
@@ -477,6 +472,12 @@ export const GET_BOARD_ARTICLE = gql`
         deletedAt
         createdAt
         updatedAt
+        accessToken
+      }
+      meLiked {
+        memberId
+        likeRefId
+        myFavorite
       }
     }
   }
