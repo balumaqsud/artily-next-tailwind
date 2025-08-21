@@ -288,6 +288,7 @@ const CommunityDetail: NextPage = ({
       setLikeLoading(false);
     }
   };
+  console.log("boardArticle", boardArticle);
 
   return (
     <div className="w-full bg-background">
