@@ -39,7 +39,7 @@ const PopularProductsCard = ({
         className="relative aspect-[4/3] w-full overflow-hidden rounded-t-2xl bg-cover bg-center"
         style={{
           backgroundImage: `url(${REACT_APP_API_URL}/${
-            product?.productImages?.[0] ?? product?.propertyImages?.[0]
+            product?.productImages?.[0] ?? product?.productImages?.[0]
           })`,
         }}
       />

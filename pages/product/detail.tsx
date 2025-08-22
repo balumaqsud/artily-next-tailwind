@@ -287,6 +287,48 @@ const ProductDetail: NextPage<DetailProps> = ({
     }
   };
 
+  // Helper function to convert shipping time enum to display text
+  const getShippingTimeDisplay = (time: string) => {
+    switch (time) {
+      case "TURBO":
+        return "24 hours";
+      case "FAST":
+        return "3-5 days";
+      case "SLOW":
+        return "7-10 days";
+      default:
+        return time || "Standard";
+    }
+  };
+
+  // Helper function to convert product type enum to display text
+  const getProductTypeDisplay = (type: string) => {
+    switch (type) {
+      case "CLOTHING":
+        return "Clothing";
+      case "HOME_LIVING":
+        return "Home & Living";
+      case "ACCESSORY":
+        return "Accessory";
+      case "HANDMADE":
+        return "Handmade";
+      case "VINTAGE":
+        return "Vintage";
+      case "CRAFT_SUPPLIES":
+        return "Craft Supplies";
+      case "JEWELRY":
+        return "Jewelry";
+      case "PET_PRODUCTS":
+        return "Pet Products";
+      case "ART_COLLECTABLES":
+        return "Art & Collectables";
+      case "CHILDREN":
+        return "Children";
+      default:
+        return type || "Unknown";
+    }
+  };
+
   if (getPropertyLoading) {
     return (
       <div className="flex h-[1080px] w-full items-center justify-center">
@@ -524,7 +566,7 @@ const ProductDetail: NextPage<DetailProps> = ({
                   )}
                   {productType && (
                     <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
-                      {productType}
+                      {getProductTypeDisplay(productType)}
                     </span>
                   )}
                   {productStatus && (
@@ -681,7 +723,7 @@ const ProductDetail: NextPage<DetailProps> = ({
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600">Shipping Time</span>
                     <span className="text-sm font-medium text-gray-900">
-                      {shippingTime || "Standard"}
+                      {getShippingTimeDisplay(shippingTime || "")}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">

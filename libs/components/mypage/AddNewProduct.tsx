@@ -279,11 +279,18 @@ const AddProduct = ({ initialValues, ...props }: any) => {
               }
             >
               <option value="">Select Type</option>
-              {productType.map((type: any) => (
-                <option value={`${type}`} key={type}>
-                  {type}
-                </option>
-              ))}
+              <option value={ProductType.CLOTHING}>Clothing</option>
+              <option value={ProductType.HOME_LIVING}>Home & Living</option>
+              <option value={ProductType.ACCESSORY}>Accessory</option>
+              <option value={ProductType.HANDMADE}>Handmade</option>
+              <option value={ProductType.VINTAGE}>Vintage</option>
+              <option value={ProductType.CRAFT_SUPPLIES}>Craft Supplies</option>
+              <option value={ProductType.JEWELRY}>Jewelry</option>
+              <option value={ProductType.PET_PRODUCTS}>Pet Products</option>
+              <option value={ProductType.ART_COLLECTABLES}>
+                Art & Collectables
+              </option>
+              <option value={ProductType.CHILDREN}>Children</option>
             </select>
           </div>
         </div>
@@ -358,9 +365,9 @@ const AddProduct = ({ initialValues, ...props }: any) => {
               }
             >
               <option value="">Select Shipping Time</option>
-              <option value={SHippingTimeType.TURBO}>TURBO</option>
-              <option value={SHippingTimeType.FAST}>FAST</option>
-              <option value={SHippingTimeType.SLOW}>SLOW</option>
+              <option value={SHippingTimeType.TURBO}>24 hours</option>
+              <option value={SHippingTimeType.FAST}>3-5 days</option>
+              <option value={SHippingTimeType.SLOW}>7-10 days</option>
             </select>
           </div>
         </div>

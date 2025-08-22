@@ -25,9 +25,7 @@ const ProductCard = ({
   recentlyVisited,
 }: ProductCardProps) => {
   const user = useReactiveVar(userVar);
-  const image = (product as any)?.productImages?.[0]
-    ? `${REACT_APP_API_URL}/${(product as any).productImages[0]}`
-    : "/img/banner/header1.svg";
+
   const price = Number((product as any)?.productPrice ?? 0);
 
   return (
@@ -39,8 +37,13 @@ const ProductCard = ({
         }}
       >
         <div
-          className="relative aspect-square w-full bg-cover bg-center"
-          style={{ backgroundImage: `url(${image})` }}
+          role="button"
+          className="relative aspect-[4/3] w-full overflow-hidden rounded-t-2xl bg-cover bg-center"
+          style={{
+            backgroundImage: `url(${REACT_APP_API_URL}/${
+              product?.productImages?.[0] ?? product?.productImages?.[0]
+            })`,
+          }}
         />
       </Link>
 
