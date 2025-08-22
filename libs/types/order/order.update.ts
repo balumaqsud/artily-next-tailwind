@@ -1,11 +1,6 @@
-import { Field, InputType } from '@nestjs/graphql';
-import { OrderStatus } from '../../enums/order.enum';
+import { OrderStatus } from "../../enums/order.enum";
 
-@InputType()
-export class OrderUpdateInput {
-  @Field(() => String)
+export interface OrderUpdateInput {
   orderId: string;
-
-  @Field(() => OrderStatus)
   orderStatus: OrderStatus;
 }

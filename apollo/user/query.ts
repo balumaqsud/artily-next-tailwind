@@ -722,3 +722,60 @@ export const GET_MEMBER_FOLLOWINGS = gql`
     }
   }
 `;
+
+export const GET_CART = gql`
+  query GetMyOrders($input: OrderInquiry!) {
+    getMyOrders(input: $input) {
+      list {
+        _id
+        orderTotal
+        orderDelivery
+        orderStatus
+        memberId
+        createdAt
+        updatedAt
+        orderItems {
+          _id
+          itemQuantity
+          itemPrice
+          orderId
+          productId
+          createdAt
+          updatedAt
+        }
+        productData {
+          _id
+          productType
+          productCategory
+          productStatus
+          productTags
+          productLocation
+          productShippingTime
+          productTitle
+          productPrice
+          productViews
+          productLikes
+          productComments
+          productRank
+          productImages
+          productMaterials
+          productColor
+          productDesc
+          productShippingCost
+          productWrapAvailable
+          productPersonalizable
+          productStock
+          productSlug
+          memberId
+          soldAt
+          deletedAt
+          createdAt
+          updatedAt
+        }
+      }
+      metaCounter {
+        total
+      }
+    }
+  }
+`;
