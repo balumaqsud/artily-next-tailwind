@@ -353,7 +353,7 @@ const SellerDetail: NextPage = ({
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-gray-900">
-                  {artist?.memberFollowings || 0}
+                  {artist?.memberFollowing || 0}
                 </div>
                 <div className="text-sm text-gray-600">Followings</div>
               </div>

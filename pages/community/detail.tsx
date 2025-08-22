@@ -317,17 +317,6 @@ const CommunityDetail: NextPage = ({
             </div>
           </div>
 
-          {/* Article Image */}
-          {boardArticle?.articleImage && (
-            <div className="mb-4 sm:mb-6">
-              <img
-                src={`${REACT_APP_API_URL}/${boardArticle.articleImage}`}
-                alt={boardArticle.articleTitle}
-                className="w-full rounded-lg object-cover max-h-64 sm:max-h-96"
-              />
-            </div>
-          )}
-
           {/* Article Content */}
           {boardArticle?.articleContent && (
             <div className="prose prose-sm sm:prose-lg max-w-none text-gray-700 leading-relaxed">

@@ -159,7 +159,7 @@ const MemberFollowings = (props: MemberFollowingsProps) => {
                       </div>
                       <div className="text-center">
                         <div className="font-medium text-gray-900">
-                          {follower?.followingData?.memberFollowings}
+                          {follower?.followingData?.memberFollowing}
                         </div>
                         <div className="text-xs">Following</div>
                       </div>

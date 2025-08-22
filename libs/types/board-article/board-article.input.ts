@@ -12,6 +12,14 @@ export interface BoardArticleInput {
   memberId?: string;
 }
 
+// GraphQL backend expects this interface
+export interface ArticleInput {
+  articleCategory: BoardArticleCategory;
+  articleTitle: string;
+  articleContent: string;
+  articleImage: string;
+}
+
 interface BAISearch {
   articleCategory: BoardArticleCategory;
   text?: string;

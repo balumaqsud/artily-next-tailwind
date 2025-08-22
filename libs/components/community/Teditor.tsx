@@ -7,28 +7,28 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { T } from "../../types/common";
 import "@toast-ui/editor/dist/toastui-editor.css";
-import { useMutation } from "@apollo/client";
+import { useMutation, useReactiveVar } from "@apollo/client";
 import { CREATE_BOARD_ARTICLE } from "../../../apollo/user/mutation";
 import { sweetErrorHandling, sweetTopSuccessAlert } from "../../sweetAlert";
 import { Message } from "../../enums/common.enum";
+import { userVar } from "../../../apollo/store";
+import { ArticleInput } from "../../types/board-article/board-article.input";
 
 const TuiEditor = () => {
-  const editorRef = useRef<Editor>(null),
-    token = getJwtToken(),
-    router = useRouter();
+  const editorRef = useRef<Editor>(null);
+  const token = getJwtToken();
+  const router = useRouter();
+  const user = useReactiveVar(userVar);
+
   const [articleCategory, setArticleCategory] = useState<BoardArticleCategory>(
     BoardArticleCategory.FREE
   );
+  const [articleTitle, setArticleTitle] = useState<string>("");
+  const [articleImage, setArticleImage] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   /** APOLLO REQUESTS **/
   const [createBoardArticle] = useMutation(CREATE_BOARD_ARTICLE);
-
-  const memoizedValues = useMemo(() => {
-    const articleTitle = "",
-      articleContent = "",
-      articleImage = "";
-    return { articleTitle, articleContent, articleImage };
-  }, []);
 
   /** HANDLERS **/
   const uploadImage = async (image: any) => {
@@ -57,54 +57,92 @@ const TuiEditor = () => {
       );
 
       const responseImage = response.data.data.imageUploader;
-      memoizedValues.articleImage = responseImage;
+      setArticleImage(responseImage);
       return `${REACT_APP_API_URL}/${responseImage}`;
     } catch (err) {
       console.log("Error, uploadImage:", err);
+      throw new Error("Failed to upload image");
     }
   };
 
-  const changeCategoryHandler = (e: any) => {
-    setArticleCategory(e.target.value);
+  const changeCategoryHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setArticleCategory(e.target.value as BoardArticleCategory);
   };
 
-  const articleTitleHandler = (e: T) => {
-    memoizedValues.articleTitle = e.target.value;
+  const articleTitleHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setArticleTitle(e.target.value);
   };
 
   const handleRegisterButton = async () => {
     try {
-      const editor = editorRef.current;
-      const articleContent = editor?.getInstance().getHTML() as string;
-      memoizedValues.articleContent = articleContent;
-
-      if (
-        memoizedValues.articleContent === "" &&
-        memoizedValues.articleTitle === ""
-      ) {
-        throw new Error(Message.INSERT_ALL_INPUTS);
+      if (!user?._id) {
+        throw new Error("User not authenticated");
       }
 
+      setIsSubmitting(true);
+
+      const editor = editorRef.current;
+      if (!editor) {
+        throw new Error("Editor not initialized");
+      }
+
+      const articleContent = editor.getInstance().getHTML() as string;
+
+      // Validate inputs
+      if (!articleTitle.trim()) {
+        throw new Error("Article title is required");
+      }
+
+      if (
+        !articleContent.trim() ||
+        articleContent === "<p><br></p>" ||
+        articleContent === "<p></p>"
+      ) {
+        throw new Error("Article content is required");
+      }
+
+      if (!articleCategory) {
+        throw new Error("Article category is required");
+      }
+
+      const articleData: ArticleInput = {
+        articleCategory,
+        articleTitle: articleTitle.trim(),
+        articleContent: articleContent.trim(),
+        articleImage: articleImage || "",
+      };
+
+      console.log("Creating article with data:", articleData);
+
       await createBoardArticle({
-        variables: { input: { ...memoizedValues, articleCategory } },
+        variables: { input: articleData },
       });
+
       await sweetTopSuccessAlert("Article created successfully", 700);
+
+      // Reset form
+      setArticleTitle("");
+      setArticleImage("");
+      if (editorRef.current) {
+        editorRef.current.getInstance().setHTML("");
+      }
+
+      // Redirect to my articles
       await router.push({
         pathname: "/mypage",
         query: { category: "myArticles" },
       });
-    } catch (error) {
-      await sweetErrorHandling(new Error(Message.INSERT_ALL_INPUTS)).then();
+    } catch (error: any) {
+      console.error("Error creating article:", error);
+      const errorMessage = error.message || "Failed to create article";
+      await sweetErrorHandling(new Error(errorMessage)).then();
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const doDisabledCheck = () => {
-    if (
-      memoizedValues.articleContent === "" ||
-      memoizedValues.articleTitle === ""
-    ) {
-      return true;
-    }
+    return !articleTitle.trim() || isSubmitting || !user?._id;
   };
 
   return (
@@ -132,7 +170,8 @@ const TuiEditor = () => {
         <div>
           <label className="text-xs font-medium text-gray-700">Title</label>
           <input
-            onChange={articleTitleHandler as any}
+            value={articleTitle}
+            onChange={articleTitleHandler}
             placeholder="Type title"
             className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
           />
@@ -156,21 +195,59 @@ const TuiEditor = () => {
           ref={editorRef}
           hooks={{
             addImageBlobHook: async (image: any, callback: any) => {
-              const uploadedImageURL = await uploadImage(image);
-              callback(uploadedImageURL);
-              return false;
+              try {
+                const uploadedImageURL = await uploadImage(image);
+                callback(uploadedImageURL);
+                return false;
+              } catch (error) {
+                console.error("Image upload failed:", error);
+                return false;
+              }
             },
           }}
         />
       </div>
 
+      {/* Validation Messages */}
+      {!user?._id && (
+        <div className="mt-4 text-center text-sm text-red-600">
+          Please log in to create articles
+        </div>
+      )}
+
       <div className="mt-4 flex justify-center">
         <button
           onClick={handleRegisterButton}
           disabled={doDisabledCheck()}
-          className="inline-flex items-center rounded-md bg-[#ff6b81] px-6 py-3 text-sm font-semibold text-white hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex items-center rounded-md bg-[#ff6b81] px-6 py-3 text-sm font-semibold text-white hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60 transition-all duration-200"
         >
-          Publish
+          {isSubmitting ? (
+            <>
+              <svg
+                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Publishing...
+            </>
+          ) : (
+            "Publish Article"
+          )}
         </button>
       </div>
     </div>

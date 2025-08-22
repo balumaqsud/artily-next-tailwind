@@ -5,26 +5,106 @@ import { CustomJwtPayload } from "../types/customJwtPayload";
 import { sweetMixinErrorAlert } from "../sweetAlert";
 import { LOGIN, SIGN_UP } from "../../apollo/user/mutation";
 
-export function getJwtToken(): any {
+export function getJwtToken(): string {
   if (typeof window !== "undefined") {
-    return localStorage.getItem("accessToken") ?? "";
+    try {
+      const token = localStorage.getItem("accessToken");
+      // Validate that token is a non-empty string
+      if (token && typeof token === "string" && token.trim().length > 0) {
+        return token;
+      }
+      return "";
+    } catch (error) {
+      console.error("Error getting JWT token from localStorage:", error);
+      return "";
+    }
+  }
+  return "";
+}
+
+export function isTokenValid(): boolean {
+  try {
+    const token = getJwtToken();
+    if (!token || typeof token !== "string" || token.trim().length === 0) {
+      return false;
+    }
+
+    // Basic JWT format validation before decoding
+    const parts = token.split(".");
+    if (parts.length !== 3) {
+      console.warn("Invalid JWT token format");
+      return false;
+    }
+
+    const claims = decodeJWT<CustomJwtPayload>(token);
+    if (!claims) return false;
+
+    // Check if token is expired
+    const currentTime = Date.now() / 1000;
+    if (claims.exp && claims.exp < currentTime) {
+      console.warn("JWT token has expired");
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error validating JWT token:", error);
+    return false;
   }
 }
 
 export function setJwtToken(token: string) {
-  localStorage.setItem("accessToken", token);
+  try {
+    if (token && typeof token === "string" && token.trim().length > 0) {
+      localStorage.setItem("accessToken", token);
+    } else {
+      console.warn("Attempted to set invalid JWT token:", token);
+      localStorage.removeItem("accessToken");
+    }
+  } catch (error) {
+    console.error("Error setting JWT token:", error);
+  }
+}
+
+export function clearInvalidToken() {
+  try {
+    localStorage.removeItem("accessToken");
+    console.log("Invalid token cleared from localStorage");
+  } catch (error) {
+    console.error("Error clearing invalid token:", error);
+  }
 }
 
 export const logIn = async (nick: string, password: string): Promise<void> => {
   try {
     const { jwtToken } = await requestJwtToken({ nick, password });
 
-    if (jwtToken) {
-      updateStorage({ jwtToken });
-      updateUserInfo(jwtToken);
+    if (
+      jwtToken &&
+      typeof jwtToken === "string" &&
+      jwtToken.trim().length > 0
+    ) {
+      // Validate token format before storing
+      const parts = jwtToken.split(".");
+      if (parts.length === 3) {
+        updateStorage({ jwtToken });
+        const success = updateUserInfo(jwtToken);
+        if (!success) {
+          console.error("Failed to update user info after login");
+          clearInvalidToken();
+          logOut();
+        }
+      } else {
+        console.error("Invalid JWT token format received from login");
+        logOut();
+      }
+    } else {
+      console.error("Invalid JWT token received from login");
+      logOut();
     }
   } catch (err) {
     console.warn("login err", err);
+    clearInvalidToken();
     logOut();
     // throw new Error('Login Err');
   }
@@ -80,14 +160,34 @@ export const signUp = async (
       type,
     });
 
-    if (jwtToken) {
-      updateStorage({ jwtToken });
-      updateUserInfo(jwtToken);
+    if (
+      jwtToken &&
+      typeof jwtToken === "string" &&
+      jwtToken.trim().length > 0
+    ) {
+      // Validate token format before storing
+      const parts = jwtToken.split(".");
+      if (parts.length === 3) {
+        updateStorage({ jwtToken });
+        const success = updateUserInfo(jwtToken);
+        if (!success) {
+          console.error("Failed to update user info after signup");
+          clearInvalidToken();
+          logOut();
+        }
+      } else {
+        console.error("Invalid JWT token format received from signup");
+        logOut();
+      }
+    } else {
+      console.error("Invalid JWT token received from signup");
+      logOut();
     }
   } catch (err) {
-    console.warn("login err", err);
+    console.warn("signup err", err);
+    clearInvalidToken();
     logOut();
-    // throw new Error('Login Err');
+    // throw new Error('Signup Err');
   }
 };
 
@@ -147,32 +247,64 @@ export const updateStorage = ({ jwtToken }: { jwtToken: any }) => {
 };
 
 export const updateUserInfo = (jwtToken: any) => {
-  if (!jwtToken) return false;
+  if (!jwtToken || typeof jwtToken !== "string") {
+    console.warn("Invalid JWT token provided to updateUserInfo:", jwtToken);
+    return false;
+  }
 
-  const claims = decodeJWT<CustomJwtPayload>(jwtToken);
-  userVar({
-    _id: claims._id ?? "",
-    memberType: claims.memberType ?? "",
-    memberStatus: claims.memberStatus ?? "",
-    memberAuthType: claims.memberAuthType,
-    memberPhone: claims.memberPhone ?? "",
-    memberNick: claims.memberNick ?? "",
-    memberFullName: claims.memberFullName ?? "",
-    memberImage:
-      claims.memberImage === null || claims.memberImage === undefined
-        ? "/img/profile/defaultUser.svg"
-        : `${claims.memberImage}`,
-    memberAddress: claims.memberAddress ?? "",
-    memberDesc: claims.memberDesc ?? "",
-    memberProducts: claims.memberProducts,
-    memberRank: claims.memberRank,
-    memberArticles: claims.memberArticles,
-    memberPoints: claims.memberPoints,
-    memberLikes: claims.memberLikes,
-    memberViews: claims.memberViews,
-    memberWarnings: claims.memberWarnings,
-    memberBlocks: claims.memberBlocks,
-  });
+  // Basic JWT format validation before decoding
+  const trimmedToken = jwtToken.trim();
+  if (trimmedToken.length === 0) {
+    console.warn("Empty JWT token provided to updateUserInfo");
+    return false;
+  }
+
+  const parts = trimmedToken.split(".");
+  if (parts.length !== 3) {
+    console.warn("Invalid JWT token format in updateUserInfo");
+    return false;
+  }
+
+  try {
+    const claims = decodeJWT<CustomJwtPayload>(trimmedToken);
+
+    if (!claims) {
+      console.warn("Failed to decode JWT token");
+      return false;
+    }
+
+    userVar({
+      _id: claims._id ?? "",
+      memberType: claims.memberType ?? "",
+      memberStatus: claims.memberStatus ?? "",
+      memberAuthType: claims.memberAuthType ?? "",
+      memberPhone: claims.memberPhone ?? "",
+      memberNick: claims.memberNick ?? "",
+      memberFullName: claims.memberFullName ?? "",
+      memberImage:
+        claims.memberImage === null || claims.memberImage === undefined
+          ? "/img/profile/defaultUser.svg"
+          : `${claims.memberImage}`,
+      memberAddress: claims.memberAddress ?? "",
+      memberDesc: claims.memberDesc ?? "",
+      memberProducts: claims.memberProducts ?? 0,
+      memberFollowers: claims.memberFollowers ?? 0,
+      memberFollowing: claims.memberFollowing ?? 0,
+      memberRank: claims.memberRank ?? 0,
+      memberArticles: claims.memberArticles ?? 0,
+      memberPoints: claims.memberPoints ?? 0,
+      memberLikes: claims.memberLikes ?? 0,
+      memberViews: claims.memberViews ?? 0,
+      memberWarnings: claims.memberWarnings ?? 0,
+      memberBlocks: claims.memberBlocks ?? 0,
+    });
+
+    return true;
+  } catch (error) {
+    console.error("Error decoding JWT token:", error);
+    console.error("Token that caused error:", trimmedToken);
+    return false;
+  }
 };
 
 export const logOut = () => {
@@ -199,6 +331,8 @@ const deleteUserInfo = () => {
     memberAddress: "",
     memberDesc: "",
     memberProducts: 0,
+    memberFollowers: 0,
+    memberFollowing: 0,
     memberRank: 0,
     memberArticles: 0,
     memberPoints: 0,
