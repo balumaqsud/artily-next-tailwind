@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Pagination, Tab, Typography } from "@mui/material";
+import { Tab, Typography } from "@mui/material";
 import CommunityCard from "../../libs/components/common/CommunityCard";
 import withLayoutBasic from "../../libs/components/layout/LayoutBasic";
 import { BoardArticle } from "../../libs/types/board-article/board-article";
@@ -44,6 +44,7 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
     useState<ArticlesInquiry>(initialInput);
   const [boardArticles, setBoardArticles] = useState<BoardArticle[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   if (articleCategory) initialInput.search.articleCategory = articleCategory;
 
   /** APOLLO REQUESTS **/
@@ -77,6 +78,10 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
       );
   }, []);
 
+  useEffect(() => {
+    setCurrentPage(searchCommunity.page || 1);
+  }, [searchCommunity.page]);
+
   /** HANDLERS **/
   const tabChangeHandler = async (e: T, value: string) => {
     console.log(value);
@@ -95,8 +100,16 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
       { shallow: true }
     );
   };
-  const paginationHandler = (e: T, value: number) => {
-    setSearchCommunity({ ...searchCommunity, page: value });
+
+  const handlePaginationChange = async (value: number) => {
+    const next = { ...searchCommunity, page: value };
+    setSearchCommunity(next);
+    setCurrentPage(value);
+    await router.push(
+      `/community?articleCategory=${searchCommunity.search.articleCategory}&page=${value}`,
+      `/community?articleCategory=${searchCommunity.search.articleCategory}&page=${value}`,
+      { scroll: false }
+    );
   };
 
   const likeArticleHandler = async (e: any, user: T, id: string) => {
@@ -116,6 +129,8 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
       await sweetMixinErrorAlert(error.message || "Failed to like article");
     }
   };
+
+  const totalPages = Math.ceil(totalCount / searchCommunity.limit);
 
   return (
     <div className="w-full">
@@ -272,17 +287,29 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
         </TabContext>
 
         {totalCount > 0 && (
-          <div className="mt-6 flex flex-col items-center justify-center gap-2">
-            <Pagination
-              count={Math.ceil(totalCount / searchCommunity.limit)}
-              page={searchCommunity.page}
-              shape="circular"
-              color="primary"
-              onChange={paginationHandler}
-            />
-            <p className="text-xs text-gray-500">
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row sm:justify-between">
+            <div className="text-sm text-muted-foreground text-center sm:text-left">
               Total {totalCount} article{totalCount > 1 ? "s" : ""} available
-            </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                disabled={currentPage <= 1}
+                onClick={() => handlePaginationChange(currentPage - 1)}
+                className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm disabled:opacity-50 hover:bg-gray-50 cursor-pointer"
+              >
+                Prev
+              </button>
+              <span className="text-sm px-2">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                disabled={currentPage >= totalPages}
+                onClick={() => handlePaginationChange(currentPage + 1)}
+                className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm disabled:opacity-50 hover:bg-gray-50 cursor-pointer"
+              >
+                Next
+              </button>
+            </div>
           </div>
         )}
       </div>
