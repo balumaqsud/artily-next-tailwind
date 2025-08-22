@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import { Box, Button, Pagination, Stack, Typography } from "@mui/material";
 import useDeviceDetect from "../../hooks/useDeviceDetect";
 import { useRouter } from "next/router";
 import { FollowInquiry } from "../../types/follow/follow.input";
 import { useQuery, useReactiveVar } from "@apollo/client";
 import { Following } from "../../types/follow/follow";
 import { REACT_APP_API_URL } from "../../config";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { userVar } from "../../../apollo/store";
 import { GET_MEMBER_FOLLOWINGS } from "../../../apollo/user/query";
 import { T } from "../../types/common";
@@ -21,9 +24,9 @@ const MemberFollowings = (props: MemberFollowingsProps) => {
   const {
     initialInput,
     subscribeHandler,
-    likeMemberHandler,
     unsubscribeHandler,
     redirectToMemberPageHandler,
+    likeMemberHandler,
   } = props;
   const device = useDeviceDetect();
   const router = useRouter();
@@ -38,11 +41,13 @@ const MemberFollowings = (props: MemberFollowingsProps) => {
   const {
     loading: getMemberFollowingsLoading,
     data: getMemberFollowingsData,
-    error: getMemberFollowersError,
+    error: getMemberFollowingsError,
     refetch: getMemberFollowingsRefetch,
   } = useQuery(GET_MEMBER_FOLLOWINGS, {
     fetchPolicy: "network-only",
-    variables: { input: followInquiry },
+    variables: {
+      input: followInquiry,
+    },
     skip: !followInquiry?.search?.followerId,
     notifyOnNetworkStatusChange: true,
     onCompleted: (data: T) => {
@@ -50,20 +55,26 @@ const MemberFollowings = (props: MemberFollowingsProps) => {
       setTotal(data?.getMemberFollowings?.metaCounter[0]?.total);
     },
   });
-
-  /** LIFECYCLES **/
+  /** LIFECYCLE **/
   useEffect(() => {
     if (router.query.memberId)
       setFollowInquiry({
-        ...followInquiry,
+        page: followInquiry?.page || 1,
+        limit: followInquiry?.limit || 4,
         search: { followerId: router.query.memberId as string },
       });
     else
-      setFollowInquiry({ ...followInquiry, search: { followerId: user?._id } });
+      setFollowInquiry({
+        page: followInquiry?.page || 1,
+        limit: followInquiry?.limit || 4,
+        search: { followerId: user?._id },
+      });
   }, [router]);
 
   useEffect(() => {
-    getMemberFollowingsRefetch({ input: followInquiry }).then();
+    if (followInquiry?.search?.followerId) {
+      getMemberFollowingsRefetch({ input: followInquiry }).then();
+    }
   }, [followInquiry]);
 
   /** HANDLERS **/
@@ -289,9 +300,10 @@ const MemberFollowings = (props: MemberFollowingsProps) => {
 MemberFollowings.defaultProps = {
   initialInput: {
     page: 1,
-    limit: 5,
+    limit: 4,
     search: {
       followerId: "",
+      followingId: "",
     },
   },
 };
