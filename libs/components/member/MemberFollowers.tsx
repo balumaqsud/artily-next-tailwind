@@ -55,18 +55,22 @@ const MemberFollowers = (props: MemberFollowsProps) => {
   useEffect(() => {
     if (router.query.memberId)
       setFollowInquiry({
-        ...followInquiry,
+        page: followInquiry?.page || 1,
+        limit: followInquiry?.limit || 5,
         search: { followingId: router.query.memberId as string },
       });
-    else
+    else if (user?._id)
       setFollowInquiry({
-        ...followInquiry,
-        search: { followingId: user?._id },
+        page: followInquiry?.page || 1,
+        limit: followInquiry?.limit || 5,
+        search: { followingId: user._id },
       });
-  }, [router]);
+  }, [router, user?._id]);
 
   useEffect(() => {
-    getMemberFollowersRefetch({ input: followInquiry }).then();
+    if (followInquiry?.search?.followingId) {
+      getMemberFollowersRefetch({ input: followInquiry }).then();
+    }
   }, [followInquiry]);
 
   /** HANDLERS **/

@@ -617,8 +617,8 @@ export const GET_COMMENTS = gql`
  *         FOLLOW        *
  *************************/
 export const GET_MEMBER_FOLLOWERS = gql`
-  query GetMemberFollowings($input: FollowInquiry!) {
-    getMemberFollowings(input: $input) {
+  query GetMemberFollowers($input: FollowInquiry!) {
+    getMemberFollowers(input: $input) {
       list {
         _id
         followingId
@@ -635,7 +635,7 @@ export const GET_MEMBER_FOLLOWERS = gql`
           followerId
           myFollowing
         }
-        followingData {
+        followerData {
           _id
           memberType
           memberStatus
@@ -660,6 +660,7 @@ export const GET_MEMBER_FOLLOWERS = gql`
           deletedAt
           createdAt
           updatedAt
+          accessToken
         }
       }
       metaCounter {
