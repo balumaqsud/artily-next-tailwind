@@ -16,7 +16,7 @@ export default function ValueProps({
   className?: string;
 }) {
   const { t } = useTranslation("common");
-  
+
   const defaultItems: ValueItem[] = [
     {
       title: t("Every order pays an artist"),
@@ -30,7 +30,9 @@ export default function ValueProps({
     },
     {
       title: t("Original designs to wear & share"),
-      description: t("Explore thousands of artworks across 90+ premium products."),
+      description: t(
+        "Explore thousands of artworks across 90+ premium products."
+      ),
       icon: <Image className="h-7 w-7" />,
     },
   ];

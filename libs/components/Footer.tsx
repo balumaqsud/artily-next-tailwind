@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/libs/components/ui/button";
+import { useState } from "react";
+import { sweetTopSmallSuccessAlert } from "../sweetAlert";
 
 const footerCols = [
   {
@@ -98,6 +100,43 @@ const footerCols = [
 
 const Footer = () => {
   const year = new Date().getFullYear();
+  const [email, setEmail] = useState("");
+  const [isSubscribing, setIsSubscribing] = useState(false);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!email.trim()) {
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return;
+    }
+
+    setIsSubscribing(true);
+
+    try {
+      // Simulate API call delay
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Show success alert
+      await sweetTopSmallSuccessAlert(
+        `Thank you! ${email} has been subscribed to our newsletter.`,
+        3000
+      );
+
+      // Clear the email input
+      setEmail("");
+    } catch (error) {
+      console.error("Subscription error:", error);
+    } finally {
+      setIsSubscribing(false);
+    }
+  };
+
   return (
     <footer className="bg-[#4E89DF] text-muted-foreground">
       <div className="mx-auto w-full max-w-7xl px-6 py-12">
@@ -131,18 +170,50 @@ const Footer = () => {
               Stay updated on new releases and features, guides, and case
               studies.
             </p>
-            <div className="w-full max-w-md">
+            <form onSubmit={handleSubscribe} className="w-full max-w-md">
               <div className="flex h-10 w-full items-center rounded-md border pl-3 pr-2">
                 <input
                   type="email"
-                  placeholder="email"
-                  className="h-full w-full bg-transparent  text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="h-full w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+                  required
                 />
-                <Button className="h-8 rounded-full bg-[#ff6b81] p-2 text-base font-semibold text-white hover:bg-[#ff5a73] cursor-pointer">
-                  Subscribe
+                <Button
+                  type="submit"
+                  disabled={isSubscribing || !email.trim()}
+                  className="h-8 rounded-full bg-[#ff6b81] p-2 text-base font-semibold text-white hover:bg-[#ff5a73] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                >
+                  {isSubscribing ? (
+                    <div className="flex items-center gap-2">
+                      <svg
+                        className="animate-spin h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Subscribing...
+                    </div>
+                  ) : (
+                    "Subscribe"
+                  )}
                 </Button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
 

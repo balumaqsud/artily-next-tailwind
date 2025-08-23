@@ -36,7 +36,6 @@ import {
   LIKE_TARGET_PRODUCT,
   UPDATE_COMMENT,
   REMOVE_COMMENT,
-  CREATE_ORDER,
 } from "../../apollo/user/mutation";
 
 SwiperCore.use([Autoplay, Navigation, Pagination]);
@@ -77,7 +76,6 @@ const ProductDetail: NextPage<DetailProps> = ({
   const [personalization, setPersonalization] = useState<string>("");
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
-  const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
 
   const title =
     (product as any)?.productTitle ?? (product as any)?.propertyTitle;
@@ -109,7 +107,6 @@ const ProductDetail: NextPage<DetailProps> = ({
   const [createComment] = useMutation(CREATE_COMMENT);
   const [updateComment] = useMutation(UPDATE_COMMENT);
   const [removeComment] = useMutation(REMOVE_COMMENT);
-  const [addToCart] = useMutation(CREATE_ORDER);
 
   const {
     loading: getPropertyLoading,
@@ -308,23 +305,36 @@ const ProductDetail: NextPage<DetailProps> = ({
         throw new Error(`Only ${stock} items available in stock`);
       }
 
-      setIsAddingToCart(true);
-
-      const orderInput = {
-        items: [
-          {
-            itemQuantity: quantity,
-            itemPrice: price || 0,
-            productId: product._id.toString(),
-          },
-        ],
+      // Instead of creating an order, store cart item locally
+      const cartItem = {
+        _id: `temp_${Date.now()}`, // Temporary ID for local storage
+        itemQuantity: quantity,
+        itemPrice: price || 0,
+        productId: product._id.toString(),
+        productData: product, // Store full product data
+        createdAt: new Date().toISOString(),
       };
 
-      console.log("Creating order for cart:", orderInput);
+      // Get existing cart items from localStorage
+      const existingCart = JSON.parse(
+        localStorage.getItem("artly_cart") || "[]"
+      );
 
-      await addToCart({
-        variables: { input: orderInput },
-      });
+      // Check if product already exists in cart
+      const existingItemIndex = existingCart.findIndex(
+        (item: any) => item.productId === product._id.toString()
+      );
+
+      if (existingItemIndex >= 0) {
+        // Update existing item quantity
+        existingCart[existingItemIndex].itemQuantity += quantity;
+      } else {
+        // Add new item
+        existingCart.push(cartItem);
+      }
+
+      // Save updated cart to localStorage
+      localStorage.setItem("artly_cart", JSON.stringify(existingCart));
 
       await sweetTopSmallSuccessAlert(
         `Added ${quantity} ${quantity === 1 ? "item" : "items"} to cart!`,
@@ -333,12 +343,15 @@ const ProductDetail: NextPage<DetailProps> = ({
 
       // Reset quantity to 1 after successful add
       setQuantity(1);
+
+      // Redirect to cart page after a short delay
+      setTimeout(() => {
+        router.push("/cart");
+      }, 1000);
     } catch (error: any) {
       console.error("Error adding to cart:", error);
       const errorMessage = error.message || "Failed to add item to cart";
       await sweetMixinErrorAlert(errorMessage);
-    } finally {
-      setIsAddingToCart(false);
     }
   };
 
@@ -715,18 +728,48 @@ const ProductDetail: NextPage<DetailProps> = ({
                 <div className="flex items-center gap-4">
                   <div className="inline-flex items-center rounded-lg border border-gray-200 bg-white">
                     <button
-                      className="px-4 py-2 text-lg font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+                      className="px-4 py-2 text-lg font-medium text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                      disabled={quantity <= 1}
                     >
                       −
                     </button>
-                    <span className="min-w-[4rem] text-center font-medium">
-                      {quantity}
-                    </span>
+                    <input
+                      type="number"
+                      min="1"
+                      max={stock || undefined}
+                      value={quantity}
+                      onChange={(e) => {
+                        const newQuantity = parseInt(e.target.value) || 1;
+                        if (stock !== null && stock !== undefined) {
+                          setQuantity(
+                            Math.min(stock, Math.max(1, newQuantity))
+                          );
+                        } else {
+                          setQuantity(Math.max(1, newQuantity));
+                        }
+                      }}
+                      className="min-w-[4rem] text-center font-medium border-none outline-none focus:ring-0 bg-transparent"
+                      style={{
+                        width: `${Math.max(
+                          4,
+                          quantity.toString().length + 1
+                        )}rem`,
+                      }}
+                    />
                     <button
-                      className="px-4 py-2 text-lg font-medium text-gray-600 hover:bg-gray-50 transition-colors"
-                      onClick={() =>
-                        setQuantity((q) => Math.min(stock ?? q + 1, q + 1))
+                      className="px-4 py-2 text-lg font-medium text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      onClick={() => {
+                        if (stock !== null && stock !== undefined) {
+                          setQuantity((q) => Math.min(stock, q + 1));
+                        } else {
+                          setQuantity((q) => q + 1);
+                        }
+                      }}
+                      disabled={
+                        stock !== null &&
+                        stock !== undefined &&
+                        quantity >= stock
                       }
                     >
                       +
@@ -734,10 +777,100 @@ const ProductDetail: NextPage<DetailProps> = ({
                   </div>
                   {typeof stock === "number" && (
                     <div className="text-sm text-gray-600">
-                      <span className="font-medium">{stock}</span> in stock
+                      <span className="font-medium">{stock}</span> total in
+                      stock
                     </div>
                   )}
                 </div>
+
+                {/* Quick Add Presets */}
+                {typeof stock === "number" && stock > 1 && (
+                  <div className="flex flex-wrap gap-2">
+                    <span className="text-xs text-gray-500 mr-2">
+                      Quick add:
+                    </span>
+                    {[1, 2, 3, 5, 10].map((preset) => {
+                      if (preset <= stock) {
+                        return (
+                          <button
+                            key={preset}
+                            onClick={() => setQuantity(preset)}
+                            className={`px-3 py-1 text-xs rounded-full border transition-all ${
+                              quantity === preset
+                                ? "border-pink-500 bg-pink-50 text-pink-700"
+                                : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                            }`}
+                          >
+                            {preset}
+                          </button>
+                        );
+                      }
+                      return null;
+                    })}
+                  </div>
+                )}
+
+                {/* Dynamic Stock Information */}
+                {typeof stock === "number" && stock !== null && (
+                  <div className="space-y-2">
+                    {/* Available Stock */}
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Available:</span>
+                      <span
+                        className={`font-medium ${
+                          stock - quantity >= 0
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
+                      >
+                        {Math.max(0, stock - quantity)} items
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Price Summary */}
+                {price && (
+                  <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Price per item:</span>
+                      <span className="font-medium text-gray-900">
+                        ${formatterStr(price)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-lg font-semibold mt-2 pt-2 border-t border-gray-200">
+                      <span className="text-gray-700">
+                        Total for {quantity} item{quantity !== 1 ? "s" : ""}:
+                      </span>
+                      <span className="text-2xl text-pink-600">
+                        ${formatterStr(price * quantity)}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Error Message for Exceeding Stock */}
+                {stock !== null && stock !== undefined && quantity > stock && (
+                  <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">
+                    <div className="flex items-center gap-2">
+                      <svg
+                        className="h-4 w-4 text-red-500"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      <span>
+                        Quantity exceeds available stock. Maximum: {stock}{" "}
+                        items.
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Personalization */}
@@ -763,36 +896,10 @@ const ProductDetail: NextPage<DetailProps> = ({
               <div className="space-y-3">
                 <button
                   onClick={addToCartHandler}
-                  disabled={isAddingToCart || !user?._id}
+                  disabled={!user?._id}
                   className="w-full rounded-lg bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-4 text-center font-semibold text-white shadow-lg hover:from-pink-600 hover:to-purple-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isAddingToCart ? (
-                    <>
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      Adding to Cart...
-                    </>
-                  ) : (
-                    "Add to Cart"
-                  )}
+                  Add to Cart
                 </button>
                 <button className="w-full rounded-lg border border-gray-300 bg-white px-6 py-4 text-center font-semibold text-gray-900 hover:bg-gray-50 transition-colors">
                   Buy Now

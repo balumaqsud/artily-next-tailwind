@@ -1,9 +1,8 @@
 import React, { useMemo, useState, useEffect } from "react";
 import withLayoutBasic from "../../libs/components/layout/LayoutBasic";
-import { useQuery, useMutation, useReactiveVar } from "@apollo/client";
+import { useMutation, useReactiveVar } from "@apollo/client";
 import { userVar } from "../../apollo/store";
-import { GET_CART } from "../../apollo/user/query";
-import { UPDATE_ORDER } from "../../apollo/user/mutation";
+import { CREATE_ORDER } from "../../apollo/user/mutation";
 import {
   sweetTopSmallSuccessAlert,
   sweetMixinErrorAlert,
@@ -18,52 +17,35 @@ const ProductsCart = () => {
   const [shipping, setShipping] = useState<"STANDARD" | "EXPRESS">("STANDARD");
   const [updatingItems, setUpdatingItems] = useState<Set<string>>(new Set());
   const [showCheckout, setShowCheckout] = useState(false);
+  const [cartItems, setCartItems] = useState<any[]>([]);
 
-  const [updateOrder] = useMutation(UPDATE_ORDER);
+  const [createOrder] = useMutation(CREATE_ORDER);
 
-  const {
-    data,
-    loading,
-    refetch: refetchCart,
-    error,
-  } = useQuery(GET_CART, {
-    fetchPolicy: "network-only",
-    variables: {
-      input: {
-        page: 1,
-        limit: 50,
-        orderStatus: "PENDING",
-      },
-    },
-    skip: !user?._id,
-  });
+  // Load cart items from localStorage
+  useEffect(() => {
+    if (user?._id) {
+      const savedCart = JSON.parse(localStorage.getItem("artly_cart") || "[]");
+      setCartItems(savedCart);
+    }
+  }, [user?._id]);
 
-  const orders = data?.getMyOrders?.list || [];
-  const cartOrder =
-    orders.find((order: any) => order.orderStatus === "PENDING") || null;
+  // Save cart items to localStorage whenever they change
+  useEffect(() => {
+    if (user?._id && cartItems.length > 0) {
+      localStorage.setItem("artly_cart", JSON.stringify(cartItems));
+    }
+  }, [cartItems, user?._id]);
 
-  const items = Array.isArray(cartOrder?.orderItems)
-    ? cartOrder.orderItems
-    : cartOrder?.orderItems
-    ? [cartOrder.orderItems]
-    : [];
-
-  const products = Array.isArray(cartOrder?.productData)
-    ? cartOrder.productData
-    : cartOrder?.productData
-    ? [cartOrder.productData]
-    : [];
-
-  const cartTotal = cartOrder?.orderTotal || 0;
+  const items = cartItems;
+  const products = cartItems.map((item) => item.productData);
 
   const subtotal = useMemo(() => {
-    if (cartTotal) return cartTotal as number;
     return items.reduce(
       (acc: number, item: any) =>
         acc + (item.itemPrice ?? 0) * (item.itemQuantity ?? 1),
       0
     );
-  }, [items, cartTotal]);
+  }, [items]);
 
   const standardFee = 12.79;
   const expressExtra = 29.13;
@@ -71,17 +53,11 @@ const ProductsCart = () => {
     shipping === "STANDARD" ? standardFee : standardFee + expressExtra;
   const total = subtotal + shippingFee;
 
-  useEffect(() => {
-    if (user?._id) {
-      refetchCart();
-    }
-  }, [user?._id, refetchCart]);
-
   const handleUpdateQuantity = async (
     itemId: string,
     action: "increment" | "decrement"
   ) => {
-    if (!user?._id || !cartOrder) {
+    if (!user?._id) {
       sweetMixinErrorAlert("Please log in to update cart items.");
       return;
     }
@@ -91,11 +67,48 @@ const ProductsCart = () => {
     setUpdatingItems((prev) => new Set([...prev, itemId]));
 
     try {
-      sweetMixinErrorAlert(
-        "Quantity updates require backend support. Please contact support."
+      // Find the item to update
+      const itemToUpdate = items.find((item: any) => item._id === itemId);
+      if (!itemToUpdate) {
+        throw new Error("Item not found");
+      }
+
+      // Calculate new quantity
+      const currentQuantity = itemToUpdate.itemQuantity || 1;
+      const newQuantity =
+        action === "increment"
+          ? currentQuantity + 1
+          : Math.max(1, currentQuantity - 1);
+
+      if (newQuantity === currentQuantity) {
+        return; // No change needed
+      }
+
+      // Check stock limit
+      const product = itemToUpdate.productData;
+      if (
+        product?.productStock !== null &&
+        product?.productStock !== undefined
+      ) {
+        if (newQuantity > product.productStock) {
+          sweetMixinErrorAlert(
+            `Only ${product.productStock} items available in stock.`
+          );
+          return;
+        }
+      }
+
+      // Update the cart items
+      const updatedItems = items.map((item: any) =>
+        item._id === itemId ? { ...item, itemQuantity: newQuantity } : item
       );
-    } catch (error) {
-      sweetMixinErrorAlert("Failed to update cart item.");
+
+      setCartItems(updatedItems);
+
+      await sweetTopSmallSuccessAlert("Quantity updated successfully!", 800);
+    } catch (error: any) {
+      console.error("Error updating quantity:", error);
+      sweetMixinErrorAlert("Failed to update quantity. Please try again.");
     } finally {
       setUpdatingItems((prev) => {
         const newSet = new Set(prev);
@@ -106,7 +119,7 @@ const ProductsCart = () => {
   };
 
   const handleRemoveItem = async (itemId: string) => {
-    if (!user?._id || !cartOrder) {
+    if (!user?._id) {
       sweetMixinErrorAlert("Please log in to remove cart items.");
       return;
     }
@@ -116,42 +129,20 @@ const ProductsCart = () => {
     setUpdatingItems((prev) => new Set([...prev, itemId]));
 
     try {
-      sweetMixinErrorAlert(
-        "Item removal requires backend support. Please contact support."
-      );
-    } catch (error) {
-      sweetMixinErrorAlert("Failed to remove item from cart.");
+      // Remove the item from the cart
+      const updatedItems = items.filter((item: any) => item._id !== itemId);
+      setCartItems(updatedItems);
+
+      await sweetTopSmallSuccessAlert("Item removed successfully!", 800);
+    } catch (error: any) {
+      console.error("Error removing item:", error);
+      sweetMixinErrorAlert("Failed to remove item. Please try again.");
     } finally {
       setUpdatingItems((prev) => {
         const newSet = new Set(prev);
         newSet.delete(itemId);
         return newSet;
       });
-    }
-  };
-
-  const changeOrderStatus = async (orderId: string, newStatus: string) => {
-    if (!user?._id) {
-      sweetMixinErrorAlert("Please log in to change order status.");
-      return;
-    }
-
-    try {
-      await updateOrder({
-        variables: {
-          input: {
-            orderId,
-            orderStatus: newStatus,
-          },
-        },
-      });
-
-      sweetTopSmallSuccessAlert(
-        `Order status changed to ${newStatus} successfully!`
-      );
-      refetchCart();
-    } catch (error) {
-      sweetMixinErrorAlert("Failed to change order status.");
     }
   };
 
@@ -166,17 +157,29 @@ const ProductsCart = () => {
       return;
     }
 
-    if (!cartOrder) {
-      sweetMixinErrorAlert("Cart order not found.");
-      return;
-    }
-
     try {
-      await changeOrderStatus(cartOrder._id, "CONFIRMED");
-      sweetTopSmallSuccessAlert("Order confirmed successfully!");
+      // Create a new confirmed order
+      const orderInput = {
+        items: items.map((item: any) => ({
+          itemQuantity: item.itemQuantity || 1,
+          itemPrice: item.itemPrice || 0,
+          productId: item.productId || item._id,
+        })),
+      };
+
+      await createOrder({
+        variables: { input: orderInput },
+      });
+
+      // Clear the cart after successful order creation
+      setCartItems([]);
+      localStorage.removeItem("artly_cart");
+
+      sweetTopSmallSuccessAlert("Order created successfully!");
       setShowCheckout(true);
     } catch (error) {
-      sweetMixinErrorAlert("Failed to proceed to checkout.");
+      console.error("Error during checkout:", error);
+      sweetMixinErrorAlert("Failed to proceed to checkout. Please try again.");
     }
   };
 
@@ -218,95 +221,7 @@ const ProductsCart = () => {
     );
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-        <div className="mx-auto w-full max-w-4xl px-4 py-20">
-          <div className="text-center">
-            <div className="mx-auto mb-8 h-24 w-24 rounded-full bg-gradient-to-r from-pink-400 to-rose-500 p-1">
-              <div className="flex h-full w-full items-center justify-center rounded-full bg-white">
-                <svg
-                  className="animate-spin h-12 w-12 text-pink-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-              </div>
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900">
-              Loading your cart...
-            </h2>
-            <p className="text-gray-600">
-              Please wait while we fetch your items.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-        <div className="mx-auto w-full max-w-4xl px-4 py-20">
-          <div className="text-center">
-            <div className="mx-auto mb-8 h-24 w-24 rounded-full bg-red-100 p-1">
-              <div className="flex h-full w-full items-center justify-center rounded-full bg-white">
-                <svg
-                  className="h-12 w-12 text-red-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-                  />
-                </svg>
-              </div>
-            </div>
-            <h2 className="mb-4 text-2xl font-bold text-gray-900">
-              Something went wrong
-            </h2>
-            <p className="mb-8 text-gray-600">
-              We couldn't load your cart. Please try again.
-            </p>
-            <div className="space-x-4">
-              <button
-                onClick={() => refetchCart()}
-                className="inline-flex items-center rounded-full bg-gradient-to-r from-pink-500 to-rose-500 px-6 py-3 text-white font-semibold shadow-lg hover:from-pink-600 hover:to-rose-600 transition-all duration-200"
-              >
-                Try Again
-              </button>
-              <button
-                onClick={() => router.push("/product")}
-                className="inline-flex items-center rounded-full border-2 border-gray-300 px-6 py-3 text-gray-700 font-semibold hover:border-gray-400 transition-all duration-200"
-              >
-                Continue Shopping
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (items.length === 0) {
+  if (cartItems.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
         <div className="mx-auto w-full max-w-4xl px-4 py-20">
@@ -437,7 +352,7 @@ const ProductsCart = () => {
                             }
                             disabled={
                               updatingItems.has(item._id) ||
-                              item.itemQuantity <= 1
+                              (item.itemQuantity || 1) <= 1
                             }
                             className="h-10 w-10 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center"
                           >
