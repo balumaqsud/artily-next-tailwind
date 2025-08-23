@@ -124,8 +124,10 @@ const AdminCommunity: NextPage = () => {
         });
         break;
       default:
-        delete communityInquiry?.search?.articleStatus;
-        setCommunityInquiry({ ...communityInquiry });
+        setCommunityInquiry({
+          ...communityInquiry,
+          search: {},
+        });
         break;
     }
   };
@@ -145,8 +147,13 @@ const AdminCommunity: NextPage = () => {
           },
         });
       } else {
-        delete communityInquiry?.search?.articleCategory;
-        setCommunityInquiry({ ...communityInquiry });
+        setCommunityInquiry({
+          ...communityInquiry,
+          search: {
+            ...communityInquiry.search,
+            articleCategory: undefined,
+          },
+        });
       }
     } catch (err: any) {
       console.log("searchTypeHandler: ", err.message);
@@ -167,11 +174,20 @@ const AdminCommunity: NextPage = () => {
 
   const removeArticleHandler = async (id: string) => {
     try {
+      console.log("🧹 Attempting to remove article with ID:", id);
       if (await sweetConfirmAlert("are you sure to remove?")) {
-        await removeBoardArticleByAdmin({ variables: { input: id } });
+        console.log("✅ User confirmed removal, calling mutation...");
+        const result = await removeBoardArticleByAdmin({ variables: { input: id } });
+        console.log("✅ Remove mutation successful:", result);
+      } else {
+        console.log("❌ User cancelled removal");
+        return;
       }
       await getAllBoardArticlesByAdminRefetch({ input: communityInquiry });
     } catch (err: any) {
+      console.error("❌ Error removing article:", err);
+      console.error("❌ Error message:", err.message);
+      console.error("❌ Error details:", err);
       sweetErrorHandling(err).then();
     }
   };

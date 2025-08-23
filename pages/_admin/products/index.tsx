@@ -24,11 +24,20 @@ import {
 import { GET_ALL_PRODUCTS_BY_ADMIN } from "../../../apollo/admin/query";
 import { T } from "../../../libs/types/common";
 import { useMutation, useQuery } from "@apollo/client";
+import { Direction } from "../../../libs/enums/common.enum";
 
-const AdminProducts: NextPage = ({ initialInquiry, ...props }: any) => {
+const DEFAULT_INPUT: AllProductsInquiry = {
+  page: 1,
+  limit: 10,
+  sort: "createdAt",
+  direction: Direction.DESC,
+  search: {},
+};
+
+const AdminProducts: NextPage = () => {
   const [anchorEl, setAnchorEl] = useState<[] | HTMLElement[]>([]);
   const [productsInquiry, setProductsInquiry] =
-    useState<AllProductsInquiry>(initialInquiry);
+    useState<AllProductsInquiry>(DEFAULT_INPUT);
   const [products, setProducts] = useState<Product[]>([]);
   const [productsTotal, setProductsTotal] = useState<number>(0);
   const [value, setValue] = useState(
@@ -113,20 +122,31 @@ const AdminProducts: NextPage = ({ initialInquiry, ...props }: any) => {
         });
         break;
       default:
-        delete productsInquiry?.search?.productStatus;
-        setProductsInquiry({ ...productsInquiry });
+        setProductsInquiry({
+          ...productsInquiry,
+          search: {},
+        });
         break;
     }
   };
 
   const removeProductHandler = async (id: string) => {
     try {
+      console.log("🧹 Attempting to remove product with ID:", id);
       if (await sweetConfirmAlert("Are you sure to remove?")) {
-        await removeProductByAdmin({ variables: { input: id } });
+        console.log("✅ User confirmed removal, calling mutation...");
+        const result = await removeProductByAdmin({ variables: { input: id } });
+        console.log("✅ Remove mutation successful:", result);
+      } else {
+        console.log("❌ User cancelled removal");
+        return;
       }
       await getAllProductsByAdminRefetch({ input: productsInquiry });
       menuIconCloseHandler();
     } catch (err: any) {
+      console.error("❌ Error removing product:", err);
+      console.error("❌ Error message:", err.message);
+      console.error("❌ Error details:", err);
       sweetErrorHandling(err).then();
     }
   };
@@ -142,10 +162,17 @@ const AdminProducts: NextPage = ({ initialInquiry, ...props }: any) => {
           sort: "createdAt",
           search: {
             ...productsInquiry.search,
+            typeList: [newValue as ProductType],
           },
         });
       } else {
-        setProductsInquiry({ ...productsInquiry });
+        setProductsInquiry({
+          ...productsInquiry,
+          search: {
+            ...productsInquiry.search,
+            typeList: undefined,
+          },
+        });
       }
     } catch (err: any) {
       console.log("searchTypeHandler: ", err.message);
@@ -228,14 +255,6 @@ const AdminProducts: NextPage = ({ initialInquiry, ...props }: any) => {
       </Box>
     </Box>
   );
-};
-
-export const defaultAdminProductsInquiry: AllProductsInquiry = {
-  page: 1,
-  limit: 10,
-  sort: "createdAt",
-  direction: "DESC" as any,
-  search: {},
 };
 
 export default withAdminLayout(AdminProducts);
