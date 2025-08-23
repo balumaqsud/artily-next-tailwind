@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from "react";
 import type { NextPage } from "next";
 import withAdminLayout from "../../../libs/components/layout/LayoutAdmin";
-import { Box, Stack, MenuItem } from "@mui/material";
-import { List, ListItem } from "@mui/material";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import Select from "@mui/material/Select";
-import { TabContext } from "@mui/lab";
-import TablePagination from "@mui/material/TablePagination";
 import CommunityArticleList from "../../../libs/components/admin/community/CommunityArticleList";
 import { AllBoardArticlesInquiry } from "../../../libs/types/board-article/board-article.input";
 import { BoardArticle } from "../../../libs/types/board-article/board-article";
@@ -198,131 +191,176 @@ const AdminCommunity: NextPage = () => {
   console.log("+articles", articles);
 
   return (
-    <Box component={"div"} className={"content"}>
-      <Typography variant={"h2"} className={"tit"} sx={{ mb: "24px" }}>
-        Arricle List
-      </Typography>
+    <div className="w-full">
+      {/* Page Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          Article Management
+        </h1>
+        <p className="text-gray-600">Manage community articles and content</p>
+      </div>
 
       {/* Debug Information */}
       {getAllBoardArticlesByAdminError && (
-        <Box
-          sx={{
-            mb: 2,
-            p: 2,
-            bgcolor: "#fee",
-            border: "1px solid #fcc",
-            borderRadius: 1,
-          }}
-        >
-          <Typography variant="h6" color="error">
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+          <h3 className="text-lg font-semibold text-red-800 mb-2">
             GraphQL Error:
-          </Typography>
-          <Typography variant="body2" color="error">
+          </h3>
+          <p className="text-red-700 text-sm mb-2">
             {getAllBoardArticlesByAdminError.message}
-          </Typography>
+          </p>
           {getAllBoardArticlesByAdminError.networkError && (
-            <Typography variant="body2" color="error">
+            <p className="text-red-700 text-sm mb-2">
               Network Error:{" "}
               {getAllBoardArticlesByAdminError.networkError.message}
-            </Typography>
+            </p>
           )}
           {getAllBoardArticlesByAdminError.graphQLErrors?.map((err, index) => (
-            <Typography key={index} variant="body2" color="error">
+            <p key={index} className="text-red-700 text-sm">
               GraphQL Error {index + 1}: {err.message}
-            </Typography>
+            </p>
           ))}
-        </Box>
+        </div>
       )}
 
       {getAllBoardArticlesByAdminLoading && (
-        <Box
-          sx={{
-            mb: 2,
-            p: 2,
-            bgcolor: "#e3f2fd",
-            border: "1px solid #2196f3",
-            borderRadius: 1,
-          }}
-        >
-          <Typography variant="body1" color="primary">
-            Loading articles...
-          </Typography>
-        </Box>
+        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+          <div className="flex items-center space-x-3">
+            <div className="w-5 h-5 bg-blue-500 rounded-full animate-pulse"></div>
+            <p className="text-blue-800 font-medium">Loading articles...</p>
+          </div>
+        </div>
       )}
 
-      <Box component={"div"} className={"table-wrap"}>
-        <Box component={"div"} sx={{ width: "100%", typography: "body1" }}>
-          <TabContext value={value}>
-            <Box component={"div"}>
-              <List className={"tab-menu"}>
-                <ListItem
-                  onClick={(e: any) => tabChangeHandler(e, "ALL")}
-                  value="ALL"
-                  className={value === "ALL" ? "li on" : "li"}
-                >
-                  All
-                </ListItem>
-                <ListItem
-                  onClick={(e: any) => tabChangeHandler(e, "ACTIVE")}
-                  value="ACTIVE"
-                  className={value === "ACTIVE" ? "li on" : "li"}
-                >
-                  Active
-                </ListItem>
-                <ListItem
-                  onClick={(e: any) => tabChangeHandler(e, "DELETE")}
-                  value="DELETE"
-                  className={value === "DELETE" ? "li on" : "li"}
-                >
-                  Delete
-                </ListItem>
-              </List>
-              <Divider />
-              <Stack className={"search-area"} sx={{ m: "24px" }}>
-                <Select sx={{ width: "160px", mr: "20px" }} value={searchType}>
-                  <MenuItem
-                    value={"ALL"}
-                    onClick={() => searchTypeHandler("ALL")}
-                  >
-                    ALL
-                  </MenuItem>
-                  {Object.values(BoardArticleCategory).map(
-                    (category: string) => (
-                      <MenuItem
-                        value={category}
-                        onClick={() => searchTypeHandler(category)}
-                        key={category}
-                      >
-                        {category}
-                      </MenuItem>
-                    )
-                  )}
-                </Select>
-              </Stack>
-              <Divider />
-            </Box>
-            <CommunityArticleList
-              articles={articles}
-              anchorEl={anchorEl}
-              menuIconClickHandler={menuIconClickHandler}
-              menuIconCloseHandler={menuIconCloseHandler}
-              updateArticleHandler={updateArticleHandler}
-              removeArticleHandler={removeArticleHandler}
-            />
+      {/* Main Content */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        {/* Tab Navigation */}
+        <div className="border-b border-gray-200">
+          <div className="flex space-x-1 p-1">
+            <button
+              onClick={(e: any) => tabChangeHandler(e, "ALL")}
+              className={`flex-1 px-6 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+                value === "ALL"
+                  ? "bg-blue-50 text-blue-700 border border-blue-200"
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+              }`}
+            >
+              All Articles
+            </button>
+            <button
+              onClick={(e: any) => tabChangeHandler(e, "ACTIVE")}
+              className={`flex-1 px-6 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+                value === "ACTIVE"
+                  ? "bg-green-50 text-green-700 border border-green-200"
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+              }`}
+            >
+              Active
+            </button>
+            <button
+              onClick={(e: any) => tabChangeHandler(e, "DELETE")}
+              className={`flex-1 px-6 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+                value === "DELETE"
+                  ? "bg-red-50 text-red-700 border border-red-200"
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+              }`}
+            >
+              Deleted
+            </button>
+          </div>
+        </div>
 
-            <TablePagination
-              rowsPerPageOptions={[10, 20, 40, 60]}
-              component="div"
-              count={articleTotal}
-              rowsPerPage={communityInquiry?.limit}
-              page={communityInquiry?.page - 1}
-              onPageChange={changePageHandler}
-              onRowsPerPageChange={changeRowsPerPageHandler}
-            />
-          </TabContext>
-        </Box>
-      </Box>
-    </Box>
+        {/* Search and Filter */}
+        <div className="p-6 border-b border-gray-100 bg-gray-50/50">
+          <div className="flex items-center space-x-4">
+            <label className="text-sm font-medium text-gray-700">
+              Category:
+            </label>
+            <select
+              value={searchType}
+              onChange={(e) => searchTypeHandler(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 bg-white"
+            >
+              <option value="ALL">All Categories</option>
+              {Object.values(BoardArticleCategory).map((category: string) => (
+                <option value={category} key={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Article List */}
+        <div className="p-6">
+          <CommunityArticleList
+            articles={articles}
+            anchorEl={anchorEl}
+            menuIconClickHandler={menuIconClickHandler}
+            menuIconCloseHandler={menuIconCloseHandler}
+            updateArticleHandler={updateArticleHandler}
+            removeArticleHandler={removeArticleHandler}
+          />
+        </div>
+
+        {/* Pagination */}
+        <div className="px-6 py-4 border-t border-gray-200 bg-gray-50/50">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <label className="text-sm text-gray-700">Rows per page:</label>
+              <select
+                value={communityInquiry?.limit}
+                onChange={(e: any) => changeRowsPerPageHandler(e)}
+                className="px-3 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              >
+                {[10, 20, 40, 60].map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={(e: any) =>
+                  changePageHandler(
+                    e,
+                    Math.max(0, (communityInquiry?.page || 1) - 2)
+                  )
+                }
+                disabled={communityInquiry?.page <= 1}
+                className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors duration-200"
+              >
+                Previous
+              </button>
+
+              <span className="text-sm text-gray-700">
+                Page {communityInquiry?.page} of{" "}
+                {Math.ceil(
+                  (articleTotal || 0) / (communityInquiry?.limit || 10)
+                )}
+              </span>
+
+              <button
+                onClick={(e: any) =>
+                  changePageHandler(e, communityInquiry?.page || 1)
+                }
+                disabled={
+                  (communityInquiry?.page || 1) >=
+                  Math.ceil(
+                    (articleTotal || 0) / (communityInquiry?.limit || 10)
+                  )
+                }
+                className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors duration-200"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

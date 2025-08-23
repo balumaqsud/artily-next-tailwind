@@ -1,18 +1,17 @@
 import React from "react";
-import { useRouter } from "next/router";
 import Link from "next/link";
 
+type Order = "asc" | "desc";
+
 interface Data {
+  id: string;
   category: string;
-  qna_case_status: string;
   title: string;
-  writer: string;
+  author: string;
   date: string;
   status: string;
-  id?: string;
+  actions: string;
 }
-
-type Order = "asc" | "desc";
 
 interface HeadCell {
   disablePadding: boolean;
@@ -20,39 +19,6 @@ interface HeadCell {
   label: string;
   numeric: boolean;
 }
-
-const headCells: readonly HeadCell[] = [
-  {
-    id: "category",
-    numeric: true,
-    disablePadding: false,
-    label: "CATEGORY",
-  },
-  {
-    id: "title",
-    numeric: true,
-    disablePadding: false,
-    label: "TITLE",
-  },
-  {
-    id: "writer",
-    numeric: true,
-    disablePadding: false,
-    label: "WRITER",
-  },
-  {
-    id: "date",
-    numeric: true,
-    disablePadding: false,
-    label: "DATE",
-  },
-  {
-    id: "qna_case_status",
-    numeric: false,
-    disablePadding: false,
-    label: "QNA STATUS",
-  },
-];
 
 interface EnhancedTableProps {
   numSelected: number;
@@ -66,8 +32,59 @@ interface EnhancedTableProps {
   rowCount: number;
 }
 
+const headCells: readonly HeadCell[] = [
+  {
+    id: "category",
+    numeric: false,
+    disablePadding: false,
+    label: "Category",
+  },
+  {
+    id: "title",
+    numeric: false,
+    disablePadding: false,
+    label: "Title",
+  },
+  {
+    id: "author",
+    numeric: false,
+    disablePadding: false,
+    label: "Author",
+  },
+  {
+    id: "date",
+    numeric: false,
+    disablePadding: false,
+    label: "Date",
+  },
+  {
+    id: "status",
+    numeric: false,
+    disablePadding: false,
+    label: "Status",
+  },
+  {
+    id: "actions",
+    numeric: false,
+    disablePadding: false,
+    label: "Actions",
+  },
+];
+
 function EnhancedTableHead(props: EnhancedTableProps) {
-  const { onSelectAllClick } = props;
+  const {
+    onSelectAllClick,
+    order,
+    orderBy,
+    numSelected,
+    rowCount,
+    onRequestSort,
+  } = props;
+
+  const createSortHandler =
+    (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
+      onRequestSort(event, property);
+    };
 
   return (
     <thead className="bg-gray-50">
@@ -75,6 +92,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
           <input
             type="checkbox"
+            checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
             className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
           />
@@ -82,14 +100,15 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         {headCells.map((headCell) => (
           <th
             key={headCell.id}
-            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700 transition-colors duration-200"
+            onClick={createSortHandler(headCell.id)}
           >
             {headCell.label}
+            {orderBy === headCell.id ? (
+              <span className="ml-2">{order === "desc" ? "↓" : "↑"}</span>
+            ) : null}
           </th>
         ))}
-        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-          ACTIONS
-        </th>
       </tr>
     </thead>
   );
@@ -97,7 +116,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 
 interface InquiryListProps {
   inquiries: any[];
-  anchorEl: any[];
+  anchorEl: any;
   menuIconClickHandler: (e: any, index: number) => void;
   menuIconCloseHandler: () => void;
   updateInquiryHandler: (updateData: any) => void;
@@ -181,12 +200,11 @@ const InquiryList: React.FC<InquiryListProps> = ({
             orderBy={orderBy}
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={inquiries.length}
+            rowCount={inquiries?.length || 0}
           />
           <tbody className="bg-white divide-y divide-gray-200">
             {inquiries?.map((inquiry, index) => {
               const isItemSelected = isSelected(inquiry._id.toString());
-
               return (
                 <tr
                   key={inquiry._id.toString()}

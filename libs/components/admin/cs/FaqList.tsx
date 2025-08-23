@@ -1,27 +1,17 @@
 import React from "react";
-import { useRouter } from "next/router";
 import Link from "next/link";
 
+type Order = "asc" | "desc";
+
 interface Data {
+  id: string;
   category: string;
-  title: string;
-  writer: string;
+  question: string;
+  author: string;
   date: string;
   status: string;
-  id?: string;
+  actions: string;
 }
-
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-type Order = "asc" | "desc";
 
 interface HeadCell {
   disablePadding: boolean;
@@ -29,39 +19,6 @@ interface HeadCell {
   label: string;
   numeric: boolean;
 }
-
-const headCells: readonly HeadCell[] = [
-  {
-    id: "category",
-    numeric: true,
-    disablePadding: false,
-    label: "CATEGORY",
-  },
-  {
-    id: "title",
-    numeric: true,
-    disablePadding: false,
-    label: "TITLE",
-  },
-  {
-    id: "writer",
-    numeric: true,
-    disablePadding: false,
-    label: "WRITER",
-  },
-  {
-    id: "date",
-    numeric: true,
-    disablePadding: false,
-    label: "DATE",
-  },
-  {
-    id: "status",
-    numeric: false,
-    disablePadding: false,
-    label: "STATUS",
-  },
-];
 
 interface EnhancedTableProps {
   numSelected: number;
@@ -75,8 +32,59 @@ interface EnhancedTableProps {
   rowCount: number;
 }
 
+const headCells: readonly HeadCell[] = [
+  {
+    id: "category",
+    numeric: false,
+    disablePadding: false,
+    label: "Category",
+  },
+  {
+    id: "question",
+    numeric: false,
+    disablePadding: false,
+    label: "Question",
+  },
+  {
+    id: "author",
+    numeric: false,
+    disablePadding: false,
+    label: "Author",
+  },
+  {
+    id: "date",
+    numeric: false,
+    disablePadding: false,
+    label: "Date",
+  },
+  {
+    id: "status",
+    numeric: false,
+    disablePadding: false,
+    label: "Status",
+  },
+  {
+    id: "actions",
+    numeric: false,
+    disablePadding: false,
+    label: "Actions",
+  },
+];
+
 function EnhancedTableHead(props: EnhancedTableProps) {
-  const { onSelectAllClick } = props;
+  const {
+    onSelectAllClick,
+    order,
+    orderBy,
+    numSelected,
+    rowCount,
+    onRequestSort,
+  } = props;
+
+  const createSortHandler =
+    (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
+      onRequestSort(event, property);
+    };
 
   return (
     <thead className="bg-gray-50">
@@ -84,6 +92,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
           <input
             type="checkbox"
+            checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
             className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
           />
@@ -91,14 +100,15 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         {headCells.map((headCell) => (
           <th
             key={headCell.id}
-            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700 transition-colors duration-200"
+            onClick={createSortHandler(headCell.id)}
           >
             {headCell.label}
+            {orderBy === headCell.id ? (
+              <span className="ml-2">{order === "desc" ? "↓" : "↑"}</span>
+            ) : null}
           </th>
         ))}
-        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-          ACTIONS
-        </th>
       </tr>
     </thead>
   );
@@ -106,7 +116,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 
 interface FaqListProps {
   faqs: any[];
-  anchorEl: any[];
+  anchorEl: any;
   menuIconClickHandler: (e: any, index: number) => void;
   menuIconCloseHandler: () => void;
   updateFaqHandler: (updateData: any) => void;
@@ -175,12 +185,11 @@ const FaqList: React.FC<FaqListProps> = ({
             orderBy={orderBy}
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={faqs.length}
+            rowCount={faqs?.length || 0}
           />
           <tbody className="bg-white divide-y divide-gray-200">
             {faqs?.map((faq, index) => {
               const isItemSelected = isSelected(faq._id.toString());
-
               return (
                 <tr
                   key={faq._id.toString()}
@@ -228,7 +237,7 @@ const FaqList: React.FC<FaqListProps> = ({
                         >
                           <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L13 7.414l2.828-2.828a2 2 0 00-2.828-2.828L11.379 5.793z" />
                           <path d="M11.379 5.793L13 7.414l2.828-2.828a2 2 0 00-2.828-2.828L11.379 5.793z" />
-                          <path d="M11.379 5.793L13 7.414l2.828-2.828a2 2 0 00-2.828-2.828L11.379 5.793z" />
+                          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L13 7.414l2.828-2.828a2 2 0 00-2.828-2.828L11.379 5.793z" />
                         </svg>
                       </Link>
                       <button

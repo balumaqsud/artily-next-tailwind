@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from "react";
 import type { NextPage } from "next";
 import withAdminLayout from "../../../libs/components/layout/LayoutAdmin";
-import { Box, List, ListItem, Stack } from "@mui/material";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import { TabContext } from "@mui/lab";
-import TablePagination from "@mui/material/TablePagination";
 import ProductPanelList from "../../../libs/components/admin/products/ProductList";
 import { AllProductsInquiry } from "../../../libs/types/product/product.input";
 import { Product } from "../../../libs/types/product/product";
@@ -79,7 +72,7 @@ const AdminProducts: NextPage = () => {
   };
 
   const changeRowsPerPageHandler = async (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     productsInquiry.limit = parseInt(event.target.value, 10);
     productsInquiry.page = 1;
@@ -192,68 +185,183 @@ const AdminProducts: NextPage = () => {
   };
 
   return (
-    <Box component={"div"} className={"content"}>
-      <Typography variant={"h2"} className={"tit"} sx={{ mb: "24px" }}>
-        Product List
-      </Typography>
-      <Box component={"div"} className={"table-wrap"}>
-        <Box component={"div"} sx={{ width: "100%", typography: "body1" }}>
-          <TabContext value={value}>
-            <Box component={"div"}>
-              <List className={"tab-menu"}>
-                <ListItem
-                  onClick={(e: any) => tabChangeHandler(e, "ALL")}
-                  value="ALL"
-                  className={value === "ALL" ? "li on" : "li"}
-                >
-                  All
-                </ListItem>
-                <ListItem
-                  onClick={(e: any) => tabChangeHandler(e, "ACTIVE")}
-                  value="ACTIVE"
-                  className={value === "ACTIVE" ? "li on" : "li"}
-                >
-                  Active
-                </ListItem>
-                <ListItem
-                  onClick={(e: any) => tabChangeHandler(e, "SOLD")}
-                  value="SOLD"
-                  className={value === "SOLD" ? "li on" : "li"}
-                >
-                  Sold
-                </ListItem>
-                <ListItem
-                  onClick={(e: any) => tabChangeHandler(e, "DELETE")}
-                  value="DELETE"
-                  className={value === "DELETE" ? "li on" : "li"}
-                >
-                  Delete
-                </ListItem>
-              </List>
-              <Divider />
-            </Box>
-            <ProductPanelList
-              products={products}
-              anchorEl={anchorEl}
-              menuIconClickHandler={menuIconClickHandler}
-              menuIconCloseHandler={menuIconCloseHandler}
-              updateProductHandler={updateProductHandler}
-              removeProductHandler={removeProductHandler}
-            />
+    <div className="w-full">
+      {/* Page Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          Product Management
+        </h1>
+        <p className="text-gray-600">Manage products and inventory</p>
+      </div>
 
-            <TablePagination
-              rowsPerPageOptions={[10, 20, 40, 60]}
-              component="div"
-              count={productsTotal}
-              rowsPerPage={productsInquiry?.limit}
-              page={productsInquiry?.page - 1}
-              onPageChange={changePageHandler}
-              onRowsPerPageChange={changeRowsPerPageHandler}
-            />
-          </TabContext>
-        </Box>
-      </Box>
-    </Box>
+      {/* Debug Information */}
+      {getAllProductsByAdminError && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+          <h3 className="text-lg font-semibold text-red-800 mb-2">
+            GraphQL Error:
+          </h3>
+          <p className="text-red-700 text-sm mb-2">
+            {getAllProductsByAdminError.message}
+          </p>
+          {getAllProductsByAdminError.networkError && (
+            <p className="text-red-700 text-sm mb-2">
+              Network Error: {getAllProductsByAdminError.networkError.message}
+            </p>
+          )}
+          {getAllProductsByAdminError.graphQLErrors?.map((err, index) => (
+            <p key={index} className="text-red-700 text-sm">
+              GraphQL Error {index + 1}: {err.message}
+            </p>
+          ))}
+        </div>
+      )}
+
+      {getAllProductsByAdminLoading && (
+        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+          <div className="flex items-center space-x-3">
+            <div className="w-5 h-5 bg-blue-500 rounded-full animate-pulse"></div>
+            <p className="text-blue-800 font-medium">Loading products...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Main Content */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        {/* Tab Navigation */}
+        <div className="border-b border-gray-200">
+          <div className="flex space-x-1 p-1">
+            <button
+              onClick={(e: any) => tabChangeHandler(e, "ALL")}
+              className={`flex-1 px-6 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+                value === "ALL"
+                  ? "bg-blue-50 text-blue-700 border border-blue-200"
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+              }`}
+            >
+              All Products
+            </button>
+            <button
+              onClick={(e: any) => tabChangeHandler(e, "ACTIVE")}
+              className={`flex-1 px-6 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+                value === "ACTIVE"
+                  ? "bg-green-50 text-green-700 border border-green-200"
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+              }`}
+            >
+              Active
+            </button>
+            <button
+              onClick={(e: any) => tabChangeHandler(e, "SOLD")}
+              className={`flex-1 px-6 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+                value === "SOLD"
+                  ? "bg-blue-50 text-blue-700 border border-blue-200"
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+              }`}
+            >
+              Sold
+            </button>
+            <button
+              onClick={(e: any) => tabChangeHandler(e, "DELETE")}
+              className={`flex-1 px-6 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+                value === "DELETE"
+                  ? "bg-red-50 text-red-700 border border-red-200"
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+              }`}
+            >
+              Deleted
+            </button>
+          </div>
+        </div>
+
+        {/* Search and Filter */}
+        <div className="p-6 border-b border-gray-100 bg-gray-50/50">
+          <div className="flex items-center space-x-4">
+            <label className="text-sm font-medium text-gray-700">Type:</label>
+            <select
+              value={searchType}
+              onChange={(e) => searchTypeHandler(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 bg-white"
+            >
+              <option value="ALL">All Types</option>
+              {Object.values(ProductType).map((type: string) => (
+                <option value={type} key={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Product List */}
+        <div className="p-6">
+          <ProductPanelList
+            products={products}
+            anchorEl={anchorEl}
+            menuIconClickHandler={menuIconClickHandler}
+            menuIconCloseHandler={menuIconCloseHandler}
+            updateProductHandler={updateProductHandler}
+            removeProductHandler={removeProductHandler}
+          />
+        </div>
+
+        {/* Pagination */}
+        <div className="px-6 py-4 border-t border-gray-200 bg-gray-50/50">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <label className="text-sm text-gray-700">Rows per page:</label>
+              <select
+                value={productsInquiry?.limit}
+                onChange={changeRowsPerPageHandler}
+                className="px-3 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              >
+                {[10, 20, 40, 60].map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={(e: any) =>
+                  changePageHandler(
+                    e,
+                    Math.max(0, (productsInquiry?.page || 1) - 2)
+                  )
+                }
+                disabled={productsInquiry?.page <= 1}
+                className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors duration-200"
+              >
+                Previous
+              </button>
+
+              <span className="text-sm text-gray-700">
+                Page {productsInquiry?.page} of{" "}
+                {Math.ceil(
+                  (productsTotal || 0) / (productsInquiry?.limit || 10)
+                )}
+              </span>
+
+              <button
+                onClick={(e: any) =>
+                  changePageHandler(e, productsInquiry?.page || 1)
+                }
+                disabled={
+                  (productsInquiry?.page || 1) >=
+                  Math.ceil(
+                    (productsTotal || 0) / (productsInquiry?.limit || 10)
+                  )
+                }
+                className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors duration-200"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

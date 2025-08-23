@@ -12,7 +12,7 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import TablePagination from "@mui/material/TablePagination";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
-import { NoticeList } from "../../../libs/components/admin/cs/NoticeList";
+import NoticeList from "../../../libs/components/admin/cs/NoticeList";
 
 const AdminNotice: NextPage = (props: any) => {
   const [anchorEl, setAnchorEl] = useState<[] | HTMLElement[]>([]);
@@ -105,13 +105,12 @@ const AdminNotice: NextPage = (props: any) => {
               <Divider />
             </Box>
             <NoticeList
-              // dense={dense}
-              // membersData={membersData}
-              // searchMembers={searchMembers}
+              notices={[]}
               anchorEl={anchorEl}
-              // handleMenuIconClick={handleMenuIconClick}
-              // handleMenuIconClose={handleMenuIconClose}
-              // generateMentorTypeHandle={generateMentorTypeHandle}
+              menuIconClickHandler={() => {}}
+              menuIconCloseHandler={() => {}}
+              updateNoticeHandler={() => {}}
+              removeNoticeHandler={() => {}}
             />
 
             <TablePagination
