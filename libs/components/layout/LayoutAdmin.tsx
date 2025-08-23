@@ -2,22 +2,12 @@ import type { ComponentType } from "react";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import MenuList from "../admin/AdminMenuList";
-import Toolbar from "@mui/material/Toolbar";
-import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
-import { Menu, MenuItem } from "@mui/material";
-import Drawer from "@mui/material/Drawer";
-import AppBar from "@mui/material/AppBar";
-import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton";
-import Divider from "@mui/material/Divider";
-import Typography from "@mui/material/Typography";
-import Tooltip from "@mui/material/Tooltip";
 import { getJwtToken, logOut, updateUserInfo } from "../../auth";
 import { useReactiveVar } from "@apollo/client";
 import { userVar } from "../../../apollo/store";
 import { REACT_APP_API_URL } from "../../config";
 import { MemberType } from "../../enums/member.enum";
+
 const drawerWidth = 280;
 
 const withAdminLayout = (Component: ComponentType) => {
@@ -67,143 +57,105 @@ const withAdminLayout = (Component: ComponentType) => {
     if (!user || user?.memberType !== MemberType.ADMIN) return null;
 
     return (
-      <main id="pc-wrap" className="admin">
-        <Box component={"div"} sx={{ display: "flex" }}>
-          <AppBar
-            position="fixed"
-            sx={{
+      <main id="pc-wrap" className="admin min-h-screen bg-gray-50">
+        <div className="flex">
+          {/* Top App Bar */}
+          <div
+            className="fixed top-0 right-0 z-50 flex items-center justify-end px-6 py-3 bg-white shadow-sm border-b border-gray-200"
+            style={{
               width: `calc(100% - ${drawerWidth}px)`,
-              ml: `${drawerWidth}px`,
-              boxShadow: "rgb(100 116 139 / 12%) 0px 1px 4px",
-              background: "none",
+              marginLeft: `${drawerWidth}px`,
             }}
           >
-            <Toolbar>
-              <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar
-                    src={
-                      user?.memberImage
-                        ? `${REACT_APP_API_URL}/${user?.memberImage}`
-                        : "/img/profile/defaultUser.svg"
-                    }
-                  />
-                </IconButton>
-              </Tooltip>
-              <Menu
-                sx={{ mt: "45px" }}
-                id="menu-appbar"
-                className={"pop-menu"}
-                anchorEl={anchorElUser}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
+            <div className="relative">
+              <button
+                onClick={handleOpenUserMenu}
+                className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 transition-colors duration-200"
               >
-                <Box
-                  component={"div"}
-                  onClick={handleCloseUserMenu}
-                  sx={{
-                    width: "200px",
-                  }}
-                >
-                  <Stack sx={{ px: "20px", my: "12px" }}>
-                    <Typography
-                      variant={"h6"}
-                      component={"h6"}
-                      sx={{ mb: "4px" }}
-                    >
-                      {user?.memberNick}
-                    </Typography>
-                    <Typography
-                      variant={"subtitle1"}
-                      component={"p"}
-                      color={"#757575"}
-                    >
-                      {user?.memberPhone}
-                    </Typography>
-                  </Stack>
-                  <Divider />
-                  <Box
-                    component={"div"}
-                    sx={{ p: 1, py: "6px" }}
-                    onClick={logoutHandler}
-                  >
-                    <MenuItem sx={{ px: "16px", py: "6px" }}>
-                      <Typography variant={"subtitle1"} component={"span"}>
-                        Logout
-                      </Typography>
-                    </MenuItem>
-                  </Box>
-                </Box>
-              </Menu>
-            </Toolbar>
-          </AppBar>
-
-          <Drawer
-            sx={{
-              width: drawerWidth,
-              flexShrink: 0,
-              "& .MuiDrawer-paper": {
-                width: drawerWidth,
-                boxSizing: "border-box",
-              },
-            }}
-            variant="permanent"
-            anchor="left"
-            className="aside"
-          >
-            <Toolbar sx={{ flexDirection: "column", alignItems: "flexStart" }}>
-              <Stack className={"logo-box"}>
-                <img src={"/img/logo/logoText.svg"} alt={"logo"} />
-              </Stack>
-
-              <Stack
-                className="user"
-                direction={"row"}
-                alignItems={"center"}
-                sx={{
-                  bgcolor: openMenu ? "rgba(255, 255, 255, 0.04)" : "none",
-                  borderRadius: "8px",
-                  px: "24px",
-                  py: "11px",
-                }}
-              >
-                <Avatar
+                <img
                   src={
                     user?.memberImage
                       ? `${REACT_APP_API_URL}/${user?.memberImage}`
-                      : "/img/profile/defaultUser.svg"
+                      : "/profile/defaultUser.svg"
                   }
+                  alt="Profile"
+                  className="w-10 h-10 rounded-full object-cover border-2 border-gray-200"
                 />
-                <Typography variant={"body2"} p={1} ml={1}>
-                  {user?.memberNick} <br />
-                  {user?.memberPhone}
-                </Typography>
-              </Stack>
-            </Toolbar>
+              </button>
 
-            <Divider />
+              {/* User Menu Dropdown */}
+              {anchorElUser && (
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                  <div className="px-4 py-3 border-b border-gray-100">
+                    <div className="text-sm font-medium text-gray-900">
+                      {user?.memberNick}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {user?.memberPhone}
+                    </div>
+                  </div>
+                  <button
+                    onClick={logoutHandler}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
 
-            <MenuList />
-          </Drawer>
+          {/* Sidebar Drawer */}
+          <div
+            className="fixed left-0 top-0 h-full bg-white shadow-lg border-r border-gray-200 z-40"
+            style={{ width: drawerWidth }}
+          >
+            <div className="flex flex-col h-full">
+              {/* Logo Section */}
+              <div className="flex flex-col items-start p-6 border-b border-gray-200">
+                <div className="mb-6">
+                  <img
+                    src="/logo/artly-logo.png"
+                    alt="Artly Logo"
+                    className="h-8"
+                  />
+                </div>
 
-          <Box component={"div"} id="bunker" sx={{ flexGrow: 1 }}>
-            {/*@ts-ignore*/}
-            <Component
-              {...props}
-              setSnackbar={setSnackbar}
-              setTitle={setTitle}
-            />
-          </Box>
-        </Box>
+                {/* User Info */}
+                <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg w-full">
+                  <img
+                    src={
+                      user?.memberImage
+                        ? `${REACT_APP_API_URL}/${user?.memberImage}`
+                        : "/profile/defaultUser.svg"
+                    }
+                    alt="Profile"
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <div className="text-sm">
+                    <div className="font-medium text-gray-900">
+                      {user?.memberNick}
+                    </div>
+                    <div className="text-gray-500">{user?.memberPhone}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Navigation Menu */}
+              <div className="flex-1 py-4">
+                <MenuList />
+              </div>
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div
+            className="flex-1 pt-16 px-8 py-8"
+            style={{ marginLeft: drawerWidth }}
+          >
+            <Component {...props} />
+          </div>
+        </div>
       </main>
     );
   };

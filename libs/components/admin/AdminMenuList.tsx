@@ -1,24 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, withRouter } from "next/router";
 import Link from "next/link";
-import {
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-} from "@mui/material";
-import Collapse from "@mui/material/Collapse";
-import Typography from "@mui/material/Typography";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
 import { ChatsCircle, Headset, User, UserCircleGear } from "phosphor-react";
 import cookies from "js-cookie";
-import useDeviceDetect from "../../hooks/useDeviceDetect";
 
 const AdminMenuList = (props: any) => {
   const router = useRouter();
-  const device = useDeviceDetect();
-  const [mobileLayout, setMobileLayout] = useState(false);
   const [openSubMenu, setOpenSubMenu] = useState("Users");
   const [openMenu, setOpenMenu] = useState(
     typeof window === "object" ? cookies.get("admin_menu") === "true" : false
@@ -34,8 +21,6 @@ const AdminMenuList = (props: any) => {
 
   /** LIFECYCLES **/
   useEffect(() => {
-    if (device === "mobile") setMobileLayout(true);
-
     switch (pathnames[1]) {
       case "products":
         setClickMenu(["Products"]);
@@ -76,10 +61,8 @@ const AdminMenuList = (props: any) => {
   /** HANDLERS **/
   const subMenuChangeHandler = (target: string) => {
     if (clickMenu.find((item: string) => item === target)) {
-      // setOpenSubMenu('');
       setClickMenu(clickMenu.filter((menu: string) => target !== menu));
     } else {
-      // setOpenSubMenu(target);
       setClickMenu([...clickMenu, target]);
     }
   };
@@ -87,22 +70,24 @@ const AdminMenuList = (props: any) => {
   const menu_set = [
     {
       title: "Users",
-      icon: <User size={20} color="#bdbdbd" weight="fill" />,
+      icon: <User size={20} className="text-gray-400" weight="fill" />,
       on_click: () => subMenuChangeHandler("Users"),
     },
     {
       title: "Products",
-      icon: <UserCircleGear size={20} color="#bdbdbd" weight="fill" />,
+      icon: (
+        <UserCircleGear size={20} className="text-gray-400" weight="fill" />
+      ),
       on_click: () => subMenuChangeHandler("Products"),
     },
     {
       title: "Community",
-      icon: <ChatsCircle size={20} color="#bdbdbd" weight="fill" />,
+      icon: <ChatsCircle size={20} className="text-gray-400" weight="fill" />,
       on_click: () => subMenuChangeHandler("Community"),
     },
     {
       title: "Cs",
-      icon: <Headset size={20} color="#bdbdbd" weight="fill" />,
+      icon: <Headset size={20} className="text-gray-400" weight="fill" />,
       on_click: () => subMenuChangeHandler("Cs"),
     },
   ];
@@ -118,66 +103,82 @@ const AdminMenuList = (props: any) => {
   };
 
   return (
-    <>
+    <div className="w-full">
       {menu_set.map((item, index) => (
-        <List className={"menu_wrap"} key={index} disablePadding>
-          <ListItemButton
+        <div key={index} className="w-full">
+          <button
             onClick={item.on_click}
-            component={"li"}
-            className={clickMenu[0] === item.title ? "menu on" : "menu"}
-            sx={{
-              minHeight: 48,
-              justifyContent: openMenu ? "initial" : "center",
-              px: 2.5,
-            }}
+            className={`w-full flex items-center justify-between px-6 py-3 text-left transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 ${
+              clickMenu[0] === item.title
+                ? "bg-blue-50 text-blue-600 border-r-2 border-blue-500"
+                : "text-gray-700 hover:bg-gray-50"
+            }`}
           >
-            <ListItemIcon
-              sx={{
-                minWidth: 0,
-                mr: openMenu ? 3 : "auto",
-                justifyContent: "center",
-              }}
-            >
-              {item.icon}
-            </ListItemIcon>
-            <ListItemText>{item.title}</ListItemText>
-            {clickMenu.find((menu: string) => item.title === menu) ? (
-              <ExpandLess />
-            ) : (
-              <ExpandMore />
-            )}
-          </ListItemButton>
-          <Collapse
-            in={!!clickMenu.find((menu: string) => menu === item.title)}
-            className="menu"
-            timeout="auto"
-            component="li"
-            unmountOnExit
+            <div className="flex items-center space-x-3">
+              <div className="flex-shrink-0">{item.icon}</div>
+              <span className="font-medium">{item.title}</span>
+            </div>
+            <div className="flex-shrink-0">
+              {clickMenu.find((menu: string) => item.title === menu) ? (
+                <svg
+                  className="w-5 h-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 15l7-7 7 7"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  className="w-5 h-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              )}
+            </div>
+          </button>
+
+          <div
+            className={`transition-all duration-200 ease-in-out ${
+              clickMenu.find((menu: string) => item.title === menu)
+                ? "max-h-96 opacity-100"
+                : "max-h-0 opacity-0 overflow-hidden"
+            }`}
           >
-            <List className="menu-list" disablePadding>
+            <div className="pl-12">
               {sub_menu_set[item.title] &&
                 sub_menu_set[item.title].map((sub: any, i: number) => (
                   <Link href={sub.url} shallow={true} replace={true} key={i}>
-                    <ListItemButton
-                      component="li"
-                      className={
+                    <div
+                      className={`px-4 py-2 text-sm transition-all duration-200 cursor-pointer rounded-md ${
                         clickMenu[0] === item.title &&
                         clickSubMenu === sub.title
-                          ? "li on"
-                          : "li"
-                      }
+                          ? "bg-blue-100 text-blue-700 font-medium"
+                          : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
+                      }`}
                     >
-                      <Typography variant={sub.title} component={"span"}>
-                        {sub.title}
-                      </Typography>
-                    </ListItemButton>
+                      {sub.title}
+                    </div>
                   </Link>
                 ))}
-            </List>
-          </Collapse>
-        </List>
+            </div>
+          </div>
+        </div>
       ))}
-    </>
+    </div>
   );
 };
 

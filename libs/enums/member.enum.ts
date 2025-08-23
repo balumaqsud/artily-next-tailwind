@@ -1,17 +1,17 @@
 export enum MemberType {
-	USER = 'USER',
-	AGENT = 'AGENT',
-	ADMIN = 'ADMIN',
+  USER = "USER",
+  ADMIN = "ADMIN",
+  SELLER = "SELLER",
 }
 
 export enum MemberStatus {
-	ACTIVE = 'ACTIVE',
-	BLOCK = 'BLOCK',
-	DELETE = 'DELETE',
+  ACTIVE = "ACTIVE",
+  BLOCK = "BLOCK",
+  DELETE = "DELETE",
 }
 
 export enum MemberAuthType {
-	PHONE = 'PHONE',
-	EMAIL = 'EMAIL',
-	TELEGRAM = 'TELEGRAM',
+  PHONE = "PHONE",
+  EMAIL = "EMAIL",
+  TELEGRAM = "TELEGRAM",
 }

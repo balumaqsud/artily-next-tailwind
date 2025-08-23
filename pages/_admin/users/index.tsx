@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import type { NextPage } from "next";
 import withAdminLayout from "../../../libs/components/layout/LayoutAdmin";
-import { MemberPanelList } from "../../../libs/components/admin/users/MemberList";
+import MemberPanelList from "../../../libs/components/admin/users/MemberList";
 import { Box, InputAdornment, List, ListItem, Stack } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
@@ -183,6 +183,14 @@ const AdminUsers: NextPage = ({
     }
   };
 
+  const removeMemberHandler = async (id: string) => {
+    try {
+      console.log("removeMemberHandler: ", id);
+    } catch (err: any) {
+      console.log("removeMemberHandler: ", err.message);
+    }
+  };
+
   return (
     <Box component={"div"} className={"content"}>
       <Typography variant={"h2"} className={"tit"} sx={{ mb: "24px" }}>
@@ -300,6 +308,7 @@ const AdminUsers: NextPage = ({
               menuIconClickHandler={menuIconClickHandler}
               menuIconCloseHandler={menuIconCloseHandler}
               updateMemberHandler={updateMemberHandler}
+              removeMemberHandler={removeMemberHandler}
             />
 
             <TablePagination

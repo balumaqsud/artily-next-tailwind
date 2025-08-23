@@ -1,28 +1,8 @@
 import React from "react";
 import Link from "next/link";
-import {
-  Box,
-  Button,
-  Fade,
-  Menu,
-  MenuItem,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Tooltip,
-} from "@mui/material";
-import IconButton from "@mui/material/IconButton";
-import Avatar from "@mui/material/Avatar";
-import Stack from "@mui/material/Stack";
-import OpenInBrowserRoundedIcon from "@mui/icons-material/OpenInBrowserRounded";
 import Moment from "react-moment";
 import { BoardArticle } from "../../../types/board-article/board-article";
 import { REACT_APP_API_URL } from "../../../config";
-import DeleteIcon from "@mui/icons-material/Delete";
-import Typography from "@mui/material/Typography";
 import { BoardArticleStatus } from "../../../enums/board-article.enum";
 
 interface Data {
@@ -101,176 +81,258 @@ interface EnhancedTableProps {
     property: keyof Data
   ) => void;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  order: "asc" | "desc";
+  orderBy: string;
   rowCount: number;
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
+  const { onSelectAllClick } = props;
+
   return (
-    <TableHead>
-      <TableRow>
+    <thead className="bg-gray-50">
+      <tr>
+        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <input
+            type="checkbox"
+            onChange={onSelectAllClick}
+            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+          />
+        </th>
         {headCells.map((headCell) => (
-          <TableCell
+          <th
             key={headCell.id}
-            align={headCell.numeric ? "left" : "center"}
-            padding={headCell.disablePadding ? "none" : "normal"}
+            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
           >
             {headCell.label}
-          </TableCell>
+          </th>
         ))}
-      </TableRow>
-    </TableHead>
+        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          ACTIONS
+        </th>
+      </tr>
+    </thead>
   );
 }
 
 interface CommunityArticleListProps {
   articles: BoardArticle[];
-  anchorEl: any;
-  menuIconClickHandler: any;
-  menuIconCloseHandler: any;
-  updateArticleHandler: any;
-  removeArticleHandler: any;
+  anchorEl: any[];
+  menuIconClickHandler: (e: any, index: number) => void;
+  menuIconCloseHandler: () => void;
+  updateArticleHandler: (updateData: any) => void;
+  removeArticleHandler: (id: string) => void;
 }
 
-const CommunityArticleList = (props: CommunityArticleListProps) => {
-  const {
-    articles,
-    anchorEl,
-    menuIconClickHandler,
-    menuIconCloseHandler,
-    updateArticleHandler,
-    removeArticleHandler,
-  } = props;
+const CommunityArticleList: React.FC<CommunityArticleListProps> = ({
+  articles,
+  anchorEl,
+  menuIconClickHandler,
+  menuIconCloseHandler,
+  updateArticleHandler,
+  removeArticleHandler,
+}) => {
+  const [order, setOrder] = React.useState<"asc" | "desc">("asc");
+  const [orderBy, setOrderBy] = React.useState<keyof Data>("article_id");
+  const [selected, setSelected] = React.useState<readonly string[]>([]);
 
-  // Add null check and default value for articles
+  const handleRequestSort = (
+    event: React.MouseEvent<unknown>,
+    property: keyof Data
+  ) => {
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(property);
+  };
+
+  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      const newSelecteds = articles.map((n) => n._id.toString());
+      setSelected(newSelecteds);
+      return;
+    }
+    setSelected([]);
+  };
+
+  const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
+    const selectedIndex = selected.indexOf(name);
+    let newSelected: readonly string[] = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, name);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1)
+      );
+    }
+
+    setSelected(newSelected);
+  };
+
+  const isSelected = (name: string) => selected.indexOf(name) !== -1;
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case BoardArticleStatus.ACTIVE:
+        return "bg-green-100 text-green-800";
+      case BoardArticleStatus.DELETE:
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
   const safeArticles = articles || [];
 
   return (
-    <Stack>
-      <TableContainer>
-        <Table
-          sx={{ minWidth: 750 }}
-          aria-labelledby="tableTitle"
-          size={"medium"}
-        >
-          {/*@ts-ignore*/}
-          <EnhancedTableHead />
-          <TableBody>
+    <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <EnhancedTableHead
+            numSelected={selected.length}
+            order={order}
+            orderBy={orderBy}
+            onSelectAllClick={handleSelectAllClick}
+            onRequestSort={handleRequestSort}
+            rowCount={safeArticles.length}
+          />
+          <tbody className="bg-white divide-y divide-gray-200">
             {safeArticles.length === 0 && (
-              <TableRow>
-                <TableCell align="center" colSpan={8}>
-                  <span className={"no-data"}>data not found!</span>
-                </TableCell>
-              </TableRow>
+              <tr>
+                <td colSpan={9} className="px-6 py-4 text-center text-gray-500">
+                  No articles found
+                </td>
+              </tr>
             )}
 
-            {safeArticles.length !== 0 &&
-              safeArticles.map((article: BoardArticle, index: number) => (
-                <TableRow
-                  hover
-                  key={article._id}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell align="left">{article._id}</TableCell>
-                  <TableCell align="left">
-                    <Box component={"div"}>
-                      {article.articleTitle}
-                      <Link
-                        href={`/community/detail?articleCategory=${article.articleCategory}&id=${article._id}`}
-                        className={"img_box"}
-                      >
-                        <IconButton className="btn_window">
-                          <Tooltip title={"Open window"}>
-                            <OpenInBrowserRoundedIcon />
-                          </Tooltip>
-                        </IconButton>
-                      </Link>
-                    </Box>
-                  </TableCell>
-                  <TableCell align="left">{article.articleCategory}</TableCell>
-                  <TableCell align="left" className={"name"}>
-                    <Link href={`/member?memberId=${article?.memberData?._id}`}>
-                      <Avatar
-                        alt="Remy Sharp"
-                        src={
-                          article?.memberData?.memberImage
-                            ? `${REACT_APP_API_URL}/${article?.memberData?.memberImage}`
-                            : `/img/profile/defaultUser.svg`
-                        }
-                        sx={{ ml: "2px", mr: "10px" }}
-                      />
-                      {article?.memberData?.memberNick}
-                    </Link>
-                  </TableCell>
-                  <TableCell align="center">{article?.articleViews}</TableCell>
-                  <TableCell align="center">{article?.articleLikes}</TableCell>
-                  <TableCell align="left">
-                    <Moment format={"DD.MM.YY HH:mm"}>
-                      {article?.createdAt}
-                    </Moment>
-                  </TableCell>
-                  <TableCell align="center">
-                    {article.articleStatus === BoardArticleStatus.DELETE ? (
-                      <Button
-                        variant="outlined"
-                        sx={{
-                          p: "3px",
-                          border: "none",
-                          ":hover": { border: "1px solid #000000" },
-                        }}
-                        onClick={() => removeArticleHandler(article._id)}
-                      >
-                        <DeleteIcon fontSize="small" />
-                      </Button>
-                    ) : (
-                      <>
-                        <Button
-                          onClick={(e: any) => menuIconClickHandler(e, index)}
-                          className={"badge success"}
-                        >
-                          {article.articleStatus}
-                        </Button>
+            {safeArticles.map((article, index) => {
+              const isItemSelected = isSelected(article._id.toString());
 
-                        <Menu
-                          className={"menu-modal"}
-                          MenuListProps={{
-                            "aria-labelledby": "fade-button",
-                          }}
-                          anchorEl={anchorEl[index]}
-                          open={Boolean(anchorEl[index])}
-                          onClose={menuIconCloseHandler}
-                          TransitionComponent={Fade}
-                          sx={{ p: 1 }}
+              return (
+                <tr
+                  key={article._id.toString()}
+                  className={`hover:bg-gray-50 transition-colors duration-200 ${
+                    isItemSelected ? "bg-blue-50" : ""
+                  }`}
+                >
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <input
+                      type="checkbox"
+                      checked={isItemSelected}
+                      onChange={(event) =>
+                        handleClick(event as any, article._id.toString())
+                      }
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {article._id.toString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0 h-10 w-10">
+                        <img
+                          className="h-10 w-10 rounded-lg object-cover"
+                          src={`${REACT_APP_API_URL}/${article.articleImage}`}
+                          alt=""
+                        />
+                      </div>
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-gray-900">
+                          {article.articleTitle}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {article.articleCategory}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {article.memberId?.toString() || "Unknown"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {article.articleViews || 0}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {article.articleLikes || 0}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <Moment format="YYYY-MM-DD">
+                      {article.createdAt || new Date()}
+                    </Moment>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span
+                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
+                        article.articleStatus
+                      )}`}
+                    >
+                      {article.articleStatus}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div className="relative">
+                      <button
+                        onClick={(e) => menuIconClickHandler(e, index)}
+                        className="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                      >
+                        <svg
+                          className="w-5 h-5"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
                         >
-                          {Object.values(BoardArticleStatus)
-                            .filter((ele) => ele !== article.articleStatus)
-                            .map((status: string) => (
-                              <MenuItem
-                                onClick={() =>
-                                  updateArticleHandler({
-                                    _id: article._id,
-                                    articleStatus: status,
-                                  })
-                                }
-                                key={status}
-                              >
-                                <Typography
-                                  variant={"subtitle1"}
-                                  component={"span"}
-                                >
-                                  {status}
-                                </Typography>
-                              </MenuItem>
-                            ))}
-                        </Menu>
-                      </>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Stack>
+                          <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                        </svg>
+                      </button>
+
+                      {anchorEl[index] && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                          <button
+                            onClick={() => {
+                              updateArticleHandler({
+                                _id: article._id.toString(),
+                                articleStatus: BoardArticleStatus.ACTIVE,
+                              });
+                            }}
+                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+                          >
+                            Activate
+                          </button>
+                          <button
+                            onClick={() => {
+                              updateArticleHandler({
+                                _id: article._id.toString(),
+                                articleStatus: BoardArticleStatus.DELETE,
+                              });
+                            }}
+                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+                          >
+                            Delete
+                          </button>
+                          <button
+                            onClick={() =>
+                              removeArticleHandler(article._id.toString())
+                            }
+                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 };
 

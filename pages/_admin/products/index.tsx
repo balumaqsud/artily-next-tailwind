@@ -8,7 +8,7 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { TabContext } from "@mui/lab";
 import TablePagination from "@mui/material/TablePagination";
-import { ProductPanelList } from "../../../libs/components/admin/products/ProductList";
+import ProductPanelList from "../../../libs/components/admin/products/ProductList";
 import { AllProductsInquiry } from "../../../libs/types/product/product.input";
 import { Product } from "../../../libs/types/product/product";
 import { ProductType, ProductStatus } from "../../../libs/enums/product.enum";

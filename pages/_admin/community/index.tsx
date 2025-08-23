@@ -177,7 +177,9 @@ const AdminCommunity: NextPage = () => {
       console.log("🧹 Attempting to remove article with ID:", id);
       if (await sweetConfirmAlert("are you sure to remove?")) {
         console.log("✅ User confirmed removal, calling mutation...");
-        const result = await removeBoardArticleByAdmin({ variables: { input: id } });
+        const result = await removeBoardArticleByAdmin({
+          variables: { input: id },
+        });
         console.log("✅ Remove mutation successful:", result);
       } else {
         console.log("❌ User cancelled removal");
@@ -200,6 +202,54 @@ const AdminCommunity: NextPage = () => {
       <Typography variant={"h2"} className={"tit"} sx={{ mb: "24px" }}>
         Arricle List
       </Typography>
+
+      {/* Debug Information */}
+      {getAllBoardArticlesByAdminError && (
+        <Box
+          sx={{
+            mb: 2,
+            p: 2,
+            bgcolor: "#fee",
+            border: "1px solid #fcc",
+            borderRadius: 1,
+          }}
+        >
+          <Typography variant="h6" color="error">
+            GraphQL Error:
+          </Typography>
+          <Typography variant="body2" color="error">
+            {getAllBoardArticlesByAdminError.message}
+          </Typography>
+          {getAllBoardArticlesByAdminError.networkError && (
+            <Typography variant="body2" color="error">
+              Network Error:{" "}
+              {getAllBoardArticlesByAdminError.networkError.message}
+            </Typography>
+          )}
+          {getAllBoardArticlesByAdminError.graphQLErrors?.map((err, index) => (
+            <Typography key={index} variant="body2" color="error">
+              GraphQL Error {index + 1}: {err.message}
+            </Typography>
+          ))}
+        </Box>
+      )}
+
+      {getAllBoardArticlesByAdminLoading && (
+        <Box
+          sx={{
+            mb: 2,
+            p: 2,
+            bgcolor: "#e3f2fd",
+            border: "1px solid #2196f3",
+            borderRadius: 1,
+          }}
+        >
+          <Typography variant="body1" color="primary">
+            Loading articles...
+          </Typography>
+        </Box>
+      )}
+
       <Box component={"div"} className={"table-wrap"}>
         <Box component={"div"} sx={{ width: "100%", typography: "body1" }}>
           <TabContext value={value}>
