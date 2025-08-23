@@ -54,9 +54,18 @@ const MyMenu = () => {
           <div className="mt-1 flex items-center gap-1 text-xs text-gray-600">
             <span className="truncate">{user?.memberPhone}</span>
           </div>
-          <span className="mt-1 inline-block text-xs font-semibold text-red-500">
-            {user?.memberType}
-          </span>
+          {user?.memberType === "ADMIN" ? (
+            <Link
+              href="/_admin"
+              className="mt-1 inline-block text-xs font-semibold text-red-500 hover:underline cursor-pointer"
+            >
+              {user?.memberType}
+            </Link>
+          ) : (
+            <span className="mt-1 inline-block text-xs font-semibold text-red-500">
+              {user?.memberType}
+            </span>
+          )}
         </div>
       </div>
 
