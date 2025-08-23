@@ -27,11 +27,20 @@ import {
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_ALL_BOARD_ARTICLES_BY_ADMIN } from "../../../apollo/admin/query";
 import { T } from "../../../libs/types/common";
+import { Direction } from "../../../libs/enums/common.enum";
 
-const AdminCommunity: NextPage = ({ initialInquiry, ...props }: any) => {
+const DEFAULT_INPUT: AllBoardArticlesInquiry = {
+  page: 1,
+  limit: 10,
+  sort: "createdAt",
+  direction: Direction.DESC,
+  search: {},
+};
+
+const AdminCommunity: NextPage = () => {
   const [anchorEl, setAnchorEl] = useState<any>([]);
   const [communityInquiry, setCommunityInquiry] =
-    useState<AllBoardArticlesInquiry>(initialInquiry);
+    useState<AllBoardArticlesInquiry>(DEFAULT_INPUT);
   const [articles, setArticles] = useState<BoardArticle[]>([]);
   const [articleTotal, setArticleTotal] = useState<number>(0);
   const [value, setValue] = useState(
@@ -60,10 +69,8 @@ const AdminCommunity: NextPage = ({ initialInquiry, ...props }: any) => {
     variables: { input: communityInquiry },
     notifyOnNetworkStatusChange: true,
     onCompleted: (data: T) => {
-      setArticles(data?.getAllBoardArticlesByAdmin?.list);
-      setArticleTotal(
-        data?.getAllBoardArticlesByAdmin.metaCounter[0].total ?? 0
-      );
+      setArticles(data?.getAllArticlesByAdmin?.list);
+      setArticleTotal(data?.getAllArticlesByAdmin.metaCounter[0].total ?? 0);
     },
   });
 
@@ -251,16 +258,6 @@ const AdminCommunity: NextPage = ({ initialInquiry, ...props }: any) => {
       </Box>
     </Box>
   );
-};
-
-AdminCommunity.defaultProps = {
-  initialInquiry: {
-    page: 1,
-    limit: 10,
-    sort: "createdAt",
-    direction: "DESC",
-    search: {},
-  },
 };
 
 export default withAdminLayout(AdminCommunity);

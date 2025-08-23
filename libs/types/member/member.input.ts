@@ -41,5 +41,5 @@ export interface MembersInquiry {
   limit: number;
   sort?: string;
   direction?: Direction;
-  search: MISearch;
+  search?: MISearch;
 }
