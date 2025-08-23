@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "@/libs/components/ui/button";
 import { CaretRight } from "phosphor-react";
 import { Meteors } from "../ui/meteors";
+import { useTranslation } from "next-i18next";
 
 type ShopHeroProps = {
   title?: string;
@@ -13,9 +14,9 @@ type ShopHeroProps = {
 };
 
 export default function ShopHero({
-  title = "Artisan Creations",
-  blurb = "Discover unique handcrafted treasures from talented artists worldwide — where quality meets creativity.",
-  ctaLabel = "Browse Collection",
+  title,
+  blurb,
+  ctaLabel,
   ctaHref = `/product?input=${JSON.stringify({
     page: 1,
     limit: 9,
@@ -25,6 +26,8 @@ export default function ShopHero({
   })}`,
   imageSrc = "/banner/artistic.jpeg",
 }: ShopHeroProps) {
+  const { t } = useTranslation("common");
+  
   return (
     <section className="w-full px-6 py-6">
       <div className="mx-auto w-full max-w-7xl overflow-hidden rounded-2xl bg-[#ff6b81] text-white">
@@ -32,14 +35,14 @@ export default function ShopHero({
           <div className="relative p-8 md:p-12 overflow-hidden">
             <Meteors number={15} />
             <h1 className="relative z-10 text-3xl font-extrabold tracking-tight md:text-5xl">
-              {title}
+              {title || t("Artisan Creations")}
             </h1>
             <p className="relative z-10 mt-4 max-w-2xl text-base md:text-lg">
-              {blurb}
+              {blurb || t("Discover unique handcrafted treasures from talented artists worldwide — where quality meets creativity.")}
             </p>
             <Link href={ctaHref} className="relative z-10 mt-6 inline-block">
               <Button className="rounded-full bg-white px-6 py-5 text-base font-semibold text-gray-900 hover:bg-gray-100 cursor-pointer">
-                {ctaLabel}
+                {ctaLabel || t("Browse Collection")}
                 <CaretRight size={16} weight="bold" className="ml-1" />
               </Button>
             </Link>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "@/libs/components/ui/button";
 import { CaretRight } from "phosphor-react";
 import { Meteors } from "../ui/meteors";
+import { useTranslation } from "next-i18next";
 
 type ShopHero2Props = {
   title?: string;
@@ -13,9 +14,9 @@ type ShopHero2Props = {
 };
 
 export default function ShopHero2({
-  title = "Inspire Your Space",
-  blurb = "Thoughtfully crafted goods to elevate everyday living — handmade, unique, and responsibly sourced.",
-  ctaLabel = "Start Shopping",
+  title,
+  blurb,
+  ctaLabel,
   ctaHref = `/product?input=${JSON.stringify({
     page: 1,
     limit: 9,
@@ -25,6 +26,8 @@ export default function ShopHero2({
   })}`,
   imageSrc = "/banner/artistic2.jpeg",
 }: ShopHero2Props) {
+  const { t } = useTranslation("common");
+
   return (
     <section className="w-full px-6 py-6">
       <div className="mx-auto w-full max-w-7xl overflow-hidden rounded-2xl bg-[#1B938B] text-white">
@@ -42,14 +45,17 @@ export default function ShopHero2({
           <div className="relative p-8 md:p-12 overflow-hidden">
             <Meteors number={15} />
             <h1 className="relative z-10 text-3xl font-extrabold tracking-tight md:text-5xl">
-              {title}
+              {title || t("Inspire Your Space")}
             </h1>
             <p className="relative z-10 mt-4 max-w-2xl text-base md:text-lg">
-              {blurb}
+              {blurb ||
+                t(
+                  "Thoughtfully crafted goods to elevate everyday living — handmade, unique, and responsibly sourced."
+                )}
             </p>
             <Link href={ctaHref} className="relative z-10 mt-6 inline-block">
               <Button className="rounded-full bg-white px-6 py-5 text-base font-semibold text-gray-900 hover:bg-gray-100 cursor-pointer">
-                {ctaLabel}
+                {ctaLabel || t("Start Shopping")}
                 <CaretRight size={16} weight="bold" className="ml-1" />
               </Button>
             </Link>

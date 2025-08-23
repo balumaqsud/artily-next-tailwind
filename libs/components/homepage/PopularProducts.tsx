@@ -12,6 +12,7 @@ import {
   sweetTopSmallSuccessAlert,
 } from "../../sweetAlert";
 import { Message } from "../../enums/common.enum";
+import { useTranslation } from "next-i18next";
 
 interface PopularProductsProps {
   initialInput?: ProductsInquiry;
@@ -28,6 +29,7 @@ const DEFAULT_INPUT: ProductsInquiry = {
 const PopularProducts = ({
   initialInput = DEFAULT_INPUT,
 }: PopularProductsProps) => {
+  const { t } = useTranslation("common");
   const [popularProducts, setPopularProducts] = useState<Product[]>([]);
 
   const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
@@ -110,7 +112,7 @@ const PopularProducts = ({
       <div className="mx-auto w-full max-w-7xl">
         <div className="mb-6">
           <h2 className="text-xl md:text-2xl font-bold tracking-tight text-muted-foreground">
-            Bestsellers you’ll see everywhere soon
+            {t("Bestsellers you'll see everywhere soon")}
           </h2>
         </div>
 

@@ -12,6 +12,7 @@ import {
   sweetMixinErrorAlert,
   sweetTopSmallSuccessAlert,
 } from "../../sweetAlert";
+import { useTranslation } from "next-i18next";
 
 interface TopProductsProps {
   initialInput?: ProductsInquiry;
@@ -26,6 +27,7 @@ const DEFAULT_INPUT: ProductsInquiry = {
 };
 
 const TopProducts = ({ initialInput = DEFAULT_INPUT }: TopProductsProps) => {
+  const { t } = useTranslation("common");
   /** APOLLO REQUESTS **/
   const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
   const [topProducts, setTopProducts] = useState<Product[]>([]);
@@ -108,7 +110,7 @@ const TopProducts = ({ initialInput = DEFAULT_INPUT }: TopProductsProps) => {
         <div className="mb-8 flex items-center justify-between">
           <div className="flex flex-col">
             <h2 className="text-xl md:text-2xl font-bold tracking-tight text-muted-foreground">
-              Featured Products of summer 2025
+              {t("Featured Products of summer 2025")}
             </h2>
           </div>
         </div>

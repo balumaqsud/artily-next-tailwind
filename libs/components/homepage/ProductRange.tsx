@@ -3,14 +3,17 @@ import ProductRangeCard from "./ProductRangeCard";
 import { ScrollArea, ScrollBar } from "@/libs/components/ui/scroll-area";
 import { Button } from "@/libs/components/ui/button";
 import { fallbackCollections } from "@/libs/config";
+import { useTranslation } from "next-i18next";
 
 const ProductRange = () => {
+  const { t } = useTranslation("common");
+  
   return (
     <section className="w-full px-4 py-8">
       <div className="mx-auto w-full max-w-7xl">
         <div className="mb-8 flex items-center justify-between">
           <h2 className="text-xl md:text-2xl font-bold tracking-tight text-muted-foreground">
-            See Our Product Range
+            {t("See Our Product Range")}
           </h2>
         </div>
 

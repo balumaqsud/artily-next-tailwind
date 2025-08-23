@@ -2,9 +2,12 @@ import React from "react";
 import { Button } from "@/libs/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Vortex } from "@/libs/components/ui/vortex";
+import { useTranslation } from "next-i18next";
 
 export default function MainBanner() {
   const router = useRouter();
+  const { t } = useTranslation("common");
+
   return (
     <div className="mt-19 w-full px-6">
       <div
@@ -25,18 +28,21 @@ export default function MainBanner() {
           className="flex h-full w-full flex-col items-center justify-center px-4 text-center"
         >
           <h1 className="text-emerald-100 text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight drop-shadow-lg shadow-lg">
-            Creative Looks{" "}
-            <span className="text-emerald-200 drop-shadow-lg">Begin Here</span>
+            {t("Creative Looks")}{" "}
+            <span className="text-emerald-200 drop-shadow-lg">
+              {t("Begin Here")}
+            </span>
           </h1>
           <p className="mt-4 sm:mt-6 max-w-xs sm:max-w-lg md:max-w-2xl text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold drop-shadow-2xl shadow-black">
-            New chapter, same you. Score deals on tees, stickers & more, all
-            with fresh art you'll love
+            {t(
+              "New chapter, same you. Score deals on tees, stickers & more, all with fresh art you'll love"
+            )}
           </p>
           <Button
             className="rounded-full bg-white px-6 sm:px-8 py-4 sm:py-6 mt-6 sm:mt-8 text-base sm:text-lg font-semibold text-gray-900 hover:bg-gray-100 cursor-pointer"
             onClick={() => router.push("/product")}
           >
-            Shop Now
+            {t("Shop now")}
           </Button>
         </Vortex>
       </div>

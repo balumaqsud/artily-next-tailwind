@@ -138,7 +138,7 @@ const MemberMenu = (props: MemberMenuProps) => {
                         </svg>
                       )}
                     </div>
-                    <span className="font-medium">Properties</span>
+                    <span className="font-medium">Products</span>
                   </div>
                   <span className="text-sm font-semibold">
                     {member?.memberProducts}
@@ -204,7 +204,7 @@ const MemberMenu = (props: MemberMenuProps) => {
                   <span className="font-medium">Followings</span>
                 </div>
                 <span className="text-sm font-semibold">
-                  {member?.memberFollowings}
+                  {member?.memberFollowing}
                 </span>
               </div>
             </Link>

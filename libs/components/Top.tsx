@@ -7,7 +7,6 @@ import { Stack, Box } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import { alpha, styled } from "@mui/material/styles";
 import Menu, { MenuProps } from "@mui/material/Menu";
-
 import useDeviceDetect from "../hooks/useDeviceDetect";
 import Link from "next/link";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
@@ -88,13 +87,8 @@ const Top = () => {
   }, []);
 
   /** HANDLERS **/
-  const langClick = (e: any) => {
-    setAnchorEl2(e.currentTarget);
-  };
-
-  const langClose = () => {
-    setAnchorEl2(null);
-  };
+  const langClick = (e: any) => setAnchorEl2(e.currentTarget);
+  const langClose = () => setAnchorEl2(null);
 
   const langChoice = useCallback(
     async (e: any) => {
@@ -189,7 +183,7 @@ const Top = () => {
               <img
                 src="/logo/artly-logo.png"
                 alt="artly-logo"
-                className="h-10 w-auto sm:h-12 md:h-14"
+                className="h-20 w-auto sm:h-18 md:h-26"
               />
             </Link>
           </div>

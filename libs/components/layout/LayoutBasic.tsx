@@ -70,7 +70,7 @@ const withLayoutBasic = (Component: any) => {
           setAuthHeader(true);
           break;
         case "/member":
-          title = "Member P";
+          title = "Member Page";
           desc = "Manage your account and preferences";
           bgImage = "/banner/artistic.jpeg";
           break;
@@ -84,13 +84,20 @@ const withLayoutBasic = (Component: any) => {
       }
 
       return { title, desc, bgImage };
-    }, [router.pathname]);
+    }, [router.pathname, i18n.language]); // Add i18n.language dependency
 
     /** LIFECYCLES **/
     useEffect(() => {
       const jwt = getJwtToken();
       if (jwt) updateUserInfo(jwt);
     }, []);
+
+    useEffect(() => {
+      // Reset authHeader when route changes
+      if (router.pathname !== "/account/join") {
+        setAuthHeader(false);
+      }
+    }, [router.pathname]);
 
     /** HANDLERS **/
 

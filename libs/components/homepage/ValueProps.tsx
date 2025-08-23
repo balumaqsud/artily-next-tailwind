@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Image, ThumbsUp, Leaf } from "lucide-react";
+import { useTranslation } from "next-i18next";
 
 type ValueItem = {
   title: string;
@@ -14,20 +15,22 @@ export default function ValueProps({
   items?: ValueItem[];
   className?: string;
 }) {
+  const { t } = useTranslation("common");
+  
   const defaultItems: ValueItem[] = [
     {
-      title: "Every order pays an artist",
-      description: "Your purchase sends money straight to the creator.",
+      title: t("Every order pays an artist"),
+      description: t("Your purchase sends money straight to the creator."),
       icon: <ThumbsUp className="h-7 w-7" />,
     },
     {
-      title: "Lower‑impact production",
-      description: "We offset carbon and choose responsible materials.",
+      title: t("Lower‑impact production"),
+      description: t("We offset carbon and choose responsible materials."),
       icon: <Leaf className="h-7 w-7" />,
     },
     {
-      title: "Original designs to wear & share",
-      description: "Explore thousands of artworks across 90+ premium products.",
+      title: t("Original designs to wear & share"),
+      description: t("Explore thousands of artworks across 90+ premium products."),
       icon: <Image className="h-7 w-7" />,
     },
   ];

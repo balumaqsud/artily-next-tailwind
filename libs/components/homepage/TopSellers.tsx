@@ -8,6 +8,7 @@ import { GET_ARTISTS } from "../../../apollo/user/query";
 import { useQuery } from "@apollo/client";
 import { T } from "../../types/common";
 import { Direction } from "../../enums/common.enum";
+import { useTranslation } from "next-i18next";
 
 interface TopSellersProps {
   initialInput?: SellersInquiry;
@@ -23,6 +24,7 @@ const DEFAULT_INPUT: SellersInquiry = {
 
 const TopSellers = ({ initialInput = DEFAULT_INPUT }: TopSellersProps) => {
   const router = useRouter();
+  const { t } = useTranslation("common");
   const [topSellers, setTopSellers] = useState<Member[]>([]);
 
   /** APOLLO REQUESTS **/
@@ -88,7 +90,7 @@ const TopSellers = ({ initialInput = DEFAULT_INPUT }: TopSellersProps) => {
         <div className="mb-6 flex items-center justify-between">
           <div>
             <h2 className="text-xl md:text-2xl font-bold tracking-tight text-muted-foreground">
-              Top artists
+              {t("Top artists")}
             </h2>
           </div>
           <div>
@@ -96,7 +98,7 @@ const TopSellers = ({ initialInput = DEFAULT_INPUT }: TopSellersProps) => {
               onClick={() => router.push("/artist")}
               className="text-sm text-foreground hover:underline cursor-pointer"
             >
-              See all artists
+              {t("See all artists")}
             </button>
           </div>
         </div>

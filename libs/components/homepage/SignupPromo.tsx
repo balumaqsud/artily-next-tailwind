@@ -1,6 +1,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { Button } from "@/libs/components/ui/button";
+import { useTranslation } from "next-i18next";
 
 type SignupPromoProps = {
   title?: string;
@@ -11,12 +12,14 @@ type SignupPromoProps = {
 };
 
 export default function SignupPromo({
-  title = "Join the community",
-  subtitle = "Make your first purchase and get 25% off.",
-  ctaLabel = "Sign Up",
+  title,
+  subtitle,
+  ctaLabel,
   ctaHref = "/account/join",
   bg = "/banner/main7.jpg",
 }: SignupPromoProps) {
+  const { t } = useTranslation("common");
+  
   return (
     <div className=" mt-16 w-full px-4 py-8">
       <div
@@ -26,14 +29,14 @@ export default function SignupPromo({
         aria-label="Signup promo"
       >
         <h3 className="text-2xl font-extrabold tracking-tight text-foreground md:text-3xl">
-          {title}
+          {title || t("Join the community")}
         </h3>
         <p className="mt-2 text-lg font-semibold text-foreground md:text-xl">
-          {subtitle}
+          {subtitle || t("Make your first purchase and get 25% off.")}
         </p>
         <Link href={ctaHref} className="mt-5 inline-block">
           <Button className="h-11 rounded-full bg-[#ff6b81] px-6 text-base font-semibold text-white hover:bg-[#ff5a73] cursor-pointer">
-            {ctaLabel}
+            {ctaLabel || t("Sign Up")}
           </Button>
         </Link>
       </div>

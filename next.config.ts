@@ -7,10 +7,9 @@ const nextConfig: NextConfig = {
     REACT_APP_API_GRAPHQL_URL: process.env.REACT_APP_API_GRAPHQL_URL,
     REACT_APP_API_WS: process.env.REACT_APP_API_WS,
   },
-  i18n: {
-    locales: ["en", "ko"],
-    defaultLocale: "en",
-  },
 };
+
+const { i18n } = require("./next-i18next.config");
+nextConfig.i18n = i18n;
 
 export default nextConfig;
