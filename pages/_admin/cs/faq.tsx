@@ -1,131 +1,157 @@
 import React, { useState } from "react";
 import type { NextPage } from "next";
 import withAdminLayout from "../../../libs/components/layout/LayoutAdmin";
-import { Box, Button, InputAdornment, Stack } from "@mui/material";
-import { List, ListItem } from "@mui/material";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import { TabContext } from "@mui/lab";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import TablePagination from "@mui/material/TablePagination";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
 import FaqList from "../../../libs/components/admin/cs/FaqList";
 
 const FaqArticles: NextPage = (props: any) => {
   const [anchorEl, setAnchorEl] = useState<[] | HTMLElement[]>([]);
+  const [value, setValue] = useState("ALL");
+  const [searchType, setSearchType] = useState("ALL");
 
   /** APOLLO REQUESTS **/
   /** LIFECYCLES **/
   /** HANDLERS **/
 
+  const tabChangeHandler = async (event: any, newValue: string) => {
+    setValue(newValue);
+    // Add tab change logic here
+  };
+
+  const searchTypeHandler = async (newValue: string) => {
+    setSearchType(newValue);
+    // Add search type logic here
+  };
+
   return (
-    // @ts-ignore
-    <Box component={"div"} className={"content"}>
-      <Box component={"div"} className={"title flex_space"}>
-        <Typography variant={"h2"}>FAQ Management</Typography>
-        <Button
-          className="btn_add"
-          variant={"contained"}
-          size={"medium"}
-          // onClick={() => router.push(`/_admin/cs/faq_create`)}
-        >
-          <AddRoundedIcon sx={{ mr: "8px" }} />
-          ADD
-        </Button>
-      </Box>
-      <Box component={"div"} className={"table-wrap"}>
-        <Box component={"div"} sx={{ width: "100%", typography: "body1" }}>
-          <TabContext value={"value"}>
-            <Box component={"div"}>
-              <List className={"tab-menu"}>
-                <ListItem
-                  // onClick={(e) => handleTabChange(e, 'all')}
-                  value="all"
-                  className={"all" === "all" ? "li on" : "li"}
-                >
-                  All (0)
-                </ListItem>
-                <ListItem
-                  // onClick={(e) => handleTabChange(e, 'active')}
-                  value="active"
-                  className={"all" === "all" ? "li on" : "li"}
-                >
-                  Active (0)
-                </ListItem>
-                <ListItem
-                  // onClick={(e) => handleTabChange(e, 'blocked')}
-                  value="blocked"
-                  className={"all" === "all" ? "li on" : "li"}
-                >
-                  Blocked (0)
-                </ListItem>
-                <ListItem
-                  // onClick={(e) => handleTabChange(e, 'deleted')}
-                  value="deleted"
-                  className={"all" === "all" ? "li on" : "li"}
-                >
-                  Deleted (0)
-                </ListItem>
-              </List>
-              <Divider />
-              <Stack className={"search-area"} sx={{ m: "24px" }}>
-                <Select
-                  sx={{ width: "160px", mr: "20px" }}
-                  value={"searchCategory"}
-                >
-                  <MenuItem value={"mb_nick"}>mb_nick</MenuItem>
-                  <MenuItem value={"mb_id"}>mb_id</MenuItem>
-                </Select>
+    <div className="w-full">
+      {/* Page Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          FAQ Management
+        </h1>
+        <p className="text-gray-600">
+          Manage frequently asked questions and answers
+        </p>
+      </div>
 
-                <OutlinedInput
-                  value={"searchInput"}
-                  // onChange={(e) => handleInput(e.target.value)}
-                  sx={{ width: "100%" }}
-                  className={"search"}
-                  placeholder="Search user name"
-                  onKeyDown={(event) => {
-                    // if (event.key == 'Enter') searchTargetHandler().then();
-                  }}
-                  endAdornment={
-                    <>
-                      {true && <CancelRoundedIcon onClick={() => {}} />}
-                      <InputAdornment position="end" onClick={() => {}}>
-                        <img
-                          src="/img/icons/search_icon.png"
-                          alt={"searchIcon"}
-                        />
-                      </InputAdornment>
-                    </>
-                  }
-                />
-              </Stack>
-              <Divider />
-            </Box>
-            <FaqList
-              faqs={[]}
-              anchorEl={anchorEl}
-              menuIconClickHandler={() => {}}
-              menuIconCloseHandler={() => {}}
-              updateFaqHandler={() => {}}
-              removeFaqHandler={() => {}}
-            />
+      {/* Main Content */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        {/* Tab Navigation */}
+        <div className="border-b border-gray-200">
+          <div className="flex space-x-1 p-1">
+            <button
+              onClick={(e: any) => tabChangeHandler(e, "ALL")}
+              className={`flex-1 px-6 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+                value === "ALL"
+                  ? "bg-blue-50 text-blue-700 border border-blue-200"
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+              }`}
+            >
+              All FAQs
+            </button>
+            <button
+              onClick={(e: any) => tabChangeHandler(e, "ACTIVE")}
+              className={`flex-1 px-6 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+                value === "ACTIVE"
+                  ? "bg-green-50 text-green-700 border border-green-200"
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+              }`}
+            >
+              Active
+            </button>
+            <button
+              onClick={(e: any) => tabChangeHandler(e, "BLOCKED")}
+              className={`flex-1 px-6 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+                value === "BLOCKED"
+                  ? "bg-yellow-50 text-yellow-700 border border-yellow-200"
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+              }`}
+            >
+              Blocked
+            </button>
+            <button
+              onClick={(e: any) => tabChangeHandler(e, "DELETED")}
+              className={`flex-1 px-6 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+                value === "DELETED"
+                  ? "bg-red-50 text-red-700 border border-red-200"
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+              }`}
+            >
+              Deleted
+            </button>
+          </div>
+        </div>
 
-            <TablePagination
-              rowsPerPageOptions={[20, 40, 60]}
-              component="div"
-              count={4}
-              rowsPerPage={10}
-              page={1}
-              onPageChange={() => {}}
-              onRowsPerPageChange={() => {}}
-            />
-          </TabContext>
-        </Box>
-      </Box>
-    </Box>
+        {/* Search and Filter */}
+        <div className="p-6 border-b border-gray-100 bg-gray-50/50">
+          <div className="flex items-center space-x-4">
+            <label className="text-sm font-medium text-gray-700">
+              Category:
+            </label>
+            <select
+              value={searchType}
+              onChange={(e) => searchTypeHandler(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 bg-white"
+            >
+              <option value="ALL">All Categories</option>
+              <option value="GENERAL">General</option>
+              <option value="TECHNICAL">Technical</option>
+              <option value="BILLING">Billing</option>
+              <option value="ACCOUNT">Account</option>
+            </select>
+          </div>
+        </div>
+
+        {/* FAQ List */}
+        <div className="p-6">
+          <FaqList
+            faqs={[]}
+            anchorEl={anchorEl}
+            menuIconClickHandler={() => {}}
+            menuIconCloseHandler={() => {}}
+            updateFaqHandler={() => {}}
+            removeFaqHandler={() => {}}
+          />
+        </div>
+
+        {/* Pagination */}
+        <div className="px-6 py-4 border-t border-gray-200 bg-gray-50/50">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <label className="text-sm text-gray-700">Rows per page:</label>
+              <select
+                defaultValue={10}
+                className="px-3 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              >
+                {[10, 20, 40, 60].map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <button
+                disabled
+                className="px-3 py-1 text-sm text-gray-400 cursor-not-allowed transition-colors duration-200"
+              >
+                Previous
+              </button>
+
+              <span className="text-sm text-gray-700">Page 1 of 1</span>
+
+              <button
+                disabled
+                className="px-3 py-1 text-sm text-gray-400 cursor-not-allowed transition-colors duration-200"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
