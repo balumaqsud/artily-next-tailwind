@@ -5,13 +5,17 @@ import MemberPanelList from "../../../libs/components/admin/users/MemberList";
 import { MembersInquiry } from "../../../libs/types/member/member.input";
 import { Member } from "../../../libs/types/member/member";
 import { MemberStatus, MemberType } from "../../../libs/enums/member.enum";
-import { sweetErrorHandling } from "../../../libs/sweetAlert";
+import {
+  sweetErrorHandling,
+  sweetTopSmallSuccessAlert,
+} from "../../../libs/sweetAlert";
 import { MemberUpdate } from "../../../libs/types/member/member.update";
 import { GET_ALL_MEMBERS_BY_ADMIN } from "../../../apollo/admin/query";
 import { useMutation, useQuery } from "@apollo/client";
 import { T } from "../../../libs/types/common";
 import { UPDATE_MEMBER_BY_ADMIN } from "../../../apollo/admin/mutation";
 import { Direction } from "../../../libs/enums/common.enum";
+import { REMOVE_MEMBER_BY_ADMIN } from "../../../apollo/admin/mutation";
 
 const DEFAULT_INPUT: MembersInquiry = {
   page: 1,
@@ -40,6 +44,7 @@ const AdminUsers: NextPage = ({
 
   /** APOLLO REQUESTS **/
   const [updateMemberByAdmin] = useMutation(UPDATE_MEMBER_BY_ADMIN);
+  const [removeMemberByAdmin] = useMutation(REMOVE_MEMBER_BY_ADMIN);
 
   const {
     loading: getAllMembersByAdminLoading,
@@ -177,8 +182,24 @@ const AdminUsers: NextPage = ({
   const removeMemberHandler = async (id: string) => {
     try {
       console.log("removeMemberHandler: ", id);
+
+      if (confirm("Are you sure you want to remove this member?")) {
+        const result = await removeMemberByAdmin({
+          variables: { input: id },
+        });
+
+        if (result?.data?.removeMemberByAdmin) {
+          await sweetTopSmallSuccessAlert("Member removed successfully!", 3000);
+
+          // Refetch the members list
+          await getAllMembersByAdminRefetch({
+            input: membersInquiry,
+          });
+        }
+      }
     } catch (err: any) {
       console.log("removeMemberHandler: ", err.message);
+      sweetErrorHandling(err).then();
     }
   };
 

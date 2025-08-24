@@ -125,21 +125,17 @@ const AdminProducts: NextPage = () => {
 
   const removeProductHandler = async (id: string) => {
     try {
-      console.log("🧹 Attempting to remove product with ID:", id);
-      if (await sweetConfirmAlert("Are you sure to remove?")) {
-        console.log("✅ User confirmed removal, calling mutation...");
-        const result = await removeProductByAdmin({ variables: { input: id } });
-        console.log("✅ Remove mutation successful:", result);
-      } else {
-        console.log("❌ User cancelled removal");
+      if (!id || id.trim() === "") {
+        sweetErrorHandling(new Error("Invalid product ID")).then();
         return;
       }
-      await getAllProductsByAdminRefetch({ input: productsInquiry });
-      menuIconCloseHandler();
+
+      if (await sweetConfirmAlert("Are you sure to remove?")) {
+        await removeProductByAdmin({ variables: { input: id } });
+        await getAllProductsByAdminRefetch({ input: productsInquiry });
+        menuIconCloseHandler();
+      }
     } catch (err: any) {
-      console.error("❌ Error removing product:", err);
-      console.error("❌ Error message:", err.message);
-      console.error("❌ Error details:", err);
       sweetErrorHandling(err).then();
     }
   };

@@ -155,7 +155,6 @@ const AdminCommunity: NextPage = () => {
 
   const updateArticleHandler = async (updateData: BoardArticleUpdate) => {
     try {
-      console.log("+updateData: ", updateData);
       await updateBoardArticleByAdmin({ variables: { input: updateData } });
       menuIconCloseHandler();
       await getAllBoardArticlesByAdminRefetch({ input: communityInquiry });
@@ -167,28 +166,20 @@ const AdminCommunity: NextPage = () => {
 
   const removeArticleHandler = async (id: string) => {
     try {
-      console.log("🧹 Attempting to remove article with ID:", id);
-      if (await sweetConfirmAlert("are you sure to remove?")) {
-        console.log("✅ User confirmed removal, calling mutation...");
-        const result = await removeBoardArticleByAdmin({
-          variables: { input: id },
-        });
-        console.log("✅ Remove mutation successful:", result);
-      } else {
-        console.log("❌ User cancelled removal");
+      if (!id || id.trim() === "") {
+        sweetErrorHandling(new Error("Invalid article ID")).then();
         return;
       }
-      await getAllBoardArticlesByAdminRefetch({ input: communityInquiry });
+
+      if (await sweetConfirmAlert("Are you sure to remove?")) {
+        await removeBoardArticleByAdmin({ variables: { input: id } });
+        await getAllBoardArticlesByAdminRefetch({ input: communityInquiry });
+        menuIconCloseHandler();
+      }
     } catch (err: any) {
-      console.error("❌ Error removing article:", err);
-      console.error("❌ Error message:", err.message);
-      console.error("❌ Error details:", err);
       sweetErrorHandling(err).then();
     }
   };
-
-  console.log("+communityInquiry", communityInquiry);
-  console.log("+articles", articles);
 
   return (
     <div className="w-full">

@@ -132,8 +132,8 @@ export const UPDATE_BOARD_ARTICLE_BY_ADMIN = gql`
 `;
 
 export const REMOVE_BOARD_ARTICLE_BY_ADMIN = gql`
-  mutation RemoveBoardArticle($input: String!) {
-    removeBoardArticle(articleId: $input) {
+  mutation RemoveArticle($input: String!) {
+    removeArticle(articleId: $input) {
       _id
       articleCategory
       articleStatus
@@ -165,6 +165,38 @@ export const REMOVE_COMMENT_BY_ADMIN = gql`
       memberId
       createdAt
       updatedAt
+    }
+  }
+`;
+
+export const REMOVE_MEMBER_BY_ADMIN = gql`
+  mutation RemoveMemberByAdmin($input: String!) {
+    removeMemberByAdmin(memberId: $input) {
+      _id
+      memberType
+      memberStatus
+      memberAuthType
+      memberPhone
+      memberNick
+      memberFullName
+      memberImage
+      memberAddress
+      memberDesc
+      memberProducts
+      memberArticles
+      memberFollowers
+      memberFollowing
+      memberPoints
+      memberLikes
+      memberViews
+      memberComments
+      memberRank
+      memberWarnings
+      memberBlocks
+      deletedAt
+      createdAt
+      updatedAt
+      accessToken
     }
   }
 `;

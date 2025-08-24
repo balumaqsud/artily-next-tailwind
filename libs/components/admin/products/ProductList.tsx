@@ -281,7 +281,6 @@ const ProductList: React.FC<ProductListProps> = ({
                             onClick={() => {
                               updateProductHandler({
                                 _id: product._id.toString(),
-                                productStatus: ProductStatus.ACTIVE,
                               });
                             }}
                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
@@ -292,7 +291,6 @@ const ProductList: React.FC<ProductListProps> = ({
                             onClick={() => {
                               updateProductHandler({
                                 _id: product._id.toString(),
-                                productStatus: ProductStatus.DELETE,
                               });
                             }}
                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
