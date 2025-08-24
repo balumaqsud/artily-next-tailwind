@@ -335,7 +335,7 @@ const Top = () => {
                   sx={{ mt: "5px" }}
                 >
                   <MenuItem onClick={() => logOut()}>
-                    <Logout className="px-4 text-lg font-semibold hover:bg-gray-100 cursor-pointer" />
+                    <Logout className=" bg-white px-5 py-3 text-md font-semibold text-gray-900 hover:bg-gray-100 transition-colors cursor-pointer" />
                     Logout
                   </MenuItem>
                 </Menu>
@@ -345,12 +345,7 @@ const Top = () => {
                 {/* Auth Buttons - Show on tablet and up */}
                 <div className="hidden sm:flex items-center gap-2">
                   <Link href={"/account/join"}>
-                    <Button className="rounded-full bg-white px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-100 transition-colors">
-                      {t("Become a seller")}
-                    </Button>
-                  </Link>
-                  <Link href={"/account/join"}>
-                    <Button className="rounded-full bg-white px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-100 transition-colors">
+                    <Button className="rounded-full bg-white px-5 py-3 text-md font-semibold text-gray-900 hover:bg-gray-100 transition-colors cursor-pointer">
                       {t("Login")}
                     </Button>
                   </Link>

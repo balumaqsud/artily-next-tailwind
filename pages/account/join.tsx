@@ -23,7 +23,6 @@ export const getStaticProps = async ({ locale }: any) => ({
 
 const Join: NextPage = () => {
   const router = useRouter();
-  const device = useDeviceDetect();
   const [input, setInput] = useState({
     nick: "",
     password: "",
@@ -175,9 +174,9 @@ const Join: NextPage = () => {
                     control={
                       <Checkbox
                         size="small"
-                        name={"ARTIST"}
+                        name={"SELLER"}
                         onChange={checkUserTypeHandler}
-                        checked={input?.type == "ARTIST"}
+                        checked={input?.type == "SELLER"}
                       />
                     }
                     label="Artly Artist"
