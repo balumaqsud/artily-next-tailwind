@@ -77,6 +77,24 @@ const AddProduct = ({ initialValues, ...props }: any) => {
   }, [getProductLoading, getProductData]);
 
   /** HANDLERS **/
+
+  // Helper function to ensure arrays are properly formatted
+  const ensureArrayField = (field: any): string[] => {
+    if (!field) return [];
+    if (Array.isArray(field)) {
+      return field.filter(
+        (item) => item && typeof item === "string" && item.trim().length > 0
+      );
+    }
+    if (typeof field === "string") {
+      return field
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item.length > 0);
+    }
+    return [];
+  };
+
   async function uploadImages() {
     try {
       const formData = new FormData();
@@ -85,6 +103,18 @@ const AddProduct = ({ initialValues, ...props }: any) => {
       if (selectedFiles.length == 0) return false;
       if (selectedFiles.length > 5)
         throw new Error("Cannot upload more than 5 images!");
+
+      // Validate file types
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i];
+        if (!file.type.startsWith("image/")) {
+          throw new Error(`File ${file.name} is not an image`);
+        }
+        if (file.size > 5 * 1024 * 1024) {
+          // 5MB limit
+          throw new Error(`File ${file.name} is too large (max 5MB)`);
+        }
+      }
 
       formData.append(
         "operations",
@@ -110,6 +140,7 @@ const AddProduct = ({ initialValues, ...props }: any) => {
         if (/^\d+$/.test(key)) formData.append(`${key}`, selectedFiles[key]);
       }
 
+      console.log("Uploading images...", selectedFiles.length, "files");
       const response = await axios.post(
         `${REACT_APP_API_URL}/graphql`,
         formData,
@@ -119,16 +150,24 @@ const AddProduct = ({ initialValues, ...props }: any) => {
             "apollo-require-preflight": true,
             Authorization: `Bearer ${token}`,
           },
+          timeout: 30000, // 30 second timeout
         }
       );
 
+      if (!response.data?.data?.imagesUploader) {
+        throw new Error("Invalid response from image upload");
+      }
+
       const responseImages = response.data.data.imagesUploader;
+      console.log("Images uploaded successfully:", responseImages);
+
       setInsertProductData({
         ...insertProductData,
         productImages: responseImages,
       });
     } catch (err: any) {
-      await sweetMixinErrorAlert(err.message);
+      console.error("Image upload error:", err);
+      await sweetMixinErrorAlert(err.message || "Failed to upload images");
     }
   }
 
@@ -141,7 +180,14 @@ const AddProduct = ({ initialValues, ...props }: any) => {
       !insertProductData?.productCategory ||
       !insertProductData?.productLocation ||
       !insertProductData?.productImages ||
-      insertProductData?.productImages?.length < 1
+      insertProductData?.productImages?.length < 1 ||
+      !insertProductData?.productMaterials ||
+      insertProductData?.productMaterials?.length < 1 ||
+      !insertProductData?.productTags ||
+      insertProductData?.productTags?.length < 1 ||
+      !insertProductData?.productStock ||
+      insertProductData?.productStock < 1 ||
+      !insertProductData?.productShippingTime
     ) {
       return true;
     }
@@ -150,23 +196,50 @@ const AddProduct = ({ initialValues, ...props }: any) => {
 
   const insertProductHandler = useCallback(async () => {
     try {
+      // Ensure all required fields have proper values
       const productData = {
-        productType: insertProductData?.productType,
-        productCategory: insertProductData?.productCategory,
-        productLocation: insertProductData?.productLocation,
-        productShippingTime: insertProductData?.productShippingTime,
-        productTitle: insertProductData?.productTitle,
-        productPrice: insertProductData?.productPrice,
-        productImages: insertProductData?.productImages,
-        productMaterials: insertProductData?.productMaterials,
-        productTags: insertProductData?.productTags,
-        productStock: insertProductData?.productStock,
-        productColor: insertProductData?.productColor,
-        productDesc: insertProductData?.productDesc,
-        productShippingCost: insertProductData?.productShippingCost,
-        productWrapAvailable: insertProductData?.productWrapAvailable,
-        productPersonalizable: insertProductData?.productPersonalizable,
+        productType:
+          insertProductData?.productType || ProductType.ART_COLLECTABLES,
+        productCategory: insertProductData?.productCategory || "",
+        productLocation: insertProductData?.productLocation || "",
+        productShippingTime:
+          insertProductData?.productShippingTime || SHippingTimeType.FAST,
+        productTitle: insertProductData?.productTitle || "",
+        productPrice: insertProductData?.productPrice || 0,
+        productImages: ensureArrayField(insertProductData?.productImages),
+        productMaterials: ensureArrayField(insertProductData?.productMaterials),
+        productTags: ensureArrayField(insertProductData?.productTags),
+        productStock: insertProductData?.productStock || 1,
+        productColor: ensureArrayField(insertProductData?.productColor),
+        productDesc: insertProductData?.productDesc || "",
+        productShippingCost: insertProductData?.productShippingCost || 0,
+        productWrapAvailable: insertProductData?.productWrapAvailable || false,
+        productPersonalizable:
+          insertProductData?.productPersonalizable || false,
       };
+
+      // Validate required fields before sending
+      if (
+        !productData.productType ||
+        !productData.productCategory ||
+        !productData.productLocation ||
+        !productData.productTitle ||
+        !productData.productPrice ||
+        productData.productPrice <= 0 ||
+        !productData.productImages ||
+        productData.productImages.length < 1 ||
+        !productData.productMaterials ||
+        productData.productMaterials.length < 1 ||
+        !productData.productTags ||
+        productData.productTags.length < 1 ||
+        !productData.productStock ||
+        productData.productStock < 1 ||
+        !productData.productShippingTime
+      ) {
+        throw new Error("Please fill in all required fields");
+      }
+
+      console.log("Sending product data:", productData);
       await createProduct({ variables: { input: productData } });
       await sweetMixinSuccessAlert("Product created successfully");
       await router.push({
@@ -181,24 +254,52 @@ const AddProduct = ({ initialValues, ...props }: any) => {
 
   const updateProductHandler = useCallback(async () => {
     try {
+      // Ensure all required fields have proper values
       const updateData = {
         _id: getProductData?.getProduct?._id,
-        productType: insertProductData?.productType,
-        productCategory: insertProductData?.productCategory,
-        productLocation: insertProductData?.productLocation,
-        productShippingTime: insertProductData?.productShippingTime,
-        productTitle: insertProductData?.productTitle,
-        productPrice: insertProductData?.productPrice,
-        productImages: insertProductData?.productImages,
-        productMaterials: insertProductData?.productMaterials,
-        productTags: insertProductData?.productTags,
-        productStock: insertProductData?.productStock,
-        productColor: insertProductData?.productColor,
-        productDesc: insertProductData?.productDesc,
-        productShippingCost: insertProductData?.productShippingCost,
-        productWrapAvailable: insertProductData?.productWrapAvailable,
-        productPersonalizable: insertProductData?.productPersonalizable,
+        productType:
+          insertProductData?.productType || ProductType.ART_COLLECTABLES,
+        productCategory: insertProductData?.productCategory || "",
+        productLocation: insertProductData?.productLocation || "",
+        productShippingTime:
+          insertProductData?.productShippingTime || SHippingTimeType.FAST,
+        productTitle: insertProductData?.productTitle || "",
+        productPrice: insertProductData?.productPrice || 0,
+        productImages: ensureArrayField(insertProductData?.productImages),
+        productMaterials: ensureArrayField(insertProductData?.productMaterials),
+        productTags: ensureArrayField(insertProductData?.productTags),
+        productStock: insertProductData?.productStock || 1,
+        productColor: ensureArrayField(insertProductData?.productColor),
+        productDesc: insertProductData?.productDesc || "",
+        productShippingCost: insertProductData?.productShippingCost || 0,
+        productWrapAvailable: insertProductData?.productWrapAvailable || false,
+        productPersonalizable:
+          insertProductData?.productPersonalizable || false,
       };
+
+      // Validate required fields before sending
+      if (
+        !updateData._id ||
+        !updateData.productType ||
+        !updateData.productCategory ||
+        !updateData.productLocation ||
+        !updateData.productTitle ||
+        !updateData.productPrice ||
+        updateData.productPrice <= 0 ||
+        !updateData.productImages ||
+        updateData.productImages.length < 1 ||
+        !updateData.productMaterials ||
+        updateData.productMaterials.length < 1 ||
+        !updateData.productTags ||
+        updateData.productTags.length < 1 ||
+        !updateData.productStock ||
+        updateData.productStock < 1 ||
+        !updateData.productShippingTime
+      ) {
+        throw new Error("Please fill in all required fields");
+      }
+
+      console.log("Sending update data:", updateData);
       await updateProduct({ variables: { input: updateData } });
       await sweetMixinSuccessAlert("Product updated successfully");
       await router.push({
@@ -436,6 +537,84 @@ const AddProduct = ({ initialValues, ...props }: any) => {
               })
             }
           />
+        </div>
+
+        {/* Shipping Cost & Options */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <label className="text-xs font-medium text-gray-700">
+              Shipping Cost
+            </label>
+            <input
+              type="number"
+              min="0"
+              step="1"
+              className="mt-1 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
+              placeholder={"0.00"}
+              value={insertProductData?.productShippingCost || 0}
+              onChange={({ target: { value } }) =>
+                setInsertProductData({
+                  ...insertProductData,
+                  productShippingCost: parseFloat(value) || 0,
+                })
+              }
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              Enter 0 for free shipping
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <div className="flex items-center space-x-3">
+              <input
+                type="checkbox"
+                id="productWrapAvailable"
+                className="h-4 w-4 rounded border-gray-300 text-[#ff6b81] focus:ring-[#ff6b81]"
+                checked={insertProductData?.productWrapAvailable || false}
+                onChange={({ target: { checked } }) =>
+                  setInsertProductData({
+                    ...insertProductData,
+                    productWrapAvailable: checked,
+                  })
+                }
+              />
+              <label
+                htmlFor="productWrapAvailable"
+                className="text-sm font-medium text-gray-700"
+              >
+                Gift Wrapping Available
+              </label>
+            </div>
+            <p className="mt-1 text-xs text-gray-500">
+              Offer gift wrapping service
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <div className="flex items-center space-x-3">
+              <input
+                type="checkbox"
+                id="productPersonalizable"
+                className="h-4 w-4 rounded border-gray-300 text-[#ff6b81] focus:ring-[#ff6b81]"
+                checked={insertProductData?.productPersonalizable || false}
+                onChange={({ target: { checked } }) =>
+                  setInsertProductData({
+                    ...insertProductData,
+                    productPersonalizable: checked,
+                  })
+                }
+              />
+              <label
+                htmlFor="productPersonalizable"
+                className="text-sm font-medium text-gray-700"
+              >
+                Personalization Available
+              </label>
+            </div>
+            <p className="mt-1 text-xs text-gray-500">
+              Allow customer customization
+            </p>
+          </div>
         </div>
 
         {/* Description */}
