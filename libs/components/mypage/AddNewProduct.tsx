@@ -376,7 +376,7 @@ const AddProduct = ({ initialValues, ...props }: any) => {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
             <label className="text-xs font-medium text-gray-700">
-              Materials (comma separated)
+              Materials (comma separated) like: "Cotton, Polyester, etc."
             </label>
             <input
               type="text"
@@ -396,7 +396,7 @@ const AddProduct = ({ initialValues, ...props }: any) => {
           </div>
           <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
             <label className="text-xs font-medium text-gray-700">
-              Tags (comma separated)
+              Tags (comma separated) like: "Summer, Casual, etc."
             </label>
             <input
               type="text"
@@ -419,7 +419,7 @@ const AddProduct = ({ initialValues, ...props }: any) => {
         {/* Colors */}
         <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
           <label className="text-xs font-medium text-gray-700">
-            Colors (comma separated)
+            Colors (comma separated) like: "Red, Blue, Green, etc."
           </label>
           <input
             type="text"
