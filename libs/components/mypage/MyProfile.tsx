@@ -2,16 +2,18 @@ import React, { useCallback, useEffect, useState } from "react";
 import { NextPage } from "next";
 import axios from "axios";
 import { Messages, REACT_APP_API_URL } from "../../config";
-import { getJwtToken, updateStorage, updateUserInfo } from "../../auth";
-import { useMutation, useReactiveVar } from "@apollo/client";
+import { getJwtToken } from "../../auth";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
 import { userVar } from "../../../apollo/store";
 import { MemberUpdate } from "../../types/member/member.update";
 import { UPDATE_MEMBER } from "../../../apollo/user/mutation";
 import { sweetErrorHandling, sweetMixinSuccessAlert } from "../../sweetAlert";
+import { GET_MEMBER } from "@/apollo/user/query";
 
 const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
   const token = getJwtToken();
   const user = useReactiveVar(userVar);
+  const [isUpdating, setIsUpdating] = useState(false);
   const DEFAULT_UPDATE: MemberUpdate = {
     _id: "",
     memberNick: "",
@@ -29,20 +31,40 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
 
   /** APOLLO REQUESTS **/
   const [updateMember] = useMutation(UPDATE_MEMBER);
+  const { data: memberData, refetch: refetchMember } = useQuery(GET_MEMBER, {
+    variables: { input: user?._id || "" },
+    skip: !user?._id,
+    fetchPolicy: "network-only",
+  });
 
   /** LIFECYCLES **/
   useEffect(() => {
-    setUpdateData({
-      ...updateData,
-      _id: user._id ?? updateData._id,
-      memberNick: user.memberNick,
-      memberPhone: user.memberPhone,
-      memberFullName: user.memberFullName,
-      memberAddress: user.memberAddress,
-      memberDesc: user.memberDesc,
-      memberImage: user.memberImage,
-    });
-  }, [user]);
+    // Use memberData from query if available, otherwise fall back to user data
+    const currentUserData = memberData?.getMember || user;
+
+    if (currentUserData && currentUserData._id) {
+      setUpdateData({
+        ...updateData,
+        _id: currentUserData._id,
+        memberNick: currentUserData.memberNick || "",
+        memberPhone: currentUserData.memberPhone || "",
+        memberFullName: currentUserData.memberFullName || "",
+        memberAddress: currentUserData.memberAddress || "",
+        memberDesc: currentUserData.memberDesc || "",
+        memberImage: currentUserData.memberImage || "",
+      });
+    }
+  }, [
+    user,
+    memberData,
+    user._id,
+    user.memberNick,
+    user.memberPhone,
+    user.memberFullName,
+    user.memberAddress,
+    user.memberDesc,
+    user.memberImage,
+  ]);
 
   /** HANDLERS **/
   const uploadImage = async (e: any) => {
@@ -82,23 +104,84 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
     }
   };
 
-  const updatePropertyHandler = useCallback(async () => {
+  const updateProfileHandler = useCallback(async () => {
     try {
       if (!user?._id) throw new Error(Messages.error2);
       updateData._id = user._id;
 
+      setIsUpdating(true);
+      console.log("Updating profile with data:", updateData);
+
       const result = await updateMember({ variables: { input: updateData } });
 
-      // @ts-ignore
-      const jwtToken = result.data.updateMember?.accessToken;
-      await updateStorage({ jwtToken });
-      updateUserInfo(result.data.updateMember?.accessToken);
+      console.log("Profile update result:", result);
 
-      await sweetMixinSuccessAlert("Information updated successfully.");
+      // Extract the updated member data from the response
+      const updatedMemberData = result?.data?.updateMember;
+
+      if (updatedMemberData) {
+        // Update the user data immediately with the returned data
+        const newUserData = {
+          _id: updatedMemberData._id || user._id,
+          memberType: updatedMemberData.memberType || user.memberType,
+          memberStatus: updatedMemberData.memberStatus || user.memberStatus,
+          memberAuthType:
+            updatedMemberData.memberAuthType || user.memberAuthType,
+          memberPhone: updatedMemberData.memberPhone || user.memberPhone,
+          memberNick: updatedMemberData.memberNick || user.memberNick,
+          memberFullName:
+            updatedMemberData.memberFullName || user.memberFullName,
+          memberImage: updatedMemberData.memberImage || user.memberImage,
+          memberAddress: updatedMemberData.memberAddress || user.memberAddress,
+          memberDesc: updatedMemberData.memberDesc || user.memberDesc,
+          memberProducts:
+            updatedMemberData.memberProducts || user.memberProducts,
+          memberFollowers:
+            updatedMemberData.memberFollowers || user.memberFollowers,
+          memberFollowing:
+            updatedMemberData.memberFollowing || user.memberFollowing,
+          memberRank: updatedMemberData.memberRank || user.memberRank,
+          memberArticles:
+            updatedMemberData.memberArticles || user.memberArticles,
+          memberPoints: updatedMemberData.memberPoints || user.memberPoints,
+          memberLikes: updatedMemberData.memberLikes || user.memberLikes,
+          memberViews: updatedMemberData.memberViews || user.memberViews,
+          memberWarnings:
+            updatedMemberData.memberWarnings || user.memberWarnings,
+          memberBlocks: updatedMemberData.memberBlocks || user.memberBlocks,
+        };
+
+        // Update the user data in the Apollo store immediately
+        userVar(newUserData);
+        console.log("User data updated immediately:", newUserData);
+
+        // Handle token update if provided
+        if (updatedMemberData.accessToken) {
+          // Import the auth functions dynamically to avoid circular dependencies
+          const { updateStorage } = await import("../../auth");
+          updateStorage({ jwtToken: updatedMemberData.accessToken });
+          console.log("Token updated successfully");
+        }
+
+        // Refetch member data to ensure we have the latest information
+        try {
+          await refetchMember();
+          console.log("Member data refetched successfully");
+        } catch (refetchError) {
+          console.warn("Failed to refetch member data:", refetchError);
+        }
+
+        await sweetMixinSuccessAlert("Information updated successfully.");
+      } else {
+        throw new Error("No updated member data received");
+      }
     } catch (err: any) {
+      console.error("Profile update error:", err);
       sweetErrorHandling(err).then();
+    } finally {
+      setIsUpdating(false);
     }
-  }, [updateData]);
+  }, [updateData, user, refetchMember]);
 
   const doDisabledCheck = () => {
     if (
@@ -135,8 +218,12 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
               <div className="h-24 w-24 overflow-hidden rounded-full bg-gray-100">
                 <img
                   src={
+                    memberData?.getMember?.memberImage ||
                     updateData?.memberImage
-                      ? `${REACT_APP_API_URL}/${updateData?.memberImage}`
+                      ? `${REACT_APP_API_URL}/${
+                          memberData?.getMember?.memberImage ||
+                          updateData?.memberImage
+                        }`
                       : `/img/profile/defaultUser.svg`
                   }
                   alt="profile"
@@ -173,7 +260,11 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
               <input
                 type="text"
                 placeholder="Your username"
-                value={updateData?.memberNick || ""}
+                value={
+                  memberData?.getMember?.memberNick ||
+                  updateData?.memberNick ||
+                  ""
+                }
                 onChange={({ target: { value } }) =>
                   setUpdateData({ ...updateData, memberNick: value })
                 }
@@ -187,7 +278,11 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
               <input
                 type="text"
                 placeholder="Your full name"
-                value={updateData?.memberFullName || ""}
+                value={
+                  memberData?.getMember?.memberFullName ||
+                  updateData?.memberFullName ||
+                  ""
+                }
                 onChange={({ target: { value } }) =>
                   setUpdateData({ ...updateData, memberFullName: value })
                 }
@@ -249,30 +344,58 @@ const MyProfile: NextPage = ({ initialValues, ...props }: any) => {
           <div className="flex justify-end">
             <button
               className="inline-flex items-center rounded-md bg-[#ff6b81] px-4 py-2 text-sm font-semibold text-white hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
-              onClick={updatePropertyHandler}
-              disabled={doDisabledCheck()}
+              onClick={updateProfileHandler}
+              disabled={doDisabledCheck() || isUpdating}
             >
-              Update Profile
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="13"
-                height="13"
-                viewBox="0 0 13 13"
-                fill="none"
-                className="ml-2"
-              >
-                <g clipPath="url(#clip0_7065_6985)">
-                  <path
-                    d="M12.6389 0H4.69446C4.49486 0 4.33334 0.161518 4.33334 0.361122C4.33334 0.560727 4.49486 0.722245 4.69446 0.722245H11.7672L0.105803 12.3836C-0.0352676 12.5247 -0.0352676 12.7532 0.105803 12.8942C0.176321 12.9647 0.268743 13 0.361131 13C0.453519 13 0.545907 12.9647 0.616459 12.8942L12.2778 1.23287V8.30558C12.2778 8.50518 12.4393 8.6667 12.6389 8.6667C12.8385 8.6667 13 8.50518 13 8.30558V0.361122C13 0.161518 12.8385 0 12.6389 0Z"
-                    fill="white"
-                  />
-                </g>
-                <defs>
-                  <clipPath id="clip0_7065_6985">
-                    <rect width="13" height="13" fill="white" />
-                  </clipPath>
-                </defs>
-              </svg>
+              {isUpdating ? (
+                <>
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Updating...
+                </>
+              ) : (
+                <>
+                  Update Profile
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="13"
+                    height="13"
+                    viewBox="0 0 13 13"
+                    fill="none"
+                    className="ml-2"
+                  >
+                    <g clipPath="url(#clip0_7065_6985)">
+                      <path
+                        d="M12.6389 0H4.69446C4.49486 0 4.33334 0.161518 4.33334 0.361122C4.33334 0.560727 4.49486 0.722245 4.69446 0.722245H11.7672L0.105803 12.3836C-0.0352676 12.5247 -0.0352676 12.7532 0.105803 12.8942C0.176321 12.9647 0.268743 13 0.361131 13C0.453519 13 0.545907 12.9647 0.616459 12.8942L12.2778 1.23287V8.30558C12.2778 8.50518 12.4393 8.6667 12.6389 8.6667C12.8385 8.6667 13 8.50518 13 8.30558V0.361122C13 0.161518 12.8385 0 12.6389 0Z"
+                        fill="white"
+                      />
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_7065_6985">
+                        <rect width="13" height="13" fill="white" />
+                      </clipPath>
+                    </defs>
+                  </svg>
+                </>
+              )}
             </button>
           </div>
         </div>

@@ -11,7 +11,7 @@ import createUploadLink from "apollo-upload-client/public/createUploadLink.js";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { onError } from "@apollo/client/link/error";
-import { getJwtToken } from "../libs/auth";
+import { getJwtToken, handleAuthError } from "../libs/auth";
 import { TokenRefreshLink } from "apollo-link-token-refresh";
 import { sweetErrorAlert } from "../libs/sweetAlert";
 import { socketVar } from "./store";
@@ -120,6 +120,7 @@ function createIsomorphicLink() {
       if (networkError) console.log(`[Network error]: ${networkError}`);
       // @ts-ignore
       if (networkError?.statusCode === 401) {
+        handleAuthError();
       }
     });
 

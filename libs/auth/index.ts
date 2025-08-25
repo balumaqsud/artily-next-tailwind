@@ -313,6 +313,190 @@ export const logOut = () => {
   window.location.reload();
 };
 
+export const updateProfileAndRefreshToken = async (
+  updateResult: any
+): Promise<boolean> => {
+  try {
+    const updateMemberData = updateResult?.data?.updateMember;
+
+    if (!updateMemberData) {
+      console.error("No update member data in response");
+      return false;
+    }
+
+    // Update user data with the actual response data (not just JWT claims)
+    const updatedUserData = {
+      _id: updateMemberData._id ?? "",
+      memberType: updateMemberData.memberType ?? "",
+      memberStatus: updateMemberData.memberStatus ?? "",
+      memberAuthType: updateMemberData.memberAuthType ?? "",
+      memberPhone: updateMemberData.memberPhone ?? "",
+      memberNick: updateMemberData.memberNick ?? "",
+      memberFullName: updateMemberData.memberFullName ?? "",
+      memberImage: updateMemberData.memberImage ?? "",
+      memberAddress: updateMemberData.memberAddress ?? "",
+      memberDesc: updateMemberData.memberDesc ?? "",
+      memberProducts: updateMemberData.memberProducts ?? 0,
+      memberFollowers: updateMemberData.memberFollowers ?? 0,
+      memberFollowing: updateMemberData.memberFollowing ?? 0,
+      memberRank: updateMemberData.memberRank ?? 0,
+      memberArticles: updateMemberData.memberArticles ?? 0,
+      memberPoints: updateMemberData.memberPoints ?? 0,
+      memberLikes: updateMemberData.memberLikes ?? 0,
+      memberViews: updateMemberData.memberViews ?? 0,
+      memberWarnings: updateMemberData.memberWarnings ?? 0,
+      memberBlocks: updateMemberData.memberBlocks ?? 0,
+    };
+
+    // Update the user data immediately with the response data
+    userVar(updatedUserData);
+    console.log("User data updated with profile changes:", updatedUserData);
+
+    // Check if the update response contains a new access token
+    if (updateMemberData.accessToken) {
+      const newToken = updateMemberData.accessToken;
+
+      console.log("New access token received from profile update");
+
+      // Validate the new token format
+      if (
+        newToken &&
+        typeof newToken === "string" &&
+        newToken.trim().length > 0
+      ) {
+        const parts = newToken.split(".");
+        if (parts.length === 3) {
+          // Update the stored token
+          updateStorage({ jwtToken: newToken });
+
+          // Reset Apollo client to use new token
+          await resetApolloClient();
+
+          console.log("Token refreshed successfully after profile update");
+          return true;
+        } else {
+          console.error(
+            "Invalid JWT token format received from profile update"
+          );
+          return false;
+        }
+      } else {
+        console.error("Invalid access token received from profile update");
+        return false;
+      }
+    } else {
+      console.log("No new access token in profile update response");
+      return true; // Update successful but no new token
+    }
+  } catch (error) {
+    console.error("Error updating profile and refreshing token:", error);
+    return false;
+  }
+};
+
+// Function to reset Apollo client after token changes
+export const resetApolloClient = async (): Promise<void> => {
+  try {
+    // Import dynamically to avoid circular dependencies
+    const { initializeApollo } = await import("../../apollo/client");
+    const apolloClient = await initializeApollo();
+
+    // Clear the cache to ensure fresh data with new token
+    await apolloClient.clearStore();
+    await apolloClient.resetStore();
+
+    console.log("Apollo client reset successfully");
+  } catch (error) {
+    console.error("Error resetting Apollo client:", error);
+  }
+};
+
+// Function to force refresh user data from server
+export const refreshUserDataFromServer = async (): Promise<boolean> => {
+  try {
+    // Import dynamically to avoid circular dependencies
+    const { initializeApollo } = await import("../../apollo/client");
+    const apolloClient = await initializeApollo();
+
+    // Refetch user data by clearing and resetting the store
+    await apolloClient.clearStore();
+    await apolloClient.resetStore();
+
+    console.log("User data refreshed from server");
+    return true;
+  } catch (error) {
+    console.error("Error refreshing user data from server:", error);
+    return false;
+  }
+};
+
+// Utility function to check and refresh token from any GraphQL response
+export const checkAndRefreshTokenFromResponse = async (
+  response: any
+): Promise<boolean> => {
+  try {
+    // Check if response contains an access token (common pattern in many mutations)
+    const accessToken =
+      response?.data?.updateMember?.accessToken ||
+      response?.data?.createMember?.accessToken ||
+      response?.data?.login?.accessToken ||
+      response?.data?.signup?.accessToken;
+
+    if (accessToken) {
+      console.log("Access token found in response, refreshing...");
+      return await updateProfileAndRefreshToken(response);
+    }
+
+    return true; // No token to refresh
+  } catch (error) {
+    console.error("Error checking token from response:", error);
+    return false;
+  }
+};
+
+// Custom hook for components to automatically handle token refresh
+export const useTokenRefresh = () => {
+  const handleMutationWithTokenRefresh = async <T>(
+    mutationFn: () => Promise<T>
+  ): Promise<T> => {
+    try {
+      const result = await mutationFn();
+
+      // Check if the result contains a new token and refresh if needed
+      await checkAndRefreshTokenFromResponse(result);
+
+      return result;
+    } catch (error) {
+      console.error("Mutation failed:", error);
+      throw error;
+    }
+  };
+
+  return { handleMutationWithTokenRefresh };
+};
+
+// Function to handle 401 errors and attempt token refresh
+export const handleAuthError = async (): Promise<boolean> => {
+  try {
+    console.log("Handling authentication error, checking token validity...");
+
+    if (!isTokenValid()) {
+      console.log("Token is invalid, clearing and redirecting to login");
+      clearInvalidToken();
+      deleteUserInfo();
+      window.location.href = "/account/join";
+      return false;
+    }
+
+    // Token is valid but request failed - might need to refresh Apollo client
+    await resetApolloClient();
+    return true;
+  } catch (error) {
+    console.error("Error handling auth error:", error);
+    return false;
+  }
+};
+
 const deleteStorage = () => {
   localStorage.removeItem("accessToken");
   window.localStorage.setItem("logout", Date.now().toString());
