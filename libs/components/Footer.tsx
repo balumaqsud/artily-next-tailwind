@@ -139,8 +139,8 @@ const Footer = () => {
 
   return (
     <footer className="bg-[#4E89DF] text-muted-foreground">
-      <div className="mx-auto w-full max-w-7xl px-6 py-12">
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-5">
+      <div className="mx-auto w-full max-w-7xl px-12 pt-10">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           {footerCols.map((col) => (
             <div key={col.title} className="space-y-3">
               <h3 className="text-lg font-semibold text-foreground">
@@ -217,7 +217,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-16 flex items-center justify-between border-t border-gray-800 pt-8 text-sm">
+        <div className="mt-8 flex items-center justify-between border-t border-gray-800 pt-2 text-sm">
           <span>© {year} Artly, Inc.</span>
           <div className="flex-shrink-0">
             <img
@@ -228,21 +228,14 @@ const Footer = () => {
           </div>
           <div className="flex items-center gap-6">
             <a
-              href="#"
-              aria-label="GitHub"
-              className="transition-colors hover:text-foreground"
-            >
-              GitHub
-            </a>
-            <a
-              href="#"
+              href="https://www.facebook.com/artly.co.kr"
               aria-label="X"
               className="transition-colors hover:text-foreground"
             >
               Facebook
             </a>
             <a
-              href="#"
+              href="https://www.instagram.com/artly.co.kr"
               aria-label="Butterfly"
               className="transition-colors hover:text-foreground"
             >
