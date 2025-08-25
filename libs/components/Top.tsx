@@ -197,7 +197,7 @@ const Top = () => {
             </Link>
             <Link href={"/product"}>
               <div className="text-base md:text-lg font-medium text-muted-foreground transition-colors hover:text-foreground">
-                {t("Products")}
+                {t("Shop")}
               </div>
             </Link>
             <Link href={"/artist"}>
@@ -210,13 +210,7 @@ const Top = () => {
                 {t("Community")}
               </div>
             </Link>
-            {user?._id && (
-              <Link href={"/mypage"}>
-                <div className="text-base md:text-lg font-medium text-muted-foreground transition-colors hover:text-foreground">
-                  {t("My Page")}
-                </div>
-              </Link>
-            )}
+
             <Link href={"/connect"}>
               <div className="text-base md:text-lg font-medium text-muted-foreground transition-colors hover:text-foreground">
                 {t("Connect")}
@@ -225,7 +219,7 @@ const Top = () => {
           </div>
 
           {/* Right Side Actions */}
-          <div className="flex items-center gap-1 sm:gap-2 md:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-5">
             {/* User Actions */}
             {/* Language Selector - Always visible */}
             <Button
@@ -332,12 +326,12 @@ const Top = () => {
                   onClose={() => {
                     setLogoutAnchor(null);
                   }}
-                  sx={{ mt: "5px" }}
+                  sx={{ borderRadius: "20px !important" }}
                 >
-                  <MenuItem onClick={() => logOut()}>
-                    <Logout className=" bg-white px-5 py-3 text-md font-semibold text-gray-900 hover:bg-gray-100 transition-colors cursor-pointer" />
-                    Logout
+                  <MenuItem onClick={() => router.push("/mypage")}>
+                    {t("Profile")}
                   </MenuItem>
+                  <MenuItem onClick={() => logOut()}>{t("Logout")}</MenuItem>
                 </Menu>
               </>
             ) : (
@@ -408,7 +402,7 @@ const Top = () => {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <div className="flex items-center px-3 py-2 text-base font-medium text-gray-900 rounded-lg hover:bg-gray-100 transition-colors">
-                      {t("Products")}
+                      {t("Shop")}
                     </div>
                   </Link>
                   <Link
@@ -427,16 +421,7 @@ const Top = () => {
                       {t("Community")}
                     </div>
                   </Link>
-                  {user?._id && (
-                    <Link
-                      href={"/mypage"}
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <div className="flex items-center px-3 py-2 text-base font-medium text-gray-900 rounded-lg hover:bg-gray-100 transition-colors">
-                        {t("My Page")}
-                      </div>
-                    </Link>
-                  )}
+
                   <Link
                     href={"/connect"}
                     onClick={() => setMobileMenuOpen(false)}
@@ -450,14 +435,6 @@ const Top = () => {
                 {/* Mobile Auth Buttons (if not logged in) */}
                 {!user?._id && (
                   <div className="pt-4 border-t border-gray-200 space-y-2">
-                    <Link
-                      href={"/account/join"}
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Button className="w-full rounded-lg bg-gradient-to-r from-pink-500 to-purple-500 px-4 py-3 text-sm font-semibold text-white hover:from-pink-600 hover:to-purple-600 transition-all">
-                        {t("Become a seller")}
-                      </Button>
-                    </Link>
                     <Link
                       href={"/account/join"}
                       onClick={() => setMobileMenuOpen(false)}
