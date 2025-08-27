@@ -1,9 +1,9 @@
 export const REACT_APP_API_URL =
-  process.env.REACT_APP_API_URL || "http://localhost:4001";
+  process.env.REACT_APP_API_URL || "http://72.60.42.29:4001";
 export const REACT_APP_API_GRAPHQL_URL =
   process.env.REACT_APP_API_GRAPHQL_URL || `${REACT_APP_API_URL}/graphql`;
 export const REACT_APP_API_WS =
-  process.env.REACT_APP_API_WS || "ws://localhost:4001";
+  process.env.REACT_APP_API_WS || "ws://72.60.42.29:4001";
 
 export const Messages = {
   error1: "Something went wrong!",

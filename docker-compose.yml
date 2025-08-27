@@ -9,9 +9,9 @@ services:
       - "4000:3000"
     environment:
       - PORT=3000
-      - REACT_APP_API_URL=http://localhost:4001
-      - REACT_APP_API_GRAPHQL_URL=http://localhost:4001/graphql
-      - REACT_APP_API_WS=ws://localhost:4001
+      - REACT_APP_API_URL=http://72.60.42.29:4001
+      - REACT_APP_API_GRAPHQL_URL=http://72.60.42.29:4001/graphql
+      - REACT_APP_API_WS=ws://72.60.42.29:4001
     volumes:
       - ./:/usr/src/artly-next-tailwind
       - /usr/src/artly-next-tailwind/node_modules

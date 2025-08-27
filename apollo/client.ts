@@ -91,7 +91,7 @@ function createIsomorphicLink() {
 
     /* WEBSOCKET SUBSCRIPTION LINK */
     const wsLink = new WebSocketLink({
-      uri: REACT_APP_API_WS ?? "ws://127.0.0.1:3007",
+      uri: REACT_APP_API_WS ?? "ws://72.60.42.29:4001",
       options: {
         reconnect: false,
         timeout: 30000,
@@ -168,7 +168,7 @@ import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 // No Subscription required for develop process
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:3007/graphql",
+  uri: "http://72.60.42.29:4001/graphql",
 });
 
 const client = new ApolloClient({
