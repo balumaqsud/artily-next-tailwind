@@ -104,7 +104,7 @@ const MemberMenu = (props: MemberMenuProps) => {
         <div>
           <h4 className="text-lg font-semibold text-gray-900 mb-3">Details</h4>
           <div className="space-y-1">
-            {member?.memberType === "AGENT" && (
+            {member?.memberType === "SELLER" && (
               <Link
                 href={{
                   pathname: "/member",
