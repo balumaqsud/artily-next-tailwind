@@ -20,6 +20,7 @@ export const getStaticProps = async ({ locale }: any) => ({
   },
 });
 
+//home page
 const Home: NextPage = () => {
   return (
     <Stack className={"home-page"}>
