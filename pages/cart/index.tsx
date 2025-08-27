@@ -186,7 +186,7 @@ const ProductsCart = () => {
   if (!user?._id) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-        <div className="mx-auto w-full max-w-4xl px-4 py-20">
+        <div className="mx-auto w-full max-w-4xl px-2 sm:px-4 py-20">
           <div className="text-center">
             <div className="mx-auto mb-8 h-24 w-24 rounded-full bg-gradient-to-r from-pink-400 to-rose-500 p-1">
               <div className="flex h-full w-full items-center justify-center rounded-full bg-white">
@@ -211,7 +211,7 @@ const ProductsCart = () => {
             </p>
             <button
               onClick={() => router.push("/account/join")}
-              className="inline-flex items-center rounded-full bg-gradient-to-r from-pink-500 to-rose-500 px-8 py-3 text-white font-semibold shadow-lg hover:from-pink-600 hover:to-rose-600 transition-all duration-200 transform hover:scale-105"
+              className="inline-flex items-center rounded-full bg-gradient-to-r from-pink-500 to-rose-500 px-6 sm:px-8 py-3 text-white font-semibold shadow-lg hover:from-pink-600 hover:to-rose-600 transition-all duration-200 transform hover:scale-105"
             >
               Sign In to Continue
             </button>
@@ -224,7 +224,7 @@ const ProductsCart = () => {
   if (cartItems.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-        <div className="mx-auto w-full max-w-4xl px-4 py-20">
+        <div className="mx-auto w-full max-w-4xl px-2 sm:px-4 py-20">
           <div className="text-center">
             <div className="mx-auto mb-8 h-24 w-24 rounded-full bg-gray-100 p-1">
               <div className="flex h-full w-full items-center justify-center rounded-full bg-white">
@@ -251,7 +251,7 @@ const ProductsCart = () => {
             </p>
             <button
               onClick={() => router.push("/product")}
-              className="inline-flex items-center rounded-full bg-gradient-to-r from-pink-500 to-rose-500 px-8 py-3 text-white font-semibold shadow-lg hover:from-pink-600 hover:to-rose-600 transition-all duration-200 transform hover:scale-105"
+              className="inline-flex items-center rounded-full bg-gradient-to-r from-pink-500 to-rose-500 px-6 sm:px-8 py-3 text-white font-semibold shadow-lg hover:from-pink-600 hover:to-rose-600 transition-all duration-200 transform hover:scale-105"
             >
               Start Shopping
             </button>
@@ -263,7 +263,7 @@ const ProductsCart = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="mx-auto w-full max-w-7xl px-4 py-8">
+      <div className="mx-auto w-full max-w-7xl px-2 sm:px-4 py-8">
         {/* Header */}
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
@@ -274,7 +274,7 @@ const ProductsCart = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:gap-8 lg:grid-cols-3">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-6">
             {/* Discount Banner */}
@@ -294,15 +294,15 @@ const ProductsCart = () => {
             </div>
 
             {/* Cart Items List */}
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {items.map((item: any, index: number) => {
                 const product = products[index];
                 return (
                   <div
                     key={item._id}
-                    className="group rounded-2xl bg-white p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200"
+                    className="group rounded-2xl bg-white p-3 sm:p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200"
                   >
-                    <div className="flex items-center gap-6">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6">
                       {/* Product Image */}
                       <div className="relative">
                         <img
@@ -312,7 +312,7 @@ const ProductsCart = () => {
                               : "/banner/main.jpg"
                           }
                           alt={product?.productTitle || "Product"}
-                          className="h-24 w-24 rounded-xl object-cover shadow-sm group-hover:shadow-md transition-shadow duration-200"
+                          className="h-20 w-20 sm:h-24 sm:w-24 rounded-xl object-cover shadow-sm group-hover:shadow-md transition-shadow duration-200"
                         />
                         {product?.productStock === 0 && (
                           <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-black bg-opacity-50">
@@ -325,13 +325,13 @@ const ProductsCart = () => {
 
                       {/* Product Details */}
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-lg font-semibold text-gray-900 truncate">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">
                           {product?.productTitle || "Product Title"}
                         </h3>
                         <p className="text-sm text-gray-500 mb-2">
                           {product?.productCategory || "Category"}
                         </p>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-1 sm:gap-2">
                           <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
                             {product?.productType || "Type"}
                           </span>
@@ -344,7 +344,7 @@ const ProductsCart = () => {
                       </div>
 
                       {/* Quantity Controls */}
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() =>
@@ -397,8 +397,8 @@ const ProductsCart = () => {
                         </div>
 
                         {/* Price */}
-                        <div className="text-right min-w-[120px]">
-                          <div className="text-xl font-bold text-gray-900">
+                        <div className="text-right min-w-[120px] w-full sm:w-auto">
+                          <div className="text-lg sm:text-xl font-bold text-gray-900">
                             $
                             {(
                               (item.itemPrice || 0) * (item.itemQuantity || 1)
@@ -413,7 +413,7 @@ const ProductsCart = () => {
                         <button
                           onClick={() => handleRemoveItem(item._id)}
                           disabled={updatingItems.has(item._id)}
-                          className="h-10 w-10 rounded-full bg-red-100 text-red-600 hover:bg-red-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center"
+                          className="h-10 w-10 rounded-full bg-red-100 text-red-600 hover:bg-red-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center self-end sm:self-center"
                         >
                           {updatingItems.has(item._id) ? (
                             <svg
@@ -462,7 +462,7 @@ const ProductsCart = () => {
           {/* Checkout Sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-8">
-              <div className="rounded-2xl bg-white p-6 shadow-lg border border-gray-100">
+              <div className="rounded-2xl bg-white p-4 sm:p-6 shadow-lg border border-gray-100">
                 {/* Shipping Options */}
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">
@@ -470,7 +470,7 @@ const ProductsCart = () => {
                   </h3>
                   <div className="space-y-3">
                     <button
-                      className={`w-full rounded-xl border-2 p-4 text-left transition-all duration-200 ${
+                      className={`w-full rounded-xl border-2 p-3 sm:p-4 text-left transition-all duration-200 ${
                         shipping === "STANDARD"
                           ? "border-pink-500 bg-pink-50"
                           : "border-gray-200 hover:border-gray-300"
@@ -493,7 +493,7 @@ const ProductsCart = () => {
                     </button>
 
                     <button
-                      className={`w-full rounded-xl border-2 p-4 text-left transition-all duration-200 ${
+                      className={`w-full rounded-xl border-2 p-3 sm:p-4 text-left transition-all duration-200 ${
                         shipping === "EXPRESS"
                           ? "border-pink-500 bg-pink-50"
                           : "border-gray-200 hover:border-gray-300"
@@ -576,8 +576,8 @@ const ProductsCart = () => {
 
         {/* Minimal Checkout Section */}
         {showCheckout && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 sm:p-4 z-50">
+            <div className="bg-white rounded-2xl p-4 sm:p-8 max-w-md w-full mx-2 sm:mx-4">
               <div className="text-center mb-6">
                 <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-green-100 flex items-center justify-center">
                   <svg
@@ -602,7 +602,7 @@ const ProductsCart = () => {
                 </p>
               </div>
 
-              <div className="bg-gray-50 rounded-xl p-4 mb-6">
+              <div className="bg-gray-50 rounded-xl p-3 sm:p-4 mb-6">
                 <div className="text-center">
                   <p className="text-sm text-gray-600 mb-1">Order Total</p>
                   <p className="text-2xl font-bold text-gray-900">

@@ -377,7 +377,7 @@ const ProductList: NextPage<ProductListProps> = ({
 
   return (
     <div className="w-full bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-8">
+      <div className="mx-auto max-w-7xl px-2 py-6">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-xl font-semibold text-foreground mb-4">
@@ -589,7 +589,7 @@ const ProductList: NextPage<ProductListProps> = ({
         )}
 
         {/* You May Also Like Section */}
-        <div className="mt-12">
+        <div className="mt-12 ">
           <TrendingProducts title="You May Also Like" />
         </div>
       </div>

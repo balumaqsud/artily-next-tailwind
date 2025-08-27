@@ -145,7 +145,7 @@ const withLayoutBasic = (Component: any) => {
             <Component {...props} />
           </main>
 
-          <div className="hidden md:block">
+          <div className="">
             <Chat />
           </div>
 

@@ -13,13 +13,13 @@ const TopSellerCard = ({ seller }: TopSellerProps) => {
   const avatar = seller?.memberImage
     ? `${REACT_APP_API_URL}/${seller?.memberImage}`
     : "/img/profile/defaultUser.svg";
-  const banner = "/banner/main.jpg"; // placeholder artwork backdrop
+  // placeholder artwork backdrop
 
   return (
     <div className="w-[300px] rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-1000 ease-in-out hover:scale-105 hover:shadow-md  dark:border-neutral-100 dark:bg-neutral-100">
       <div
         className="relative aspect-[4/3] w-full bg-cover bg-center rounded-t-2xl"
-        style={{ backgroundImage: `url('${banner}')` }}
+        style={{ backgroundImage: `url('${avatar}')` }}
       />
 
       <div className="p-4">

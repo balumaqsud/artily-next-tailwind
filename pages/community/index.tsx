@@ -208,7 +208,7 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
                 </div>
 
                 <TabPanel value="FREE" className="!p-0">
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {totalCount ? (
                       boardArticles?.map((boardArticle: BoardArticle) => (
                         <CommunityCard
@@ -218,7 +218,7 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
                         />
                       ))
                     ) : (
-                      <div className="col-span-3 flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-white p-10 text-center">
+                      <div className="col-span-2 md:col-span-3 flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-white p-10 text-center">
                         <img
                           src="/img/icons/icoAlert.svg"
                           alt=""
@@ -233,7 +233,7 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
                 </TabPanel>
 
                 <TabPanel value="RECOMMEND" className="!p-0">
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {totalCount ? (
                       boardArticles?.map((boardArticle: BoardArticle) => (
                         <CommunityCard
@@ -258,7 +258,7 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
                 </TabPanel>
 
                 <TabPanel value="NEW" className="!p-0">
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {totalCount ? (
                       boardArticles?.map((boardArticle: BoardArticle) => (
                         <CommunityCard

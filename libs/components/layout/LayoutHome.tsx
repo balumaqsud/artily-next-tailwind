@@ -44,7 +44,7 @@ const withLayoutMain = (Component: any) => {
             <Component {...props} />
           </Stack>
 
-          <div className="hidden md:block">
+          <div className="">
             <Chat />
           </div>
 

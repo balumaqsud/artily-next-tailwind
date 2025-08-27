@@ -71,13 +71,13 @@ const TrendingProducts = ({
   const display = products.length > 0 ? products : (mock as any);
 
   return (
-    <section className="w-full px-4 py-8">
+    <section className="w-full px-4 sm:px-4 py-4 sm:py-8 ">
       <div className="mx-auto w-full max-w-7xl ">
         <h2 className="mb-6 text-xl md:text-2xl font-bold tracking-tight text-muted-foreground">
           {title || t("Explore Recent Trends")}
         </h2>
         <ScrollArea className="w-full overflow-hidden">
-          <div className="flex w-max gap-3 sm:gap-4 p-2 sm:p-4">
+          <div className="flex w-max gap-3 sm:gap-4 p-2 sm:p-2">
             {display.map((p: any) => (
               <TrendingProductsCard key={p?._id} product={p} />
             ))}

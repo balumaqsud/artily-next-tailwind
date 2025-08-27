@@ -97,6 +97,23 @@ const Chat = () => {
     return () => clearTimeout(timeoutId);
   }, []);
 
+  // Handle mobile viewport
+  useEffect(() => {
+    const handleResize = () => {
+      // Ensure chat is properly positioned on mobile
+      if (window.innerWidth < 640 && open) {
+        // On mobile, ensure chat doesn't go off-screen
+        const chatElement = document.getElementById("chat-content");
+        if (chatElement) {
+          chatElement.scrollTop = chatElement.scrollHeight;
+        }
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [open]);
+
   useEffect(() => {
     setOpenButton(false);
   }, [router.pathname]);
@@ -138,7 +155,7 @@ const Chat = () => {
       {openButton ? (
         <button
           onClick={handleOpenChat}
-          className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-[#ff5a73] text-white shadow-lg transition hover:bg-fuchsia-900 cursor-pointer"
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-[#ff5a73] text-white shadow-lg transition hover:bg-fuchsia-900 active:bg-fuchsia-800 cursor-pointer"
           aria-label="Open chat"
         >
           {open ? (
@@ -150,7 +167,7 @@ const Chat = () => {
       ) : null}
 
       <div
-        className={`fixed bottom-24 right-6 z-50 w-80 transform rounded-xl border border-gray-200 bg-white shadow-xl transition-all duration-200 dark:border-neutral-800 dark:bg-neutral-900 sm:w-96 ${
+        className={`fixed bottom-24 right-2 left-2 z-50 w-auto max-w-sm transform rounded-xl border border-gray-200 bg-white shadow-xl transition-all duration-200 dark:border-neutral-800 dark:bg-neutral-900 sm:right-6 sm:left-auto sm:w-80 lg:w-96 ${
           open
             ? "opacity-100 translate-y-0 scale-100"
             : "pointer-events-none opacity-0 translate-y-2 scale-95"
@@ -158,11 +175,11 @@ const Chat = () => {
         role="dialog"
         aria-label="Chat window"
       >
-        <div className="flex items-center justify-between bg-gray-100 px-3 py-2 text-sm font-semibold dark:bg-neutral-800">
+        <div className="flex items-center justify-between bg-gray-100 px-2 sm:px-3 py-2 text-sm font-semibold dark:bg-neutral-800">
           <div className="text-foreground">Online Chat</div>
           <button
             onClick={handleOpenChat}
-            className="rounded p-1 text-muted-foreground hover:bg-black/5 dark:hover:bg-white/10"
+            className="rounded p-1 text-muted-foreground hover:bg-black/5 dark:hover:bg-white/10 active:bg-black/10"
             aria-label="Close chat"
           >
             <CloseFullscreenIcon fontSize="small" />
@@ -172,7 +189,7 @@ const Chat = () => {
         <div
           id="chat-content"
           ref={chatContentRef}
-          className="h-72 overflow-y-auto p-3"
+          className="h-64 sm:h-72 overflow-y-auto p-2 sm:p-3"
         >
           <ScrollableFeed>
             <div className="space-y-3">
@@ -190,7 +207,7 @@ const Chat = () => {
                 if (memberData?._id === user._id) {
                   return (
                     <div key={idx} className="flex justify-end">
-                      <div className="max-w-[75%] rounded-2xl bg-blue-600 px-3 py-2 text-sm text-white">
+                      <div className="max-w-[85%] sm:max-w-[75%] rounded-2xl bg-blue-600 px-2 sm:px-3 py-2 text-sm text-white break-words">
                         {text}
                       </div>
                     </div>
@@ -201,9 +218,15 @@ const Chat = () => {
                     <Avatar
                       alt={"avatar"}
                       src={memberPhoto}
-                      sx={{ width: 28, height: 28 }}
+                      sx={{
+                        width: 24,
+                        height: 24,
+                        minWidth: 24,
+                        minHeight: 24,
+                      }}
+                      className="sm:w-7 sm:h-7"
                     />
-                    <div className="max-w-[75%] rounded-2xl bg-gray-100 px-3 py-2 text-sm text-foreground dark:bg-neutral-800">
+                    <div className="max-w-[85%] sm:max-w-[75%] rounded-2xl bg-gray-100 px-2 sm:px-3 py-2 text-sm text-foreground dark:bg-neutral-800 break-words">
                       {text}
                     </div>
                   </div>
@@ -218,14 +241,14 @@ const Chat = () => {
             ref={textInput}
             type="text"
             name="message"
-            className="h-10 flex-1 rounded-md border border-gray-300 bg-transparent px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none dark:border-neutral-700"
+            className="h-10 flex-1 rounded-md border border-gray-300 bg-transparent px-2 sm:px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none dark:border-neutral-700"
             value={messageInput}
             placeholder={"Type message"}
             onChange={getInputMessageHandler}
             onKeyDown={getKeyHandler}
           />
           <button
-            className="flex h-10 w-10 items-center justify-center rounded-md bg-blue-600 text-white hover:bg-blue-700"
+            className="flex h-10 w-10 items-center justify-center rounded-md bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800"
             onClick={onClickHandler}
             aria-label="Send message"
           >

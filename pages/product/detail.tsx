@@ -901,9 +901,6 @@ const ProductDetail: NextPage<DetailProps> = ({
                 >
                   Add to Cart
                 </button>
-                <button className="w-full rounded-lg border border-gray-300 bg-white px-6 py-4 text-center font-semibold text-gray-900 hover:bg-gray-50 transition-colors">
-                  Buy Now
-                </button>
               </div>
 
               {/* Product Details */}

@@ -139,7 +139,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-[#4E89DF] text-muted-foreground">
-      <div className="mx-auto w-full max-w-7xl px-12 pt-10">
+      <div className="mx-auto w-full max-w-7xl px-8 sm:px-12 pt-10">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           {footerCols.map((col) => (
             <div key={col.title} className="space-y-3">
