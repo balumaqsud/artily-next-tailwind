@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Moment from "react-moment";
 import { BoardArticle } from "../../types/board-article/board-article";
+import { REACT_APP_API_URL } from "@/libs/config";
 
 interface CommunityCardProps {
   vertical?: boolean;
@@ -14,10 +15,9 @@ const CommunityCard = ({
   article,
   index = 0,
 }: CommunityCardProps) => {
-  const articleImage = article?.articleImage
-    ? `${process.env.NEXT_PUBLIC_API_URL}/${article?.articleImage}`
-    : "/img/event.svg";
-
+  const imagePath: string = article?.articleImage
+    ? `${REACT_APP_API_URL}/${article?.articleImage}`
+    : "/img/community/communityImg.png";
   if (vertical) {
     return (
       <Link
@@ -26,7 +26,7 @@ const CommunityCard = ({
         <div className="group w-full overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:scale-[1.02] border border-gray-100">
           <div
             className="relative aspect-[4/3] w-full bg-cover bg-center transition-transform duration-300 group-hover:scale-105"
-            style={{ backgroundImage: `url(${articleImage})` }}
+            style={{ backgroundImage: `url(${imagePath})` }}
           >
             <div className="absolute left-3 top-3 rounded-full bg-white/90 backdrop-blur-sm px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-sm">
               #{index + 1}
@@ -57,7 +57,7 @@ const CommunityCard = ({
       <div className="group flex w-full items-center gap-4 rounded-xl bg-white p-4 shadow-sm transition-all duration-300 hover:shadow-lg hover:scale-[1.01] border border-gray-100">
         <div className="relative flex-shrink-0">
           <img
-            src={articleImage}
+            src={imagePath}
             alt={article.articleTitle}
             className="h-16 w-20 rounded-lg object-cover transition-transform duration-300 group-hover:scale-105"
           />

@@ -176,10 +176,10 @@ const Chat = () => {
         aria-label="Chat window"
       >
         <div className="flex items-center justify-between bg-gray-100 px-2 sm:px-3 py-2 text-sm font-semibold dark:bg-neutral-800">
-          <div className="text-foreground">Online Chat</div>
+          <div className="text-gray-900 dark:text-gray-100">Online Chat</div>
           <button
             onClick={handleOpenChat}
-            className="rounded p-1 text-muted-foreground hover:bg-black/5 dark:hover:bg-white/10 active:bg-black/10"
+            className="rounded p-1 text-gray-600 dark:text-gray-300 hover:bg-black/5 dark:hover:bg-white/10 active:bg-black/10"
             aria-label="Close chat"
           >
             <CloseFullscreenIcon fontSize="small" />
@@ -194,7 +194,7 @@ const Chat = () => {
           <ScrollableFeed>
             <div className="space-y-3">
               <div className="flex justify-center">
-                <div className="text-xs text-muted-foreground">
+                <div className="text-xs text-gray-600 dark:text-gray-300">
                   Welcome to Live chat!
                 </div>
               </div>
@@ -226,7 +226,7 @@ const Chat = () => {
                       }}
                       className="sm:w-7 sm:h-7"
                     />
-                    <div className="max-w-[85%] sm:max-w-[75%] rounded-2xl bg-gray-100 px-2 sm:px-3 py-2 text-sm text-foreground dark:bg-neutral-800 break-words">
+                    <div className="max-w-[85%] sm:max-w-[75%] rounded-2xl bg-gray-100 px-2 sm:px-3 py-2 text-sm text-gray-900 dark:bg-neutral-800 dark:text-gray-100 break-words">
                       {text}
                     </div>
                   </div>
@@ -241,7 +241,7 @@ const Chat = () => {
             ref={textInput}
             type="text"
             name="message"
-            className="h-10 flex-1 rounded-md border border-gray-300 bg-transparent px-2 sm:px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none dark:border-neutral-700"
+            className="h-10 flex-1 rounded-md border border-gray-300 bg-transparent px-2 sm:px-3 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800"
             value={messageInput}
             placeholder={"Type message"}
             onChange={getInputMessageHandler}

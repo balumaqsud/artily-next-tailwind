@@ -21,7 +21,7 @@ export interface ArticleInput {
 }
 
 interface BAISearch {
-  articleCategory: BoardArticleCategory;
+  articleCategory?: BoardArticleCategory;
   text?: string;
 }
 
@@ -30,7 +30,7 @@ export interface ArticlesInquiry {
   limit: number;
   sort?: string;
   direction?: Direction;
-  search: BAISearch;
+  search?: BAISearch;
 }
 
 interface ABAISearch {

@@ -106,8 +106,8 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
     setSearchCommunity(next);
     setCurrentPage(value);
     await router.push(
-      `/community?articleCategory=${searchCommunity.search.articleCategory}&page=${value}`,
-      `/community?articleCategory=${searchCommunity.search.articleCategory}&page=${value}`,
+      `/community?articleCategory=${searchCommunity.search?.articleCategory}&page=${value}`,
+      `/community?articleCategory=${searchCommunity.search?.articleCategory}&page=${value}`,
       { scroll: false }
     );
   };
@@ -135,7 +135,7 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
   return (
     <div className="w-full">
       <div className="mx-auto max-w-7xl px-4 py-8">
-        <TabContext value={searchCommunity.search.articleCategory}>
+        <TabContext value={searchCommunity.search?.articleCategory || ""}>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
             {/* Left sidebar */}
             <div className="md:col-span-3">
@@ -186,7 +186,7 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
                 <div className="mb-4 flex items-start justify-between">
                   <div>
                     <h2 className="text-lg font-semibold text-gray-900">
-                      {searchCommunity.search.articleCategory} Board
+                      {searchCommunity.search?.articleCategory} Board
                     </h2>
                     <p className="text-sm text-gray-500">
                       Express your opinions freely here without content
@@ -269,11 +269,6 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
                       ))
                     ) : (
                       <div className="col-span-3 flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-white p-10 text-center">
-                        <img
-                          src="/img/icons/icoAlert.svg"
-                          alt=""
-                          className="mb-3 h-10 w-10 opacity-60"
-                        />
                         <p className="text-sm text-gray-600">
                           No Article found!
                         </p>

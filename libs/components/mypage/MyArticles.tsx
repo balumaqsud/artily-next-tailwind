@@ -20,7 +20,7 @@ const DEFAULT_INPUT: ArticlesInquiry = {
   limit: 6,
   sort: "createdAt",
   direction: "DESC" as any,
-  search: { articleCategory: BoardArticleCategory.FREE },
+  search: {},
 };
 
 const MyArticles: NextPage = ({

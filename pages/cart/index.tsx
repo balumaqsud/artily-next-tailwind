@@ -1,8 +1,9 @@
 import React, { useMemo, useState, useEffect } from "react";
 import withLayoutBasic from "../../libs/components/layout/LayoutBasic";
-import { useMutation, useReactiveVar } from "@apollo/client";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
 import { userVar } from "../../apollo/store";
 import { CREATE_ORDER } from "../../apollo/user/mutation";
+import { GET_CART } from "../../apollo/user/query";
 import {
   sweetTopSmallSuccessAlert,
   sweetMixinErrorAlert,
@@ -18,8 +19,37 @@ const ProductsCart = () => {
   const [updatingItems, setUpdatingItems] = useState<Set<string>>(new Set());
   const [showCheckout, setShowCheckout] = useState(false);
   const [cartItems, setCartItems] = useState<any[]>([]);
+  const [userOrders, setUserOrders] = useState<any[]>([]);
 
   const [createOrder] = useMutation(CREATE_ORDER);
+
+  // Query to fetch user's orders
+  // The backend should automatically filter orders for the current authenticated user
+  const {
+    loading: ordersLoading,
+    data: ordersData,
+    error: ordersError,
+    refetch: refetchOrders,
+  } = useQuery(GET_CART, {
+    variables: {
+      input: {
+        page: 1,
+        limit: 50,
+      },
+    },
+    skip: !user?._id,
+    fetchPolicy: "network-only",
+    onCompleted: (data) => {
+      if (data?.getMyOrders?.list) {
+        // Backend should automatically return only the current user's orders
+        // based on authentication context, similar to how product creation works
+        setUserOrders(data.getMyOrders.list);
+      }
+    },
+    onError: (error) => {
+      console.error("Error fetching orders:", error);
+    },
+  });
 
   // Load cart items from localStorage
   useEffect(() => {
@@ -159,6 +189,7 @@ const ProductsCart = () => {
 
     try {
       // Create a new confirmed order
+      // The backend will automatically associate this order with the current user's memberId
       const orderInput = {
         items: items.map((item: any) => ({
           itemQuantity: item.itemQuantity || 1,
@@ -167,13 +198,21 @@ const ProductsCart = () => {
         })),
       };
 
-      await createOrder({
+      const result = await createOrder({
         variables: { input: orderInput },
       });
+
+      // Verify the order was created for the current user
+      if (result.data?.createOrder?.memberId !== user._id) {
+        throw new Error("Order creation failed - user mismatch");
+      }
 
       // Clear the cart after successful order creation
       setCartItems([]);
       localStorage.removeItem("artly_cart");
+
+      // Refetch orders to show the new order
+      await refetchOrders();
 
       sweetTopSmallSuccessAlert("Order created successfully!");
       setShowCheckout(true);
@@ -457,6 +496,69 @@ const ProductsCart = () => {
                 );
               })}
             </div>
+
+            {/* User Orders Section */}
+            {userOrders.length > 0 && (
+              <div className="mt-8">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                  My Orders
+                </h2>
+                <div className="space-y-4">
+                  {userOrders.map((order: any) => (
+                    <div
+                      key={order._id}
+                      className="rounded-2xl bg-white p-4 sm:p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200"
+                    >
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <h3 className="text-lg font-semibold text-gray-900">
+                              Order #{order._id.slice(-8)}
+                            </h3>
+                            <span
+                              className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                order.orderStatus === "CONFIRMED"
+                                  ? "bg-green-100 text-green-800"
+                                  : order.orderStatus === "PENDING"
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : "bg-gray-100 text-gray-800"
+                              }`}
+                            >
+                              {order.orderStatus}
+                            </span>
+                          </div>
+                          <div className="text-sm text-gray-600 space-y-1">
+                            <p>
+                              <span className="font-medium">Total:</span> $
+                              {order.orderTotal?.toFixed(2)}
+                            </p>
+                            <p>
+                              <span className="font-medium">Delivery:</span> $
+                              {order.orderDelivery?.toFixed(2)}
+                            </p>
+                            <p>
+                              <span className="font-medium">Date:</span>{" "}
+                              {new Date(order.createdAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-2xl font-bold text-gray-900">
+                            $
+                            {(order.orderTotal + order.orderDelivery).toFixed(
+                              2
+                            )}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {order.orderItems?.length || 0} items
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Checkout Sidebar */}

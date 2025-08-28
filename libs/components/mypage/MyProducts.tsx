@@ -9,13 +9,20 @@ import { T } from "../../types/common";
 import { ProductStatus } from "../../enums/product.enum";
 import { userVar } from "../../../apollo/store";
 import { useRouter } from "next/router";
-import { UPDATE_PRODUCT } from "../../../apollo/user/mutation";
+import {
+  UPDATE_PRODUCT,
+  LIKE_TARGET_PRODUCT,
+} from "../../../apollo/user/mutation";
 import { GET_ARTIST_PRODUCTS } from "../../../apollo/user/query";
 import {
   sweetConfirmAlert,
   sweetErrorAlert,
   sweetErrorHandling,
+  sweetMixinErrorAlert,
+  sweetTopSmallSuccessAlert,
 } from "../../sweetAlert";
+import { Message } from "@/libs/enums/common.enum";
+import ProductCard from "../product/ProductCard";
 
 const DEFAULT_INPUT: SellerProductsInquiry = {
   page: 1,
@@ -37,6 +44,7 @@ const MyProducts = ({ initialInput = DEFAULT_INPUT }) => {
 
   /** APOLLO REQUESTS **/
   const [updateProduct] = useMutation(UPDATE_PRODUCT);
+  const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
 
   const {
     loading: getSellerProductsLoading,
@@ -112,6 +120,19 @@ const MyProducts = ({ initialInput = DEFAULT_INPUT }) => {
     }
   };
 
+  const likeProductHandler = async (user: T, id: string) => {
+    try {
+      if (!id) return;
+      if (!(user as any)._id) throw new Error(Message.SOMETHING_WENT_WRONG);
+      await likeTargetProduct({ variables: { productId: id } });
+      await getSellerProductsRefetch({ input: searchFilter });
+      await sweetTopSmallSuccessAlert("success", 800);
+    } catch (error: any) {
+      console.log("likeTargetProduct", error);
+      sweetMixinErrorAlert(error.message).then();
+    }
+  };
+
   if (user?.memberType !== "ARTIST" && user?.memberType !== "SELLER") {
     router.back();
     return null;
@@ -159,15 +180,14 @@ const MyProducts = ({ initialInput = DEFAULT_INPUT }) => {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {sellerProducts?.length ? (
           sellerProducts?.map((product: Product) => (
-            <PropertyCard key={product._id.toString()} product={product} />
+            <ProductCard
+              key={product._id.toString()}
+              product={product}
+              likeTargetProductHandler={likeProductHandler}
+            />
           ))
         ) : (
           <div className="col-span-full flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-white p-10 text-center">
-            <img
-              src="/img/icons/icoAlert.svg"
-              alt=""
-              className="mb-3 h-10 w-10 opacity-60"
-            />
             <p className="text-sm text-gray-600">No products found!</p>
           </div>
         )}
