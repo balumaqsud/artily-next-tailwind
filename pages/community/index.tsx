@@ -65,6 +65,7 @@ const Community: NextPage = ({ initialInput = DEFAULT_INPUT, ...props }: T) => {
     },
   });
 
+  console.log("boardArticles", boardArticles);
   /** LIFECYCLES **/
   useEffect(() => {
     if (!query?.articleCategory)

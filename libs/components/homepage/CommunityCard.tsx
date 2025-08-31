@@ -24,10 +24,12 @@ const CommunityCard = ({
         href={`/community/detail?articleCategory=${article?.articleCategory}&id=${article?._id}`}
       >
         <div className="group w-full overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:scale-[1.02] border border-gray-100">
-          <div
-            className="relative aspect-[4/3] w-full bg-cover bg-center transition-transform duration-300 group-hover:scale-105"
-            style={{ backgroundImage: `url(${imagePath})` }}
-          >
+          <div className="relative aspect-[4/3] w-full overflow-hidden">
+            <img
+              src={imagePath}
+              alt={article?.articleTitle || "Community Article"}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
             <div className="absolute left-3 top-3 rounded-full bg-white/90 backdrop-blur-sm px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-sm">
               #{index + 1}
             </div>

@@ -34,7 +34,6 @@ const GET_NOTIFICATIONS = gql`
 `;
 
 const Top = () => {
-  const device = useDeviceDetect();
   const user = useReactiveVar(userVar);
   const { t, i18n } = useTranslation("common");
   const router = useRouter();

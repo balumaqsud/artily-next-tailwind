@@ -26,6 +26,7 @@ const CommunityBoards = () => {
     refetch: refetchNews,
   } = useQuery(GET_BOARD_ARTICLES, {
     fetchPolicy: "network-only",
+    notifyOnNetworkStatusChange: true,
     variables: {
       input: {
         ...searchCommunity,
@@ -128,7 +129,9 @@ const CommunityBoards = () => {
             </div>
             <div className="flex flex-col gap-3">
               {freeLoading ? (
-                <div className="text-center py-8">{t("Loading free articles...")}</div>
+                <div className="text-center py-8">
+                  {t("Loading free articles...")}
+                </div>
               ) : freeError ? (
                 <div className="text-center py-8 text-red-500">
                   {t("Error loading free articles:")} {freeError.message}
