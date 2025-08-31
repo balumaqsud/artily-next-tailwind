@@ -1,104 +1,106 @@
 import Link from "next/link";
 import { Button } from "@/libs/components/ui/button";
 import { useState } from "react";
+import { useTranslation } from "next-i18next";
 import { sweetTopSmallSuccessAlert } from "../sweetAlert";
 
-const footerCols = [
-  {
-    title: "Artly",
-    items: [
-      { label: "Home", href: "/" },
-      { label: "Shop", href: "/product" },
-      { label: "Artists", href: "/artist" },
-      { label: "Community", href: "/community" },
-      { label: "Connect", href: "/Connect" },
-    ],
-  },
-  {
-    title: "Collections",
-    items: [
-      {
-        label: "Home and Living",
-        href: `/product?input=${JSON.stringify({
-          page: 1,
-          limit: 9,
-          sort: "createdAt",
-          direction: "DESC",
-          search: { typeList: ["HOME_LIVING"] },
-        })}`,
-      },
-      {
-        label: "Jewelry",
-        href: `/product?input=${JSON.stringify({
-          page: 1,
-          limit: 9,
-          sort: "createdAt",
-          direction: "DESC",
-          search: { typeList: ["JEWELRY"] },
-        })}`,
-      },
-      {
-        label: "Art",
-        href: `/product?input=${JSON.stringify({
-          page: 1,
-          limit: 9,
-          sort: "createdAt",
-          direction: "DESC",
-          search: { typeList: ["ART_COLLECTABLES"] },
-        })}`,
-      },
-      {
-        label: "Pet Products",
-        href: `/product?input=${JSON.stringify({
-          page: 1,
-          limit: 9,
-          sort: "createdAt",
-          direction: "DESC",
-          search: { typeList: ["PET_PRODUCTS"] },
-        })}`,
-      },
-      {
-        label: "Vintage",
-        href: `/product?input=${JSON.stringify({
-          page: 1,
-          limit: 9,
-          sort: "createdAt",
-          direction: "DESC",
-          search: { typeList: ["VINTAGE"] },
-        })}`,
-      },
-      {
-        label: "Children",
-        href: `/product?input=${JSON.stringify({
-          page: 1,
-          limit: 9,
-          sort: "createdAt",
-          direction: "DESC",
-          search: { typeList: ["CHILDREN"] },
-        })}`,
-      },
-      {
-        label: "Accessories",
-        href: `/product?input=${JSON.stringify({
-          page: 1,
-          limit: 9,
-          sort: "createdAt",
-          direction: "DESC",
-          search: { typeList: ["ACCESSORY"] },
-        })}`,
-      },
-    ],
-  },
-  {
-    title: "More",
-    items: [
-      { label: "About", href: "/about" },
-      { label: "Profile", href: "/mypage" },
-    ],
-  },
-];
-
 const Footer = () => {
+  const { t } = useTranslation("common");
+
+  const footerCols = [
+    {
+      title: "Artly",
+      items: [
+        { label: t("Home"), href: "/" },
+        { label: t("Shop"), href: "/product" },
+        { label: t("Artists"), href: "/artist" },
+        { label: t("Community"), href: "/community" },
+        { label: t("Connect"), href: "/Connect" },
+      ],
+    },
+    {
+      title: t("Collections"),
+      items: [
+        {
+          label: t("Home and Living"),
+          href: `/product?input=${JSON.stringify({
+            page: 1,
+            limit: 9,
+            sort: "createdAt",
+            direction: "DESC",
+            search: { typeList: ["HOME_LIVING"] },
+          })}`,
+        },
+        {
+          label: t("Jewelry"),
+          href: `/product?input=${JSON.stringify({
+            page: 1,
+            limit: 9,
+            sort: "createdAt",
+            direction: "DESC",
+            search: { typeList: ["JEWELRY"] },
+          })}`,
+        },
+        {
+          label: t("Art"),
+          href: `/product?input=${JSON.stringify({
+            page: 1,
+            limit: 9,
+            sort: "createdAt",
+            direction: "DESC",
+            search: { typeList: ["ART_COLLECTABLES"] },
+          })}`,
+        },
+        {
+          label: t("Pet Products"),
+          href: `/product?input=${JSON.stringify({
+            page: 1,
+            limit: 9,
+            sort: "createdAt",
+            direction: "DESC",
+            search: { typeList: ["PET_PRODUCTS"] },
+          })}`,
+        },
+        {
+          label: t("Vintage"),
+          href: `/product?input=${JSON.stringify({
+            page: 1,
+            limit: 9,
+            sort: "createdAt",
+            direction: "DESC",
+            search: { typeList: ["VINTAGE"] },
+          })}`,
+        },
+        {
+          label: t("Children"),
+          href: `/product?input=${JSON.stringify({
+            page: 1,
+            limit: 9,
+            sort: "createdAt",
+            direction: "DESC",
+            search: { typeList: ["CHILDREN"] },
+          })}`,
+        },
+        {
+          label: t("Accessories"),
+          href: `/product?input=${JSON.stringify({
+            page: 1,
+            limit: 9,
+            sort: "createdAt",
+            direction: "DESC",
+            search: { typeList: ["ACCESSORY"] },
+          })}`,
+        },
+      ],
+    },
+    {
+      title: "More",
+      items: [
+        { label: t("About"), href: "/about" },
+        { label: t("Profile"), href: "/mypage" },
+      ],
+    },
+  ];
   const year = new Date().getFullYear();
   const [email, setEmail] = useState("");
   const [isSubscribing, setIsSubscribing] = useState(false);
@@ -124,7 +126,9 @@ const Footer = () => {
 
       // Show success alert
       await sweetTopSmallSuccessAlert(
-        `Thank you! ${email} has been subscribed to our newsletter.`,
+        t("Thank you! {email} has been subscribed to our newsletter.", {
+          email,
+        }),
         3000
       );
 
@@ -164,17 +168,18 @@ const Footer = () => {
           {/* Subscribe column */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-foreground">
-              Subscribe to our newsletter
+              {t("Subscribe to our newsletter")}
             </h3>
             <p className="max-w-md text-sm">
-              Stay updated on new releases and features, guides, and case
-              studies.
+              {t(
+                "Stay updated on new releases and features, guides, and case studies."
+              )}
             </p>
             <form onSubmit={handleSubscribe} className="w-full max-w-md">
               <div className="flex h-10 w-full items-center rounded-md border pl-3 pr-2">
                 <input
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder={t("Enter your email")}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="h-full w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
@@ -206,10 +211,10 @@ const Footer = () => {
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                         ></path>
                       </svg>
-                      Subscribing...
+                      {t("Subscribing...")}
                     </div>
                   ) : (
-                    "Subscribe"
+                    t("Subscribe")
                   )}
                 </Button>
               </div>
@@ -218,7 +223,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-8 flex items-center justify-between border-t border-gray-800 pt-2 text-sm">
-          <span>© {year} Artly, Inc.</span>
+          <span>© {year} Artly</span>
           <div className="flex-shrink-0">
             <img
               src="/logo/artly-logo.png"
