@@ -26,7 +26,6 @@ const CommunityBoards = () => {
     refetch: refetchNews,
   } = useQuery(GET_BOARD_ARTICLES, {
     fetchPolicy: "network-only",
-    notifyOnNetworkStatusChange: true,
     variables: {
       input: {
         ...searchCommunity,

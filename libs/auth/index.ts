@@ -358,7 +358,7 @@ export const updateProfileAndRefreshToken = async (
 
       console.log("New access token received from profile update");
 
-      // Validate the new token format
+     
       if (
         newToken &&
         typeof newToken === "string" &&
