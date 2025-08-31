@@ -172,7 +172,7 @@ const Footer = () => {
             </h3>
             <p className="max-w-md text-sm">
               {t(
-                "Stay updated on new releases and features, guides, and case studies."
+                "Artly is a platform for artists and collectors to connect and share their work."
               )}
             </p>
             <form onSubmit={handleSubscribe} className="w-full max-w-md">
@@ -223,7 +223,9 @@ const Footer = () => {
         </div>
 
         <div className="mt-8 flex items-center justify-between border-t border-gray-800 pt-2 text-sm">
-          <span>© {year} Artly</span>
+          <span>
+            © {year} {t("Artly")}
+          </span>
           <div className="flex-shrink-0">
             <img
               src="/logo/artly-logo.png"
