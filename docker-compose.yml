@@ -6,12 +6,12 @@ services:
     restart: always
     image: node:20.10.0
     ports:
-      - "4000:3000"
+      - "4011:3030"
     environment:
-      - PORT=3000
-      - REACT_APP_API_URL=http://72.60.42.29:4001
-      - REACT_APP_API_GRAPHQL_URL=http://72.60.42.29:4001/graphql
-      - REACT_APP_API_WS=ws://72.60.42.29:4001
+      - PORT=3030
+      - REACT_APP_API_URL=http://212.85.27.30:4009
+      - REACT_APP_API_GRAPHQL_URL=http://212.85.27.30:4009/graphql
+      - REACT_APP_API_WS=ws://212.85.27.30:4009
     volumes:
       - ./:/usr/src/artly-next-tailwind
       - /usr/src/artly-next-tailwind/node_modules
